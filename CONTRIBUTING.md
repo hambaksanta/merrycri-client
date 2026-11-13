@@ -5,11 +5,19 @@
 ## 1. 한눈에 보기
 
 ```
-이슈 만들기 → 브랜치 만들기 → 커밋 → PR → 빌드 통과 + 1명 승인 → Squash and merge → 브랜치 삭제
+이슈 만들기 → dev에서 브랜치 만들기 → 커밋 → dev로 PR → 빌드 통과 + 1명 승인 → Squash and merge → 브랜치 삭제
 ```
 
-- `main`에는 **직접 push할 수 없다.** GitHub 설정으로 막혀 있다 (아래 5번).
-- 모든 변경은 PR로만 `main`에 들어간다.
+브랜치는 두 개를 고정으로 쓴다.
+
+| 브랜치 | 용도 | 들어오는 길 |
+| --- | --- | --- |
+| `dev` (기본 브랜치) | 매일 작업이 모이는 곳 | 내 작업 브랜치 → `dev` PR |
+| `main` | 발표·제출용 최종본만 | `dev` → `main` PR (세 명이 같이 확인했을 때만) |
+
+- `dev`와 `main` 둘 다 **직접 push할 수 없다.** GitHub 설정으로 막혀 있다 (아래 5번).
+- 평소 PR은 전부 `dev`로 보낸다. GitHub에서 PR을 열면 자동으로 `dev`가 선택된다.
+- `main`으로 가는 PR은 마일스톤(중간 점검, 최종 제출) 때만 연다.
 
 ## 2. 타입
 
@@ -35,9 +43,9 @@ fix/15-presence-leave
 asset/9-bgm
 ```
 
-- `main`에서 새로 따서 만든다: Android Studio 오른쪽 아래 브랜치 이름 → `main` 체크아웃 → Update Project → New Branch
+- `dev`에서 새로 따서 만든다: Android Studio 오른쪽 아래 브랜치 이름 → `dev` 체크아웃 → Update Project → New Branch
 - 하나의 브랜치 = 하나의 이슈. Merge되면 브랜치는 지운다.
-- 오래 걸리는 작업이면 하루 한 번 `main`을 내 브랜치에 합친다 (Git → Merge → `origin/main`).
+- 오래 걸리는 작업이면 하루 한 번 `dev`를 내 브랜치에 합친다 (Git → Merge → `origin/dev`).
 
 ## 4. 커밋 메시지
 
@@ -61,9 +69,19 @@ ASSET: [C] BGM 8곡 추가
   - 승인 1명 이상
   - 클라이언트: 'Android 빌드' 체크 통과 (초록 체크). 빨간 X면 Merge 버튼이 막힌다.
   - 새 커밋을 올리면 이전 승인은 취소되고 다시 승인받는다.
-  - `main`에 직접 push, 강제 push(force push), 브랜치 삭제 금지
+  - 같은 브랜치의 최신 내용이 반영돼 있어야 한다. 뒤처졌으면 PR 화면의 **Update branch**를 누른다.
+  - `dev`·`main`에 직접 push, 강제 push(force push), 브랜치 삭제 금지
 - 리뷰하는 사람: PR 브랜치를 받아서 **AVD에서 직접 실행해 보고** 승인한다. 실시간 기능이면 AVD 두 대로.
-- Merge 방법: **Squash and merge** (커밋이 하나로 합쳐져 `main` 기록이 깔끔해진다)
+- Merge 방법
+  - 작업 브랜치 → `dev`: **Squash and merge** (커밋이 하나로 합쳐져 `dev` 기록이 깔끔해진다)
+  - `dev` → `main`: **Create a merge commit** (여기서 squash 하면 다음번에 `dev`와 `main` 기록이 어긋나 충돌이 난다)
+
+### `main`에 최종본 올리는 법
+
+1. 세 명이 `dev`를 AVD 두 대로 같이 돌려 보고 문제가 없으면
+2. PR 만들기: base `main` ← compare `dev`, 제목 `CHORE: [B] 중간 점검 버전 main 반영` 처럼
+3. 빌드 통과 + 1명 승인 → **Create a merge commit**
+4. `dev` 브랜치는 **지우지 않는다** (Merge 화면의 Delete branch 버튼 누르지 않기)
 
 ## 6. 이슈
 
@@ -80,5 +98,5 @@ DB 경로·필드(`data/model/Models.kt`, 서버의 `docs/DATA_MODEL.md`)는 세
 ## 8. 충돌이 났을 때
 
 1. 당황하지 말고 단톡에 "○○ 파일 충돌" 남기기
-2. Android Studio: Git → Merge → `origin/main` → 충돌 창에서 파일 더블클릭 → 왼쪽(내 것)·오른쪽(main) 중 고르거나 둘 다 살리기
+2. Android Studio: Git → Merge → `origin/dev` → 충돌 창에서 파일 더블클릭 → 왼쪽(내 것)·오른쪽(dev) 중 고르거나 둘 다 살리기
 3. 남의 폴더 파일이 충돌하면 그 사람과 같이 푼다
