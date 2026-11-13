@@ -14,6 +14,12 @@ import com.hambaksanta.merrycri.core.scene.PlaceholderLabel
 import com.hambaksanta.merrycri.core.scene.PresenceViewModel
 import com.hambaksanta.merrycri.core.scene.SceneId
 import com.hambaksanta.merrycri.core.scene.SceneScaffold
+import io.github.sceneview.math.Position
+import com.hambaksanta.merrycri.core.scene.House3D
+import com.hambaksanta.merrycri.core.scene.Lamp3D
+import com.hambaksanta.merrycri.core.scene.PineTree3D
+import com.hambaksanta.merrycri.core.scene.Signpost3D
+import com.hambaksanta.merrycri.ui.theme.MerryColors
 
 /**
  * 마을 광장 (허브). 담당: A
@@ -40,5 +46,18 @@ fun PlazaScene(presence: PresenceViewModel, onGo: (SceneId) -> Unit, onWardrobe:
             }
         },
         objects = { PlaceholderLabel(stringResource(R.string.placeholder_plaza)) },
+        world = {
+            // TODO(A): 임시 배치. 집·트리·가로등을 glb 로 바꾸고 전구·오로라 더하기
+            PineTree3D(Position(0f, 0f, -2.5f), height = 4.5f)
+            House3D(Position(-5f, 0f, -6f), rotationY = 15f)
+            House3D(Position(0f, 0f, -7.5f), wall = MerryColors.Pine)
+            House3D(Position(5f, 0f, -6f), wall = MerryColors.Navy, rotationY = -15f)
+            House3D(Position(-7.5f, 0f, -1f), wall = MerryColors.Cream, rotationY = 70f)
+            House3D(Position(7.5f, 0f, -1f), rotationY = -70f)
+            Lamp3D(Position(-3f, 0f, 1f))
+            Lamp3D(Position(3f, 0f, 1f))
+            Signpost3D(Position(-1.5f, 0f, 3.5f))
+            Signpost3D(Position(1.5f, 0f, 3.5f), color = MerryColors.Pine)
+        },
     )
 }

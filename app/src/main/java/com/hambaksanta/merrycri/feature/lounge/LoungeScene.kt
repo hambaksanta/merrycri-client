@@ -11,6 +11,10 @@ import com.hambaksanta.merrycri.core.scene.PlaceholderLabel
 import com.hambaksanta.merrycri.core.scene.PresenceViewModel
 import com.hambaksanta.merrycri.core.scene.SceneId
 import com.hambaksanta.merrycri.core.scene.SceneScaffold
+import io.github.sceneview.math.Position
+import com.hambaksanta.merrycri.core.scene.Fireplace3D
+import com.hambaksanta.merrycri.core.scene.Sofa3D
+import com.hambaksanta.merrycri.ui.theme.MerryColors
 
 /**
  * 불멍 라운지. 담당: C
@@ -29,5 +33,14 @@ fun LoungeScene(presence: PresenceViewModel, onBack: () -> Unit) {
         presence = presence,
         onBackToPlaza = onBack,
         objects = { PlaceholderLabel(stringResource(R.string.placeholder_lounge)) },
+        skyColor = MerryColors.Night,
+        groundColor = MerryColors.Brown,
+        world = {
+            // TODO(C): 불 일렁임·불티·주황 오버레이, 장작 넣기(lounge/fire), 자리 6개, 간식 테이블
+            Fireplace3D(Position(0f, 0f, -4.5f))
+            Sofa3D(Position(-3f, 0f, 0f), rotationY = 60f)
+            Sofa3D(Position(3f, 0f, 0f), color = MerryColors.Pine, rotationY = -60f)
+            Sofa3D(Position(0f, 0f, 2.5f), color = MerryColors.Navy, rotationY = 180f)
+        },
     )
 }
