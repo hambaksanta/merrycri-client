@@ -47,8 +47,8 @@ object World3D {
      */
     fun tapToRatio(cameraNode: CameraNode, xPx: Float, yPx: Float): Pair<Double, Double>? {
         val ray = cameraNode.screenPointToRay(xPx, yPx)
-        val o = ray.origin
-        val d = ray.direction
+        val o = ray.getOrigin()
+        val d = ray.getDirection()
         if (d.y >= -1e-4f) return null // 하늘 쪽
         val t = -o.y / d.y
         return toRatio(o.x + d.x * t, o.z + d.z * t)
