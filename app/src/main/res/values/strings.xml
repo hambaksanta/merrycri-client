@@ -1,0 +1,69 @@
+<resources>
+    <string name="app_name">메리크리</string>
+
+    <!-- 공간 이름 (SceneId) -->
+    <string name="space_wardrobe">옷장</string>
+    <string name="space_plaza">마을 광장</string>
+    <string name="space_tree">트리 광장</string>
+    <string name="space_post">선물 우체국</string>
+    <string name="space_lounge">불멍 라운지</string>
+    <string name="space_snowman">눈사람 언덕</string>
+    <string name="space_snowball">눈싸움 마당</string>
+    <string name="space_sled">썰매 언덕</string>
+
+    <!-- SceneScaffold 공통 UI -->
+    <string name="scene_people_count">%1$d명</string>
+    <string name="scene_offline">오프라인</string>
+    <string name="scene_back_to_plaza">광장으로</string>
+    <string name="scene_preparing">%1$s (준비 중)</string>
+    <string name="me_default">나</string>
+    <string name="nick_default">눈송이</string>
+    <string name="debug_shake">흔들기 (디버그)</string>
+
+    <!-- 옷장 -->
+    <string name="wardrobe_hat">모자: %1$s</string>
+    <string name="wardrobe_top">상의: %1$s</string>
+    <string name="wardrobe_nick_label">닉네임 (10자)</string>
+    <string name="wardrobe_go">마을로 가기</string>
+
+    <string name="hat_none">없음</string>
+    <string name="hat_beanie">비니</string>
+    <string name="hat_santa">산타 모자</string>
+    <string name="hat_earmuff">귀마개</string>
+    <string name="hat_antler">순록 머리띠</string>
+    <string name="scarf_none">없음</string>
+    <string name="scarf_stripe">줄무늬</string>
+    <string name="scarf_knit">니트</string>
+    <string name="scarf_solid">단색</string>
+    <string name="gloves_none">없음</string>
+    <string name="gloves_mitten">벙어리 장갑</string>
+    <string name="gloves_knit">니트 장갑</string>
+    <string name="top_padding">패딩</string>
+    <string name="top_sweater">스웨터</string>
+    <string name="top_coat">코트</string>
+    <string name="top_santa">산타옷</string>
+    <string name="boots_shoes">단화</string>
+    <string name="boots_fur">털부츠</string>
+    <string name="boots_rain">레인부츠</string>
+
+    <!-- 간식 (holding) -->
+    <string name="snack_cocoa">코코아</string>
+    <string name="snack_latte">카페라떼</string>
+    <string name="snack_americano">뜨거운 아메리카노</string>
+    <string name="snack_gingerbread">진저브레드 쿠키</string>
+    <string name="snack_chocolate">초콜릿</string>
+    <string name="snack_marshmallow">마시멜로 꼬치</string>
+
+    <!-- 공통 컴포넌트 -->
+    <string name="close">닫기</string>
+
+    <!-- 임시 안내 (공간을 만들기 시작하면 지운다) -->
+    <string name="placeholder_wardrobe">옷장 · 담당 A\n모자·목도리·장갑·상의·부츠 + 부위별 색</string>
+    <string name="placeholder_plaza">마을 광장 · 담당 A\n빈 곳을 탭하면 걸어가요\n아래 이정표로 공간 이동</string>
+    <string name="placeholder_tree">트리 광장 · 담당 C\n공동 트리 꾸미기 · 트리 아래 선물 더미</string>
+    <string name="placeholder_post">선물 우체국 · 담당 C\n편지 쓰기 → 포장 → 트리 아래\n12/25~12/31 열람 (데모 모드는 바로)</string>
+    <string name="placeholder_lounge">불멍 라운지 · 담당 C\n벽난로 · 장작 넣기 · 소파\n코코아·라떼·뜨아·쿠키·초콜릿·마시멜로</string>
+    <string name="placeholder_snowman">눈사람 언덕 · 담당 A\n굴리기 → 쌓기 → 꾸미기 → 세우기 (1인 3개)</string>
+    <string name="placeholder_snowball">눈싸움 마당 · 담당 B\n상대 캐릭터 탭 → 눈덩이 던지기</string>
+    <string name="placeholder_sled">썰매 언덕 · 담당 A\n3순위 · 11/24에 시작 여부 판단</string>
+</resources>

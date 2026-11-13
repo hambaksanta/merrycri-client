@@ -7,10 +7,11 @@
 | 저장소 | 내용 |
 | --- | --- |
 | **merrycri-client** (여기) | 안드로이드 앱 (Kotlin + Jetpack Compose) |
-| [merrycri-server](https://github.com/hambaksanta/merrycri-server) | Firebase 규칙, 데이터 구조, 서버 함수, 예시 데이터 |
+| [merrycri-server](https://github.com/hambaksanta/merrycri-server) | Firebase 보안 규칙, 데이터 구조, 예시 데이터 |
 
 - 데이터 구조 (세 명 합의 필수): [merrycri-server/docs/DATA_MODEL.md](https://github.com/hambaksanta/merrycri-server/blob/main/docs/DATA_MODEL.md)
-- AI 공통 프롬프트: [docs/AI_PROMPT.md](docs/AI_PROMPT.md)
+- **협업 규칙 (브랜치·커밋·PR): [CONTRIBUTING.md](CONTRIBUTING.md)**
+- AI 공통 프롬프트 (AI에게 코드를 부탁할 때 맨 처음 붙여넣기): [docs/AI_PROMPT.md](docs/AI_PROMPT.md)
 - 단계 0 할 일: [docs/TASKS_PHASE0.md](docs/TASKS_PHASE0.md)
 - 기획서·구현서, 한눈에 보기 인포그래픽: (팀 공유 링크 붙이기)
 
@@ -48,12 +49,13 @@ Firebase 프로젝트 만들기, 규칙 배포, 예시 데이터 넣기는 **[me
 
 ## 4. Git 규칙
 
-- 기본 브랜치는 `main`. `main`에 직접 push 금지.
-- 작업 브랜치: `feat/a-world`, `feat/b-system`, `feat/c-content`
-- 하루 한 번 이상 `main`을 pull 받아서 내 브랜치에 합친다.
-- 기능 하나가 AVD에서 돌아가면 바로 커밋한다.
-- 커밋 메시지: `[A] 광장 전구 반짝임 추가`, `[B] presence 공간별 구독`, `[C] 벽난로 불 일렁임`
-- 합칠 때는 Pull Request를 만들고, 다른 한 명이 AVD에서 실행해 보고 Merge한다.
+자세한 내용은 **[CONTRIBUTING.md](CONTRIBUTING.md)**. 요약:
+
+- `main`에 직접 push 금지 (GitHub 설정으로 막혀 있음). 모든 변경은 PR로만.
+- 순서: 이슈 → 브랜치 `feat/12-lounge-fire` → 커밋 → PR → 'Android 빌드' 통과 + 1명 승인 → Squash and merge
+- 타입: `FEAT` `FIX` `DESIGN` `ASSET` `REFACTOR` `DOCS` `CHORE`
+- 커밋·PR 제목: `FEAT: [C] 라운지 벽난로 불 일렁임`
+- 리뷰하는 사람은 AVD에서 직접 실행해 보고 승인한다.
 - 이틀에 한 번(월·수·금) 30분 모여서 `main`을 AVD 두 대로 같이 돌려본다.
 
 ## 5. 음원·이미지 넣는 법
@@ -66,7 +68,8 @@ Firebase 프로젝트 만들기, 규칙 배포, 예시 데이터 넣기는 **[me
 ## 6. 테스트 팁
 
 - 실시간 기능: Device Manager에서 AVD 2개를 동시에 실행
-- 흔들기·기울이기: 에뮬레이터 ⋯ (Extended Controls) → Virtual sensors
+- 흔들기: 디버그 빌드에서는 화면 위쪽 **'흔들기 (디버그)'** 버튼으로 대신한다. 실제 센서 시험은 에뮬레이터 ⋯ (Extended Controls) → Virtual sensors
+- PR을 올리면 GitHub가 자동으로 빌드한다. 만들어진 APK는 PR의 Checks → Android 빌드 → Artifacts에서 받을 수 있다
 - 선물 열기: 설정의 데모 모드를 켜면 12/25 전에도 열린다
 
 ## 7. 출처와 라이선스 (C가 채운다)
