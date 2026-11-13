@@ -12,12 +12,12 @@ if (file("google-services.json").exists()) {
 
 android {
     namespace = "com.hambaksanta.merrycri"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.hambaksanta.merrycri"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "0.1.0"
     }
@@ -32,12 +32,15 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
     buildFeatures {
         compose = true
         buildConfig = true // BuildConfig.DEBUG 로 디버그용 버튼(흔들기 대체 등)을 보여준다
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
 }
 
@@ -62,4 +65,7 @@ dependencies {
     implementation(libs.media3.exoplayer)
     implementation(libs.datastore.preferences)
     implementation(libs.work.runtime.ktx)
+
+    // 3D 렌더링 (마을·캐릭터). glb 모델은 app/src/main/assets/models/ 에 넣는다
+    implementation(libs.sceneview)
 }

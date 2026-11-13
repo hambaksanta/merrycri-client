@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,12 +23,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hambaksanta.merrycri.R
-import com.hambaksanta.merrycri.core.character.CharacterView
+import com.hambaksanta.merrycri.core.character.Character3D
+import io.github.sceneview.math.Position
 import com.hambaksanta.merrycri.core.character.Hat
 import com.hambaksanta.merrycri.core.character.PaletteColor
 import com.hambaksanta.merrycri.core.character.Top
@@ -41,7 +40,7 @@ import com.hambaksanta.merrycri.core.scene.SceneScaffold
 
 /**
  * 옷장. 담당: A
- * SceneScaffold 를 쓰지만 걷지 않고(onFloorTap 무시), 작은 캐릭터 대신 큰 미리보기를 보여준다.
+ * SceneScaffold 를 쓰지만 걷지 않고(onFloorTap 무시), 다른 사람 대신 내 캐릭터를 크게(3D) 보여준다.
  * 지금은 모자·상의 종류와 모자·상의 색만 바꿀 수 있는 임시판.
  * TODO(A, 단계 1): 부위 탭(모자·목도리·장갑·상의·부츠), 아이템 가로 스크롤, 부위별 색 8개
  */
@@ -66,22 +65,18 @@ fun WardrobeScene(presence: PresenceViewModel, onDone: () -> Unit) {
                 modifier = Modifier.fillMaxWidth().height(52.dp),
             ) { Text(stringResource(R.string.wardrobe_go), fontSize = 18.sp) }
         },
+        world = {
+            // 내 캐릭터 미리보기 (카메라 앞쪽에 크게). TODO(A): 천천히 360도 돌기, 옷 바꿀 때 반짝 효과
+            Character3D(outfit = outfit, holding = null, position = Position(0f, 0f, 3f), scale = 2.6f)
+        },
         objects = {
             Column(
                 Modifier
                     .fillMaxSize()
                     .padding(top = 72.dp, start = 24.dp, end = 24.dp, bottom = 96.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Bottom),
             ) {
-                Spacer(Modifier.height(24.dp))
-                CharacterView(
-                    outfit = outfit,
-                    holding = null,
-                    nick = nick.ifBlank { stringResource(R.string.me_default) },
-                    modifier = Modifier.scale(2.2f),
-                )
-                Spacer(Modifier.height(72.dp))
 
                 OutlinedButton(onClick = {
                     val next = Hat.entries[(outfit.hatType().ordinal + 1) % Hat.entries.size]

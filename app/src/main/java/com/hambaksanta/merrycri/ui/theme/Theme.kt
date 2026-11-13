@@ -26,6 +26,11 @@ object MerryColors {
     val Pink = Color(0xFFF2A7B8)
     val Brown = Color(0xFF8A5A3C)
 
+    // 3D 소품 (임시 도형용)
+    val Stone = Color(0xFF8C8F99)
+    val Ice = Color(0xFFDDEBF7)
+    val Wall = Color(0xFFB5523B)
+
     // 캐릭터·간식 (임시 도형용)
     val Skin = Color(0xFFF2D3B3)
     val Cookie = Color(0xFFC98A4B)

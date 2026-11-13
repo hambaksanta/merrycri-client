@@ -2,11 +2,11 @@
 
 **팀 함박산타** · 모바일 프로그래밍 3인 팀 프로젝트 · 개발 기간 2026-11-11 ~ 11-29
 
-눈 내리는 크리스마스 마을에 최대 10명이 모여 보고, 듣고, 머무는 실시간 가상공간 안드로이드 앱. 줄여서 **메리크리**.
+눈 내리는 크리스마스 마을(파스텔 로우폴리 3D)에 최대 10명이 모여 보고, 듣고, 머무는 실시간 가상공간 안드로이드 앱. 줄여서 **메리크리**.
 
 | 저장소 | 내용 |
 | --- | --- |
-| **merrycri-client** (여기) | 안드로이드 앱 (Kotlin + Jetpack Compose) |
+| **merrycri-client** (여기) | 안드로이드 앱 (Kotlin + Jetpack Compose + SceneView 3D) |
 | [merrycri-server](https://github.com/hambaksanta/merrycri-server) | Firebase 보안 규칙, 데이터 구조, 예시 데이터 |
 
 - 데이터 구조 (세 명 합의 필수): [merrycri-server/docs/DATA_MODEL.md](https://github.com/hambaksanta/merrycri-server/blob/main/docs/DATA_MODEL.md)
@@ -20,6 +20,7 @@
 1. Android Studio → **File → New → Project from Version Control** → `https://github.com/hambaksanta/merrycri-client.git` → Clone
 2. 오른쪽 위 코끼리 아이콘(**Sync Project with Gradle Files**)이 끝날 때까지 기다린다
 3. Device Manager에서 AVD 만들기: 시스템 이미지 이름에 **Google Play**가 붙은 것 (예: Pixel 계열, API 34 이상)
+   - 3D 화면이 까맣거나 느리면: AVD 편집(연필) → Show Advanced Settings → Graphics(또는 Graphics acceleration) 를 **Hardware** 로. Software 는 3D 가 안 나올 수 있다
 4. ▶ Run
 
 `app/google-services.json`이 없으면 앱은 **오프라인 모드**로 실행된다. 화면 이동과 혼자 걷기는 되고, 다른 사람은 안 보인다. 상단에 '오프라인'이 뜨면 이 상태다.
@@ -41,7 +42,7 @@ Firebase 프로젝트 만들기, 규칙 배포, 예시 데이터 넣기는 **[me
 
 | 담당 | 역할 | 폴더 |
 | --- | --- | --- |
-| A | 월드·캐릭터 | `core/character`, `core/effects`, `feature/wardrobe`, `feature/plaza`, `feature/snowman`, `feature/sled`, `ui/theme` |
+| A | 월드·캐릭터 | `core/character`, `core/effects`, `feature/wardrobe`, `feature/plaza`, `feature/snowman`, `feature/sled`, `ui/theme`, `assets/models` (3D 모델) |
 | B | 실시간·시스템 | `MainActivity`, `MerryCriApp`, `core/scene`, `core/audio`, `core/sensor`, `data/`, `notify/`, `feature/snowball`, 그리고 **merrycri-server 저장소 전체** |
 | C | 공간 콘텐츠·기획 | `feature/tree`, `feature/post`, `feature/lounge`, `ui/components`, `docs/`, 음원·이미지 수집 |
 
@@ -51,18 +52,20 @@ Firebase 프로젝트 만들기, 규칙 배포, 예시 데이터 넣기는 **[me
 
 자세한 내용은 **[CONTRIBUTING.md](CONTRIBUTING.md)**. 요약:
 
-- `main`에 직접 push 금지 (GitHub 설정으로 막혀 있음). 모든 변경은 PR로만.
-- 순서: 이슈 → 브랜치 `feat/12-lounge-fire` → 커밋 → PR → 'Android 빌드' 통과 + 1명 승인 → Squash and merge
+- 브랜치: `dev`(기본, 매일 작업) / `main`(발표·제출용 최종본만). 둘 다 직접 push 금지 (GitHub 설정으로 막혀 있음). 모든 변경은 PR로만.
+- 평소 PR은 `dev`로. `dev` → `main`은 세 명이 같이 확인한 뒤 **Create a merge commit**으로.
+- 순서: 이슈 → 브랜치 `feat/12-lounge-fire` → 커밋 → PR → `dev`로 PR → 'Android 빌드' 통과 + 1명 승인 → Squash and merge
 - 타입: `FEAT` `FIX` `DESIGN` `ASSET` `REFACTOR` `DOCS` `CHORE`
 - 커밋·PR 제목: `FEAT: [C] 라운지 벽난로 불 일렁임`
 - 리뷰하는 사람은 AVD에서 직접 실행해 보고 승인한다.
-- 이틀에 한 번(월·수·금) 30분 모여서 `main`을 AVD 두 대로 같이 돌려본다.
+- 이틀에 한 번(월·수·금) 30분 모여서 `dev`를 AVD 두 대로 같이 돌려본다.
 
 ## 5. 음원·이미지 넣는 법
 
 - BGM: `app/src/main/res/raw/bgm_01.ogg` ~ `bgm_08.ogg` (곡당 3MB 이하). 넣기만 하면 자동 셔플 재생.
 - 효과음: `app/src/main/res/raw/` 에 `core/audio/AudioManager.kt`의 `Sfx` 목록 이름 그대로 (`sfx_bell.ogg` 등)
-- 이미지: `app/src/main/res/drawable/` 에 `bg_plaza.png`, `outfit_hat_beanie.png` 처럼 소문자·숫자·밑줄만
+- 3D 모델: `app/src/main/assets/models/` 에 `.glb` (예: `tree_pine.glb`, `house_cabin.glb`). 소문자·숫자·밑줄만, 한 개 2MB 이하 권장
+- 이미지(UI 아이콘 등): `app/src/main/res/drawable/` 에 소문자·숫자·밑줄만
 - **라이선스를 확인한 파일만** 넣고, 아래 출처 표에 바로 적는다. 저작권 있는 노래(최신 캐럴 팝 등)는 넣지 않는다.
 
 ## 6. 테스트 팁

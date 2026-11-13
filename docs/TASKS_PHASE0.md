@@ -1,12 +1,12 @@
 # 함박산타 - 프로젝트 메리크리 · 단계 0 뼈대 (11/12 ~ 11/13)
 
 완료 기준: **AVD에서 옷장 → 광장 → 나머지 공간 6개를 오갈 수 있고, AVD 두 대가 광장에서 서로 보인다.**
-이 저장소에는 화면 이동, 공통 틀(SceneScaffold), 임시 캐릭터, 눈 효과, 접속자 동기화까지 이미 들어 있다.
+이 저장소에는 화면 이동(눈보라 전환), 3D 공통 틀(SceneScaffold + SceneView), 임시 3D 캐릭터·소품, 눈 효과, 접속자 동기화까지 이미 들어 있다.
 
 ## 모두
 - [ ] 저장소 clone → Sync → AVD(Google Play 이미지)에서 실행 확인
 - [ ] [CONTRIBUTING.md](../CONTRIBUTING.md) 읽기 → 첫 이슈 만들기 → 브랜치 따기 (예: `feat/3-lounge-fire`)
-- [ ] [서버 저장소의 DATA_MODEL.md](https://github.com/hambaksanta/merrycri-server/blob/main/docs/DATA_MODEL.md) 읽고 이의 없으면 단톡에 'OK'
+- [ ] [서버 저장소의 DATA_MODEL.md](https://github.com/hambaksanta/merrycri-server/blob/dev/docs/DATA_MODEL.md) 읽고 이의 없으면 단톡에 'OK'
 - [ ] 수업 AI 활용 규정 확인
 
 ## A · 월드·캐릭터
@@ -27,4 +27,4 @@
 
 ## 11/13(금) 밤 점검
 - [ ] 각자 PR 올리기 → 'Android 빌드' 통과 + 1명 승인 → Squash and merge
-- [ ] main을 AVD 두 대로 실행: 옷장 → 광장에서 만남 → 공간 6개 이동
+- [ ] dev를 AVD 두 대로 실행: 옷장 → 광장에서 만남 → 공간 6개 이동
