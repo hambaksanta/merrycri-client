@@ -204,6 +204,9 @@ fun SceneScaffold(
                     color = MerryColors.Snow,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .background(MerryColors.Card.copy(alpha = 0.8f), RoundedCornerShape(50))
+                        .padding(horizontal = 12.dp, vertical = 4.dp),
                 )
                 Text(
                     text = if (presence.isOnline) stringResource(R.string.scene_people_count, others.size + 1)
