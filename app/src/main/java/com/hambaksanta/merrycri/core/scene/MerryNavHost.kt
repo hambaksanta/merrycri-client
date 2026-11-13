@@ -1,6 +1,7 @@
 // core/scene/MerryNavHost.kt
 package com.hambaksanta.merrycri.core.scene
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.Animatable
@@ -42,7 +43,15 @@ import io.github.sceneview.rememberModelLoader
 fun MerryNavHost() {
     val nav = rememberNavController()
     val presence: PresenceViewModel = viewModel()
-    val backToPlaza: () -> Unit = { nav.popBackStack(SceneId.PLAZA.route, inclusive = false) }
+    val backToPlaza: () -> Unit = {
+        val plazaWasInBackStack = nav.popBackStack(SceneId.PLAZA.route, inclusive = false)
+        if (!plazaWasInBackStack) {
+            nav.navigate(SceneId.PLAZA.route) {
+                popUpTo(nav.graph.id) { inclusive = true }
+                launchSingleTop = true
+            }
+        }
+    }
 
     val engine = rememberEngine()
     val modelLoader = rememberModelLoader(engine)
@@ -75,6 +84,7 @@ fun MerryNavHost() {
                 exitTransition = { ExitTransition.None },
             ) {
                 composable(SceneId.WARDROBE.route) {
+                    BackHandler(onBack = backToPlaza)
                     WardrobeScene(presence) {
                         // 처음 시작이든 광장에서 옷장에 온 것이든, 스택을 비우고 광장 하나만 남긴다
                         nav.navigate(SceneId.PLAZA.route) { popUpTo(nav.graph.id) { inclusive = true } }
@@ -87,12 +97,30 @@ fun MerryNavHost() {
                         onWardrobe = { nav.navigate(SceneId.WARDROBE.route) },
                     )
                 }
-                composable(SceneId.TREE.route) { TreeScene(presence, backToPlaza) }
-                composable(SceneId.POST.route) { PostOfficeScene(presence, backToPlaza) }
-                composable(SceneId.LOUNGE.route) { LoungeScene(presence, backToPlaza) }
-                composable(SceneId.SNOWMAN.route) { SnowmanScene(presence, backToPlaza) }
-                composable(SceneId.SNOWBALL.route) { SnowballScene(presence, backToPlaza) }
-                composable(SceneId.SLED.route) { SledScene(presence, backToPlaza) }
+                composable(SceneId.TREE.route) {
+                    BackHandler(onBack = backToPlaza)
+                    TreeScene(presence, backToPlaza)
+                }
+                composable(SceneId.POST.route) {
+                    BackHandler(onBack = backToPlaza)
+                    PostOfficeScene(presence, backToPlaza)
+                }
+                composable(SceneId.LOUNGE.route) {
+                    BackHandler(onBack = backToPlaza)
+                    LoungeScene(presence, backToPlaza)
+                }
+                composable(SceneId.SNOWMAN.route) {
+                    BackHandler(onBack = backToPlaza)
+                    SnowmanScene(presence, backToPlaza)
+                }
+                composable(SceneId.SNOWBALL.route) {
+                    BackHandler(onBack = backToPlaza)
+                    SnowballScene(presence, backToPlaza)
+                }
+                composable(SceneId.SLED.route) {
+                    BackHandler(onBack = backToPlaza)
+                    SledScene(presence, backToPlaza)
+                }
             }
             SnowstormTransition(progress = whiteout.value)
         }
