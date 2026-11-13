@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "457122958834",
+    "firebase_url": "https://hambaksanta-merrycri-default-rtdb.firebaseio.com",
+    "project_id": "hambaksanta-merrycri",
+    "storage_bucket": "hambaksanta-merrycri.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:457122958834:android:5e84ab9f1d0228af0bef6b",
+        "android_client_info": {
+          "package_name": "com.hambaksanta.merrycri"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDS496LCRI7_JFj7aop7GYlCtOXp6xl1Zc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:457122958834:android:cd10b89f034366f20bef6b",
+        "android_client_info": {
+          "package_name": "com.lumivillage.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDS496LCRI7_JFj7aop7GYlCtOXp6xl1Zc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
