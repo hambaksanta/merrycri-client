@@ -52,12 +52,13 @@ Firebase 프로젝트 만들기, 규칙 배포, 예시 데이터 넣기는 **[me
 
 자세한 내용은 **[CONTRIBUTING.md](CONTRIBUTING.md)**. 요약:
 
-- `main`에 직접 push 금지 (GitHub 설정으로 막혀 있음). 모든 변경은 PR로만.
-- 순서: 이슈 → 브랜치 `feat/12-lounge-fire` → 커밋 → PR → 'Android 빌드' 통과 + 1명 승인 → Squash and merge
+- 브랜치: `dev`(기본, 매일 작업) / `main`(발표·제출용 최종본만). 둘 다 직접 push 금지 (GitHub 설정으로 막혀 있음). 모든 변경은 PR로만.
+- 평소 PR은 `dev`로. `dev` → `main`은 세 명이 같이 확인한 뒤 **Create a merge commit**으로.
+- 순서: 이슈 → 브랜치 `feat/12-lounge-fire` → 커밋 → PR → `dev`로 PR → 'Android 빌드' 통과 + 1명 승인 → Squash and merge
 - 타입: `FEAT` `FIX` `DESIGN` `ASSET` `REFACTOR` `DOCS` `CHORE`
 - 커밋·PR 제목: `FEAT: [C] 라운지 벽난로 불 일렁임`
 - 리뷰하는 사람은 AVD에서 직접 실행해 보고 승인한다.
-- 이틀에 한 번(월·수·금) 30분 모여서 `main`을 AVD 두 대로 같이 돌려본다.
+- 이틀에 한 번(월·수·금) 30분 모여서 `dev`를 AVD 두 대로 같이 돌려본다.
 
 ## 5. 음원·이미지 넣는 법
 
