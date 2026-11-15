@@ -15,12 +15,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.hambaksanta.merrycri.MerryCriApp
 import com.hambaksanta.merrycri.core.effects.SnowstormTransition
+import com.hambaksanta.merrycri.data.AuthState
 import com.hambaksanta.merrycri.feature.lounge.LoungeScene
 import com.hambaksanta.merrycri.feature.plaza.PlazaScene
 import com.hambaksanta.merrycri.feature.post.PostOfficeScene
@@ -40,6 +44,18 @@ import io.github.sceneview.rememberModelLoader
  */
 @Composable
 fun MerryNavHost() {
+    val app = LocalContext.current.applicationContext as MerryCriApp
+    val authState by app.repository.authState.collectAsStateWithLifecycle()
+
+    when (authState) {
+        AuthState.Loading -> AuthLoadingScreen()
+        AuthState.Error -> AuthErrorScreen(onRetry = { app.repository.signIn() })
+        AuthState.SignedIn, AuthState.Offline -> MerryWorldNavHost()
+    }
+}
+
+@Composable
+private fun MerryWorldNavHost() {
     val nav = rememberNavController()
     val presence: PresenceViewModel = viewModel()
     val backToPlaza: () -> Unit = { nav.popBackStack(SceneId.PLAZA.route, inclusive = false) }

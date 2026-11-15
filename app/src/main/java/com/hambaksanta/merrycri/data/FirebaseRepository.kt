@@ -17,6 +17,9 @@ import com.hambaksanta.merrycri.data.model.Presence
 import com.hambaksanta.merrycri.data.model.SnowstormEvent
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOf
 
@@ -30,20 +33,43 @@ import kotlinx.coroutines.flow.flowOf
 class FirebaseRepository(context: Context) {
     val isAvailable: Boolean = FirebaseApp.getApps(context).isNotEmpty()
 
+    private val _authState = MutableStateFlow<AuthState>(
+        if (isAvailable) AuthState.Loading else AuthState.Offline,
+    )
+    val authState: StateFlow<AuthState> = _authState.asStateFlow()
+
     var uid: String? = null
         private set
 
     private val db: DatabaseReference? =
         if (isAvailable) FirebaseDatabase.getInstance().reference else null
 
-    fun signIn(onDone: (Boolean) -> Unit) {
-        if (!isAvailable) { onDone(false); return }
+    fun signIn(onDone: (Boolean) -> Unit = {}) {
+        if (!isAvailable) {
+            _authState.value = AuthState.Offline
+            onDone(false)
+            return
+        }
+
+        _authState.value = AuthState.Loading
         val auth = FirebaseAuth.getInstance()
-        auth.currentUser?.let { uid = it.uid; onDone(true); return }
+        auth.currentUser?.let {
+            uid = it.uid
+            _authState.value = AuthState.SignedIn
+            onDone(true)
+            return
+        }
+
         auth.signInAnonymously().addOnCompleteListener { task ->
             uid = auth.currentUser?.uid
-            if (!task.isSuccessful) Log.w(TAG, "anonymous sign-in failed", task.exception)
-            onDone(task.isSuccessful)
+            if (task.isSuccessful && uid != null) {
+                _authState.value = AuthState.SignedIn
+                onDone(true)
+            } else {
+                Log.w(TAG, "anonymous sign-in failed", task.exception)
+                _authState.value = AuthState.Error
+                onDone(false)
+            }
         }
     }
 
