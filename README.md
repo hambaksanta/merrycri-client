@@ -48,6 +48,46 @@ Firebase 프로젝트 만들기, 규칙 배포, 예시 데이터 넣기는 **[me
 
 **규칙: 내 폴더만 고친다.** 다른 사람 폴더를 고쳐야 하면 단톡에 먼저 말하거나 그 사람에게 부탁한다. `data/model/Models.kt`와 서버의 `docs/DATA_MODEL.md`는 세 명이 합의해야만 바꾸고, 바꿀 때는 두 저장소를 같이 고친다.
 
+### SceneScaffold 사용법
+
+모든 공간은 `SceneScaffold`를 사용한다. 공통 3D 배경, presence 캐릭터, 눈 효과, 공간 이름, 접속자 수, 광장 버튼과 하단 버튼 영역은 `SceneScaffold`가 제공한다. 공간 담당자는 주로 `world`와 `bottomBar`를 채운다.
+
+| 파라미터 | 사용법 |
+| --- | --- |
+| `sceneId` | 현재 `SceneId`. 공간 이름, DB 방과 기본 효과를 결정한다. |
+| `presence` | Activity 범위의 `PresenceViewModel`. 공간 화면이 받은 인스턴스를 그대로 넘긴다. |
+| `onBackToPlaza` | 광장 버튼과 시스템 뒤로가기에서 실행할 콜백. 광장에서만 `null`을 넘긴다. |
+| `skyColor`, `groundColor` | 3D 하늘과 바닥 색. 생략하면 테마 기본값을 쓴다. |
+| `showSnow` | 눈 이펙트 표시 여부. 실내 공간에서는 `false`를 사용한다. |
+| `showCharacters` | presence 캐릭터 표시 여부. 별도 캐릭터 미리보기를 쓰면 끈다. |
+| `onFloorTap` | 바닥 탭 위치를 0~1 비율의 `x`, `y`로 받는다. 생략하면 탭 위치로 걷는다. |
+| `world` | ② 레이어. 공간별 집, 나무, 가구 등 3D 노드를 넣는다. |
+| `objects` | 3D 위에 보여줄 2D 안내나 패널을 넣는다. |
+| `bottomBar` | ⑤ 레이어. 공간별 하단 동작 버튼을 넣는다. |
+
+```kotlin
+SceneScaffold(
+    sceneId = SceneId.LOUNGE,
+    presence = presence,
+    onBackToPlaza = onBackToPlaza,
+    showSnow = false,
+    onFloorTap = { x, y ->
+        // TODO: 공간별 바닥 탭 처리
+    },
+    world = {
+        // ② 레이어: 공간별 3D 오브젝트
+    },
+    objects = {
+        // 3D 위에 겹칠 2D 안내·패널
+    },
+    bottomBar = {
+        // ⑤ 레이어: 공간별 하단 버튼
+    },
+)
+```
+
+이동, presence 캐릭터, 공간 이름, 접속자 수, 광장 버튼과 눈 효과는 공통 처리되므로 공간 화면에서 다시 구현하지 않는다.
+
 ## 4. Git 규칙
 
 자세한 내용은 **[CONTRIBUTING.md](CONTRIBUTING.md)**. 요약:
