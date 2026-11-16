@@ -14,10 +14,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 /**
  * 앱 전체에서 하나만 쓴다 (Activity 범위). 담당: B
@@ -46,6 +49,18 @@ class PresenceViewModel(app: Application) : AndroidViewModel(app) {
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
     val isOnline: Boolean get() = repo.isAvailable
+
+    init {
+        viewModelScope.launch {
+            repo.observeConnection()
+                .distinctUntilChanged()
+                .filter { connected -> connected }
+                .collect {
+                    // onDisconnect 예약은 실행된 뒤 사라지므로 재연결마다 다시 등록한다.
+                    repo.enterRoom(currentSpace.value.id, _me.value)
+                }
+        }
+    }
 
     fun serverNow(): Long = System.currentTimeMillis() + serverOffset.value
 
