@@ -2,10 +2,13 @@
 package com.hambaksanta.merrycri.core.audio
 
 import android.annotation.SuppressLint
+import android.animation.ValueAnimator
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.SoundPool
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
@@ -35,6 +38,7 @@ interface AudioManager {
  */
 class MerryAudioManager(context: Context) : AudioManager {
     private val appContext = context.applicationContext
+    private val mainHandler = Handler(Looper.getMainLooper())
     private val player = ExoPlayer.Builder(appContext).build()
     private val soundPool = SoundPool.Builder()
         .setMaxStreams(6)
@@ -47,6 +51,9 @@ class MerryAudioManager(context: Context) : AudioManager {
         .build()
     private val sfxIds = mutableMapOf<Sfx, Int>()
     private var bgmEnabled = true
+    private var volumeAnimator: ValueAnimator? = null
+    private var crackleRequested = false
+    private var crackleStreamId = 0
 
     init {
         val items = (1..8)
@@ -58,6 +65,11 @@ class MerryAudioManager(context: Context) : AudioManager {
             player.repeatMode = Player.REPEAT_MODE_ALL
             player.prepare()
         }
+        soundPool.setOnLoadCompleteListener { _, sampleId, status ->
+            if (status == 0 && crackleRequested && sfxIds[Sfx.CRACKLE] == sampleId) {
+                startCrackleLoop()
+            }
+        }
         Sfx.entries.forEach { s -> rawId(s.rawName)?.let { sfxIds[s] = soundPool.load(appContext, it, 1) } }
     }
 
@@ -66,16 +78,76 @@ class MerryAudioManager(context: Context) : AudioManager {
         appContext.resources.getIdentifier(name, "raw", appContext.packageName).takeIf { it != 0 }
 
     override fun playSfx(sfx: Sfx) {
-        sfxIds[sfx]?.let { soundPool.play(it, 1f, 1f, 1, 0, 1f) }
+        mainHandler.post {
+            sfxIds[sfx]?.let { soundPool.play(it, 1f, 1f, 1, 0, 1f) }
+        }
     }
 
-    override fun duck(volume: Float) { player.volume = volume }
-    override fun unduck() { player.volume = 1f }
-    override fun pause() { player.pause() }
-    override fun resume() { if (bgmEnabled && player.mediaItemCount > 0) player.play() }
+    override fun duck(volume: Float) {
+        mainHandler.post {
+            fadeBgmTo(volume.coerceIn(0f, 1f))
+            crackleRequested = true
+            startCrackleLoop()
+        }
+    }
+
+    override fun unduck() {
+        mainHandler.post {
+            fadeBgmTo(1f)
+            crackleRequested = false
+            if (crackleStreamId != 0) soundPool.stop(crackleStreamId)
+            crackleStreamId = 0
+        }
+    }
+
+    override fun pause() {
+        mainHandler.post {
+            player.pause()
+            soundPool.autoPause()
+        }
+    }
+
+    override fun resume() {
+        mainHandler.post {
+            soundPool.autoResume()
+            if (bgmEnabled && player.mediaItemCount > 0) player.play()
+        }
+    }
 
     override fun setBgmEnabled(enabled: Boolean) {
         bgmEnabled = enabled
-        if (enabled) resume() else pause()
+        mainHandler.post {
+            if (enabled && player.mediaItemCount > 0) player.play() else player.pause()
+        }
+    }
+
+    private fun fadeBgmTo(targetVolume: Float) {
+        volumeAnimator?.cancel()
+        volumeAnimator = ValueAnimator.ofFloat(player.volume, targetVolume).apply {
+            duration = BGM_FADE_MS
+            addUpdateListener { player.volume = it.animatedValue as Float }
+            start()
+        }
+    }
+
+    private fun startCrackleLoop() {
+        if (!crackleRequested || crackleStreamId != 0) return
+        val sampleId = sfxIds[Sfx.CRACKLE] ?: return
+        crackleStreamId = soundPool.play(
+            sampleId,
+            CRACKLE_VOLUME,
+            CRACKLE_VOLUME,
+            CRACKLE_PRIORITY,
+            CRACKLE_LOOP_FOREVER,
+            NORMAL_RATE,
+        )
+    }
+
+    private companion object {
+        const val BGM_FADE_MS = 500L
+        const val CRACKLE_VOLUME = 0.7f
+        const val CRACKLE_PRIORITY = 1
+        const val CRACKLE_LOOP_FOREVER = -1
+        const val NORMAL_RATE = 1f
     }
 }
