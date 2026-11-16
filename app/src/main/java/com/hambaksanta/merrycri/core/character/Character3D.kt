@@ -2,23 +2,28 @@
 package com.hambaksanta.merrycri.core.character
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.withFrameNanos
 import com.hambaksanta.merrycri.core.scene.LocalMerry3D
-import com.hambaksanta.merrycri.ui.theme.MerryColors
 import io.github.sceneview.SceneScope
 import io.github.sceneview.math.Position
 import io.github.sceneview.math.Rotation
 import io.github.sceneview.math.Scale
-import io.github.sceneview.math.Size
+import io.github.sceneview.rememberModelInstance
 
 /**
- * 3D 캐릭터 한 명. 담당: A
- * 발바닥이 position(바닥) 에 닿게 서 있고, 키는 약 1.3m (scale 1 기준).
+ * 메리 캐릭터 한 명을 그린다. 담당: A
  *
- * 지금은 기본 도형(원기둥·구·상자·원뿔)을 쌓은 임시판이다.
- * TODO(A): 로우폴리 glb 로 바꾸기. 부위별로 따로 만든 glb 를 같은 자리에 겹쳐 놓고 색만 바꾸는 방식을 추천.
- * 레이어 순서(2D 때와 같음): 몸 → 부츠 → 상의 → 장갑 → 목도리 → 모자 → 손에 든 것
+ * 기존 도형(Cube/Cylinder/Sphere) 캐릭터를 merry_character.glb 로 바꾼 버전.
+ * 함수 이름과 파라미터는 그대로라서, 광장(SceneScaffold)과 옷장(WardrobeScene)은 고칠 게 없다.
  *
- * @param facingDeg 바라보는 방향 (Y축 회전, 도). 0 = 카메라 쪽
+ * - 옷·색·간식: outfit / holding / roasted 가 바뀌면 바로 갈아입는다.
+ * - 동작: sitting 이면 Sit, 위치가 움직이고 있으면 Walk, 아니면 Idle.
+ *   걷는지는 위치 변화로 직접 알아내므로 isWalking 값을 따로 넘기지 않아도 된다.
+ * - 모델이 불러와지는 첫 몇 프레임 동안은 아무것도 그리지 않는다.
  */
 @Composable
 fun SceneScope.Character3D(
@@ -30,75 +35,63 @@ fun SceneScope.Character3D(
     sitting: Boolean = false,
     roasted: Boolean = false,
 ) {
-    val m = LocalMerry3D.current.materials
-    val lift = if (sitting) -0.12f else 0f
+    val merry = LocalMerry3D.current
 
-    Node(position = position, rotation = Rotation(y = facingDeg), scale = Scale(scale)) {
-        // 부츠
-        val boots = m.of(outfit.bootsColor())
-        CubeNode(size = Size(0.14f, 0.12f, 0.22f), materialInstance = boots, position = Position(-0.1f, 0.06f, 0.02f))
-        CubeNode(size = Size(0.14f, 0.12f, 0.22f), materialInstance = boots, position = Position(0.1f, 0.06f, 0.02f))
+    // 캐릭터마다 자기 모델을 하나씩 가진다. (옷·색이 서로 섞이지 않게)
+    val instance = rememberModelInstance(merry.modelLoader, MODEL_PATH) ?: return
+    val character = remember(instance) { MerryCharacter(merry.engine, instance) }
 
-        // 상의 (몸통)
-        CylinderNode(radius = 0.25f, height = 0.62f, materialInstance = m.of(outfit.topColor()), position = Position(0f, 0.43f + lift, 0f))
-        if (outfit.topType() == Top.SANTA) {
-            CylinderNode(radius = 0.26f, height = 0.06f, materialInstance = m.of(MerryColors.Snow), position = Position(0f, 0.16f + lift, 0f))
-        }
+    // 옷 갈아입기
+    LaunchedEffect(character, outfit, holding, roasted) {
+        character.applyOutfit(outfit, holding, roasted)
+    }
 
-        // 장갑
-        if (outfit.glovesType() != Gloves.NONE) {
-            val gloves = m.of(outfit.glovesColor())
-            SphereNode(radius = 0.08f, materialInstance = gloves, position = Position(-0.31f, 0.42f + lift, 0.04f))
-            SphereNode(radius = 0.08f, materialInstance = gloves, position = Position(0.31f, 0.42f + lift, 0.04f))
-        }
+    // 동작 재생: 매 프레임 위치를 보고 걷는지 판단한 뒤 알맞은 애니메이션을 튼다.
+    val currentPosition by rememberUpdatedState(position)
+    val isSitting by rememberUpdatedState(sitting)
+    LaunchedEffect(character) {
+        var clip = MerryCharacter.IDLE
+        var clipTime = 0f
+        var lastFrame = 0L
+        var lastPos = currentPosition
+        var lastMoveAt = 0L
+        while (true) {
+            withFrameNanos { now ->
+                val dt = if (lastFrame == 0L) 0f else (now - lastFrame) / 1_000_000_000f
+                lastFrame = now
 
-        // 머리 + 눈
-        SphereNode(radius = 0.22f, materialInstance = m.of(MerryColors.Skin), position = Position(0f, 0.96f + lift, 0f))
-        val eye = m.of(MerryColors.Night)
-        SphereNode(radius = 0.025f, materialInstance = eye, position = Position(-0.07f, 0.99f + lift, 0.2f))
-        SphereNode(radius = 0.025f, materialInstance = eye, position = Position(0.07f, 0.99f + lift, 0.2f))
+                val p = currentPosition
+                val dx = p.x - lastPos.x
+                val dz = p.z - lastPos.z
+                if (dx * dx + dz * dz > MOVE_EPSILON_SQ) lastMoveAt = now
+                lastPos = p
+                val walking = lastMoveAt != 0L && now - lastMoveAt < WALK_HOLD_NANOS
 
-        // 목도리
-        if (outfit.scarfType() != Scarf.NONE) {
-            val scarf = m.of(outfit.scarfColor())
-            CylinderNode(radius = 0.24f, height = 0.08f, materialInstance = scarf, position = Position(0f, 0.76f + lift, 0f))
-            CubeNode(size = Size(0.07f, 0.2f, 0.04f), materialInstance = scarf, position = Position(0.1f, 0.64f + lift, 0.24f))
-        }
-
-        // 모자
-        val hat = m.of(outfit.hatColor())
-        val snow = m.of(MerryColors.Snow)
-        when (outfit.hatType()) {
-            Hat.NONE -> Unit
-            Hat.BEANIE -> {
-                CylinderNode(radius = 0.21f, height = 0.16f, materialInstance = hat, position = Position(0f, 1.12f + lift, 0f))
-                SphereNode(radius = 0.06f, materialInstance = snow, position = Position(0f, 1.24f + lift, 0f))
+                val next = MerryCharacter.pick(walking = walking, sitting = isSitting)
+                if (next != clip) { clip = next; clipTime = 0f } else clipTime += dt
+                character.play(clip, clipTime)
             }
-            Hat.SANTA -> {
-                CylinderNode(radius = 0.23f, height = 0.07f, materialInstance = snow, position = Position(0f, 1.1f + lift, 0f))
-                ConeNode(radius = 0.2f, height = 0.38f, materialInstance = hat, position = Position(0f, 1.32f + lift, 0f))
-                SphereNode(radius = 0.06f, materialInstance = snow, position = Position(0f, 1.52f + lift, 0f))
-            }
-            Hat.EARMUFF -> {
-                SphereNode(radius = 0.08f, materialInstance = hat, position = Position(-0.22f, 0.96f + lift, 0f))
-                SphereNode(radius = 0.08f, materialInstance = hat, position = Position(0.22f, 0.96f + lift, 0f))
-            }
-            Hat.ANTLER -> {
-                CylinderNode(radius = 0.025f, height = 0.25f, materialInstance = hat, position = Position(-0.12f, 1.25f + lift, 0f), rotation = Rotation(z = 20f))
-                CylinderNode(radius = 0.025f, height = 0.25f, materialInstance = hat, position = Position(0.12f, 1.25f + lift, 0f), rotation = Rotation(z = -20f))
-            }
-        }
-
-        // 손에 든 간식. TODO(A): 간식 glb 로 바꾸기
-        if (holding != null) {
-            val c = when (holding) {
-                Snack.COCOA -> MerryColors.Red
-                Snack.LATTE, Snack.AMERICANO -> MerryColors.Snow
-                Snack.GINGERBREAD -> MerryColors.Cookie
-                Snack.CHOCOLATE -> MerryColors.Choco
-                Snack.MARSHMALLOW -> if (roasted) MerryColors.Cookie else MerryColors.Snow
-            }
-            CubeNode(size = Size(0.12f), materialInstance = m.of(c), position = Position(0.34f, 0.52f + lift, 0.12f))
         }
     }
+
+    ModelNode(
+        modelInstance = instance,
+        autoAnimate = false,          // 애니메이션은 위에서 직접 고른다
+        scaleToUnits = null,          // glb 크기 그대로 (키 약 1.2, 발바닥이 원점)
+        centerOrigin = null,
+        position = position,
+        rotation = Rotation(y = facingDeg),
+        scale = Scale(scale * MODEL_SCALE),
+    )
 }
+
+private const val MODEL_PATH = "models/merry_character.glb"
+
+/** 기존 도형 캐릭터와 키를 맞추는 값. 광장에서 너무 크거나 작으면 이것만 바꾼다. */
+private const val MODEL_SCALE = 1f
+
+/** 이만큼(제곱 거리) 이상 움직이면 걷는 중으로 본다. */
+private const val MOVE_EPSILON_SQ = 0.00001f
+
+/** 마지막으로 움직인 뒤 이 시간 동안은 Walk 를 유지한다. (프레임 사이 위치가 안 바뀌는 순간에 멈칫하지 않게) */
+private const val WALK_HOLD_NANOS = 150_000_000L
