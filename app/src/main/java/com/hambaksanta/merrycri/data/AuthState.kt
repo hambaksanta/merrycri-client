@@ -5,6 +5,7 @@ package com.hambaksanta.merrycri.data
 sealed interface AuthState {
     data object Loading : AuthState
     data object SignedIn : AuthState
+    data object VillageFull : AuthState
     data object Offline : AuthState
     data object Error : AuthState
 }

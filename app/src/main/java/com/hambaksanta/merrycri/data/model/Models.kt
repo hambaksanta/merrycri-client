@@ -17,6 +17,7 @@ import com.hambaksanta.merrycri.core.character.Outfit
 /** DB 경로를 한곳에 모아 둔다. 문자열로 경로를 직접 쓰지 말고 이걸 쓴다. */
 object DbPath {
     const val USERS = "users"
+    const val ONLINE = "online"
     const val ROOMS = "rooms"
     const val PRESENCE = "presence"
     const val SNOWSTORM = "events/snowstorm"
@@ -25,6 +26,7 @@ object DbPath {
     const val DEMO_GIFTS = "demo/gifts"
     const val FIRE = "lounge/fire"
     const val SNOWMEN = "snowmen"
+    const val CONNECTED = ".info/connected"
     const val SERVER_TIME_OFFSET = ".info/serverTimeOffset"
 
     fun presence(spaceId: String) = "$ROOMS/$spaceId/$PRESENCE"
