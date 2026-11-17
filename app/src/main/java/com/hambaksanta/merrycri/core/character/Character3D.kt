@@ -1,18 +1,30 @@
 // core/character/Character3D.kt
 package com.hambaksanta.merrycri.core.character
 
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
+import androidx.compose.ui.platform.LocalContext
 import com.hambaksanta.merrycri.core.scene.LocalMerry3D
+import com.hambaksanta.merrycri.core.scene.Merry3D
 import io.github.sceneview.SceneScope
 import io.github.sceneview.math.Position
 import io.github.sceneview.math.Rotation
 import io.github.sceneview.math.Scale
-import io.github.sceneview.rememberModelInstance
+import io.github.sceneview.model.Model
+import io.github.sceneview.model.ModelInstance
+import io.github.sceneview.utils.readBuffer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * 메리 캐릭터 한 명을 그린다. 담당: A
@@ -38,7 +50,8 @@ fun SceneScope.Character3D(
     val merry = LocalMerry3D.current
 
     // 캐릭터마다 자기 모델을 하나씩 가진다. (옷·색이 서로 섞이지 않게)
-    val instance = rememberModelInstance(merry.modelLoader, MODEL_PATH) ?: return
+    // 화면에서 빠지면 모델도 엔진에서 지운다 (rememberCharacterInstance 참고).
+    val instance = rememberCharacterInstance(merry) ?: return
     val character = remember(instance) { MerryCharacter(merry.engine, instance) }
 
     // 옷 갈아입기
@@ -84,6 +97,56 @@ fun SceneScope.Character3D(
         scale = Scale(scale * MODEL_SCALE),
     )
 }
+
+/**
+ * 캐릭터 모델을 불러오고, 화면에서 빠지면 지운다.
+ *
+ * SceneView 의 rememberModelInstance 는 모델을 만들기만 하고 지우지 않는다.
+ * (ModelNode 가 사라질 때 노드만 지우고, 메시·텍스처·재질이 든 모델 본체는 ModelLoader 가 끝날 때까지 남는다)
+ * 그래서 공간을 옮기거나 사람이 들어왔다 나갈 때마다 1.3MB 짜리 모델이 계속 쌓였다.
+ */
+@Composable
+private fun rememberCharacterInstance(merry: Merry3D): ModelInstance? {
+    val context = LocalContext.current
+    var instance by remember(merry) { mutableStateOf<ModelInstance?>(null) }
+    LaunchedEffect(merry) {
+        val buffer = withContext(Dispatchers.IO) {
+            runCatching { context.assets.readBuffer(MODEL_PATH) }.getOrNull()
+        } ?: return@LaunchedEffect
+        // 만들기와 저장 사이에 멈추는 지점이 없어서, 만들어 놓고 놓치는 일은 없다.
+        instance = runCatching { merry.modelLoader.createModelInstance(buffer) }.getOrNull()
+    }
+    DisposableEffect(instance) {
+        val created = instance
+        onDispose { if (created != null) releaseModel(merry, created.asset) }
+    }
+    return instance
+}
+
+/**
+ * 모델 본체를 엔진에서 지운다. 바로 지우지 않고 메인 스레드 다음 차례에 지운다.
+ * - 같은 순간에 ModelNode 가 씬에서 빠지고 노드를 정리하므로, 그게 다 끝난 뒤에 지워야 안전하다.
+ *   (노드 정리 → 모델 지우기 순서는 SceneView 가 앱 종료 때 ModelLoader.clear() 로 하는 것과 같다)
+ * - 텍스처를 아직 불러오는 중이면 지우면 안 된다 (Filament ResourceLoader 규칙). 끝날 때까지 기다린다.
+ * - 앱이 끝나 엔진이 이미 정리됐으면 아무것도 안 한다 (ModelLoader 가 이미 지웠다).
+ */
+private fun releaseModel(merry: Merry3D, model: Model, tries: Int = 0) {
+    val delayMs = if (tries == 0) 0L else RELEASE_RETRY_MS
+    mainHandler.postDelayed({
+        if (!merry.engine.isValid) return@postDelayed
+        when {
+            merry.modelLoader.progress >= 1f -> merry.modelLoader.destroyModel(model)
+            tries < RELEASE_MAX_TRIES -> releaseModel(merry, model, tries + 1)
+            // 텍스처 로딩이 계속 안 끝나면 지우지 않는다 (모델 1개가 남는 게 앱이 죽는 것보다 낫다)
+            else -> Log.w(TAG, "캐릭터 모델 정리 건너뜀: 텍스처 로딩이 끝나지 않음")
+        }
+    }, delayMs)
+}
+
+private val mainHandler = Handler(Looper.getMainLooper())
+private const val RELEASE_RETRY_MS = 100L
+private const val RELEASE_MAX_TRIES = 50 // 약 5초
+private const val TAG = "Character3D"
 
 private const val MODEL_PATH = "models/merry_character.glb"
 
