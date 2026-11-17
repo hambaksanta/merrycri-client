@@ -45,6 +45,8 @@ import com.hambaksanta.merrycri.BuildConfig
 import com.hambaksanta.merrycri.R
 import com.hambaksanta.merrycri.core.character.Character3D
 import com.hambaksanta.merrycri.core.character.Snack
+import com.hambaksanta.merrycri.core.effects.LightMood
+import com.hambaksanta.merrycri.core.effects.MerryLighting
 import com.hambaksanta.merrycri.core.effects.Snowfall
 import com.hambaksanta.merrycri.core.sensor.ShakeDetector
 import com.hambaksanta.merrycri.data.model.Presence
@@ -85,6 +87,7 @@ fun SceneScaffold(
     groundColor: Color = MerryColors.Snow,
     showSnow: Boolean = sceneId != SceneId.LOUNGE && sceneId != SceneId.POST && sceneId != SceneId.WARDROBE,
     showCharacters: Boolean = true,
+    lightMood: LightMood = LightMood.EVENING,
     onFloorTap: ((x: Double, y: Double) -> Unit)? = null,
     bottomBar: @Composable () -> Unit = {},
     objects: @Composable BoxScope.() -> Unit = {},
@@ -140,11 +143,14 @@ fun SceneScaffold(
             materialLoader = merry.materialLoader,
             environmentLoader = environmentLoader,
             environment = environment,
+            mainLightNode = null, // 조명은 MerryLighting 이 담당
+            fillLightNode = null,
             cameraNode = cameraNode,
             cameraManipulator = null, // 카메라 고정
             autoCenterContent = false, // 좌표 그대로 배치
             onGestureListener = gestures,
         ) {
+            MerryLighting(mood = lightMood)
             Ground(groundColor)
             world()
             people.forEach { p ->

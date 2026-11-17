@@ -34,6 +34,7 @@ import com.hambaksanta.merrycri.core.character.PaletteColor
 import com.hambaksanta.merrycri.core.character.Top
 import com.hambaksanta.merrycri.core.character.hatType
 import com.hambaksanta.merrycri.core.character.topType
+import com.hambaksanta.merrycri.core.effects.LightMood
 import com.hambaksanta.merrycri.core.scene.PresenceViewModel
 import com.hambaksanta.merrycri.core.scene.SceneId
 import com.hambaksanta.merrycri.core.scene.SceneScaffold
@@ -55,6 +56,7 @@ fun WardrobeScene(presence: PresenceViewModel, onDone: () -> Unit) {
         presence = presence,
         onBackToPlaza = null,
         showCharacters = false,
+        lightMood = LightMood.DAY, // 옷 색을 팔레트와 비슷하게 보이도록 중립광
         onFloorTap = { _, _ -> },
         bottomBar = {
             Button(
