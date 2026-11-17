@@ -117,9 +117,27 @@ SceneScaffold(
 
 ## 7. 출처와 라이선스 (C가 채운다)
 
+> 20개 다운로드 파일 중 5개는 아이유·엑소·더보이즈 등 실제 발매곡(ID3 태그로 확인됨)이라 제외했고,
+> 남은 15개 중 Pixabay 카탈로그에서 아티스트명·재생시간이 일치함을 확인한 14개(중복 1개 제외) 중 8개를 최종 채택함.
+
+> 다운로드 과정에서 일부 파일이 중간에 유실돼 최종적으로 8개가 아닌 **7개(bgm_01~07)**로 확정함.
+
 | 파일 | 출처 | 라이선스 |
 | --- | --- | --- |
-| | | |
+| bgm_01.mp3 | [Christmas Party Time — BFCMUSIC](https://pixabay.com/users/bfcmusic-16674938/) (Pixabay) | Pixabay Content License (출처 표기 불필요) |
+| bgm_02.mp3 | [Festive Christmas Music — BFCMUSIC](https://pixabay.com/users/bfcmusic-16674938/) (Pixabay) | Pixabay Content License (출처 표기 불필요) |
+| bgm_03.mp3 | [Christmas Spirit — SOULFULJAMTRACKS](https://pixabay.com/music/search/christmas/) (Pixabay) | Pixabay Content License (출처 표기 불필요) |
+| bgm_04.mp3 | [Christmas Cheerful — SOULFULJAMTRACKS](https://pixabay.com/music/search/christmas/) (Pixabay) | Pixabay Content License (출처 표기 불필요) |
+| bgm_05.mp3 | [Christmas Melody — SOULFULJAMTRACKS](https://pixabay.com/music/search/christmas/) (Pixabay) | Pixabay Content License (출처 표기 불필요) |
+| bgm_06.mp3 | [Christmas — VIBEHORN](https://pixabay.com/music/search/christmas/) (Pixabay) | Pixabay Content License (출처 표기 불필요) |
+| bgm_07.mp3 | [Magic Christmas Holiday — VIBEHORN](https://pixabay.com/music/search/christmas/) (Pixabay) | Pixabay Content License (출처 표기 불필요) |
+
+**제외된 파일 (사용 금지 — 저작권 있는 상업곡):**
+- 아이유(IU) - 미리 메리 크리스마스 (Feat. 천둥 of MBLAQ)
+- 엑소(EXO) - 첫눈
+- 성시경 외 - 크리스마스니까 (Jelly Christmas 2012)
+- 더보이즈 - 화이트 (White)
+- SG워너비 & 브라운아이드걸스 - Must Have Love
 
 ## 8. AI 활용 범위
 
