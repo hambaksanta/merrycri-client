@@ -30,7 +30,7 @@ interface AudioManager {
 }
 
 /**
- * BGM: res/raw/bgm_01 ~ bgm_08 을 셔플 + 전체 반복. 파일이 없으면 조용히 넘어간다.
+ * BGM: res/raw/bgm_01 ~ bgm_07 을 셔플 + 전체 반복. 파일이 없으면 조용히 넘어간다.
  * 효과음: SoundPool.
  */
 class MerryAudioManager(context: Context) : AudioManager {
