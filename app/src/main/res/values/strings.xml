@@ -24,6 +24,22 @@
     <string name="me_default">나</string>
     <string name="nick_default">눈송이</string>
     <string name="debug_shake">흔들기 (디버그)</string>
+    <string name="debug_menu_icon">⚙️</string>
+    <string name="debug_menu_title">시연용 디버그 메뉴</string>
+    <string name="debug_snowstorm">폭설 강제 발동</string>
+    <string name="debug_snowstorm_started">폭설을 발동했어요</string>
+    <string name="debug_sled_left">썰매 왼쪽</string>
+    <string name="debug_sled_right">썰매 오른쪽</string>
+    <string name="debug_sled_left_sent">왼쪽 입력을 보냈어요</string>
+    <string name="debug_sled_right_sent">오른쪽 입력을 보냈어요</string>
+    <string name="debug_gift_notification">1분 뒤 선물 알림</string>
+    <string name="debug_notification_scheduled">1분 뒤 알림을 예약했어요</string>
+    <string name="debug_notification_permission_denied">알림 권한이 필요해요</string>
+    <string name="debug_demo_mode">데모 모드 켜기</string>
+    <string name="debug_demo_enabled">데모 모드를 켰어요</string>
+    <string name="notification_channel_gifts">선물 알림</string>
+    <string name="notification_gift_title">선물을 열 수 있어요</string>
+    <string name="notification_gift_body">트리 아래 선물을 확인해 보세요.</string>
 
     <!-- 옷장 -->
     <string name="wardrobe_hat">모자: %1$s</string>
