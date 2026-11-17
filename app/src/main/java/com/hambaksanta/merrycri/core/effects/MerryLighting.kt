@@ -34,6 +34,12 @@ fun SceneScope.MerryLighting(
         apply = {
             color(mood.keyColor[0], mood.keyColor[1], mood.keyColor[2])
             castShadows(shadows)
+            if (shadows) shadowOptions(LightManager.ShadowOptions().apply {
+                // 그림자 지도를 작게(기본 1024 → 512), 걸을 수 있는 마을 안쪽까지만 그린다.
+                // 카메라(0, 8.5, 12)에서 마을 가장 먼 모서리까지 약 20m.
+                mapSize = SHADOW_MAP_SIZE
+                shadowFar = SHADOW_FAR_M
+            })
         },
     )
     // 보조광: 왼쪽 앞 낮은 곳 → 오른쪽 뒤
@@ -57,6 +63,12 @@ fun SceneScope.MerryLighting(
         },
     )
 }
+
+/** 그림자 지도 크기(px). 그림자 가장자리가 너무 계단처럼 보이면 1024 로 올린다. */
+private const val SHADOW_MAP_SIZE = 512
+
+/** 카메라에서 이 거리(m)까지만 그림자를 그린다. 마을(World3D) 크기를 바꾸면 같이 맞춘다. */
+private const val SHADOW_FAR_M = 22f
 
 /** 시간대별 조명 값. 색은 0~1 (선형) RGB. */
 enum class LightMood(

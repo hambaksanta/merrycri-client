@@ -20,12 +20,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.LongState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,14 +53,17 @@ import com.hambaksanta.merrycri.core.effects.Snowfall
 import com.hambaksanta.merrycri.core.sensor.ShakeDetector
 import com.hambaksanta.merrycri.data.model.Presence
 import com.hambaksanta.merrycri.ui.theme.MerryColors
+import io.github.sceneview.RenderQuality
 import io.github.sceneview.SceneScope
 import io.github.sceneview.SceneView
 import io.github.sceneview.math.Position
 import io.github.sceneview.math.Size
+import io.github.sceneview.node.CameraNode
 import io.github.sceneview.rememberCameraNode
 import io.github.sceneview.rememberEnvironment
 import io.github.sceneview.rememberEnvironmentLoader
 import io.github.sceneview.rememberOnGestureListener
+import io.github.sceneview.rememberView
 import kotlin.math.atan2
 import kotlin.math.roundToInt
 
@@ -96,13 +101,17 @@ fun SceneScaffold(
     LaunchedEffect(sceneId) { presence.enterSpace(sceneId) }
     val me by presence.me.collectAsStateWithLifecycle()
     val others by presence.others.collectAsStateWithLifecycle()
-    val snowstorm by presence.snowstorm.collectAsStateWithLifecycle()
+    val snowstorm = presence.snowstorm.collectAsStateWithLifecycle()
 
     // 서버 시간 기준 '지금'. 매 프레임 갱신해서 걷기 위치를 계산한다 (Movement.kt).
-    var now by remember { mutableLongStateOf(presence.serverNow()) }
+    // 성능: 이 함수 본문에서는 now 를 직접 읽지 않는다. 읽으면 화면 전체가 매 프레임 다시 그려진다.
+    // 캐릭터(MovingCharacter)·닉네임(NickLabel)처럼 필요한 곳에서만 읽는다.
+    val now = remember { mutableLongStateOf(presence.serverNow()) }
     LaunchedEffect(Unit) {
-        while (true) withFrameMillis { now = presence.serverNow() }
+        while (true) withFrameMillis { now.longValue = presence.serverNow() }
     }
+    // 폭설 여부는 바뀔 때(켜짐/꺼짐)만 다시 그린다.
+    val heavySnow by remember { derivedStateOf { presence.isSnowstormActive(snowstorm.value, now.longValue) } }
 
     // 흔들기 감지. 화면을 떠나면 센서 해제.
     val context = LocalContext.current
@@ -117,6 +126,9 @@ fun SceneScaffold(
         position = World3D.CameraEye
         lookAt(World3D.CameraTarget)
     }
+    // 성능: SceneView 기본 후처리(SSAO·bloom)는 단색 로우폴리 장면에서 거의 안 보이고 비싸다.
+    // Performance 프리셋 = SSAO·bloom 끔, 동적 해상도 켬. 대신 꺼지는 그림자는 아래 LaunchedEffect 에서 다시 켠다.
+    val view = rememberView(merry.engine)
     val environmentLoader = rememberEnvironmentLoader(merry.engine)
     val environment = rememberEnvironment(environmentLoader, key = skyColor) {
         environmentLoader.createEnvironment(
@@ -132,9 +144,9 @@ fun SceneScaffold(
     )
 
     val people = if (showCharacters) others + me else emptyList()
-    var viewSize by remember { mutableStateOf(IntSize.Zero) }
+    val viewSize = remember { mutableStateOf(IntSize.Zero) }
 
-    Box(Modifier.fillMaxSize().onSizeChanged { viewSize = it }) {
+    Box(Modifier.fillMaxSize().onSizeChanged { viewSize.value = it }) {
         // ①②③ 3D
         SceneView(
             modifier = Modifier.fillMaxSize(),
@@ -142,6 +154,8 @@ fun SceneScaffold(
             modelLoader = merry.modelLoader,
             materialLoader = merry.materialLoader,
             environmentLoader = environmentLoader,
+            view = view,
+            renderQuality = RenderQuality.Performance,
             environment = environment,
             mainLightNode = null, // 조명은 MerryLighting 이 담당
             fillLightNode = null,
@@ -154,44 +168,23 @@ fun SceneScaffold(
             Ground(groundColor)
             world()
             people.forEach { p ->
-                key(p.uid) {
-                    val pos = Movement.positionAt(p, now)
-                    Character3D(
-                        outfit = p.outfit,
-                        holding = Snack.of(p.holding),
-                        roasted = p.roasted,
-                        position = World3D.toWorld(pos.first, pos.second),
-                        facingDeg = facing(p),
-                    )
-                }
+                key(p.uid) { MovingCharacter(p, now) }
             }
         }
+        // Performance 프리셋이 끈 그림자를 다시 켠다. (SceneView 안의 프리셋 적용 뒤에 실행되도록 SceneView 다음에 둔다)
+        // 그림자를 실제로 그릴지는 MerryLighting(shadows = …) 이 정한다.
+        LaunchedEffect(view) { view.setShadowingEnabled(true) }
 
         // ② 2D 오버레이 (안내, 패널)
         Box(Modifier.fillMaxSize(), content = objects)
 
         // ⑤-1 닉네임: 머리 위 3D 좌표를 화면 좌표로 바꿔서 띄운다
-        val labelWidth = 96.dp
         people.forEach { p ->
-            val pos = Movement.positionAt(p, now)
-            val screen = World3D.worldToScreen(
-                cameraNode, World3D.toWorld(pos.first, pos.second, height = 1.75f), viewSize.height.toFloat(),
-            ) ?: return@forEach
-            Text(
-                text = p.nick.ifBlank { stringResource(R.string.me_default) },
-                color = MerryColors.Snow,
-                fontSize = 11.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .offset { IntOffset(screen.first.roundToInt() - labelWidth.roundToPx() / 2, screen.second.roundToInt()) }
-                    .width(labelWidth)
-                    .background(MerryColors.Night.copy(alpha = 0.6f), RoundedCornerShape(50))
-                    .padding(horizontal = 6.dp, vertical = 2.dp),
-            )
+            key(p.uid) { NickLabel(p, now, cameraNode, viewSize) }
         }
 
         // ④ 이펙트
-        if (showSnow) Snowfall(Modifier.fillMaxSize(), heavy = presence.isSnowstormActive(snowstorm, now))
+        if (showSnow) Snowfall(Modifier.fillMaxSize(), heavy = heavySnow)
 
         // ⑤ UI 오버레이
         Column(
@@ -250,6 +243,50 @@ private fun SceneScope.Ground(color: Color) {
     val m = LocalMerry3D.current.materials
     CubeNode(size = Size(60f, 0.2f, 60f), materialInstance = m.of(color), position = Position(0f, -0.1f, 0f))
 }
+
+/**
+ * 캐릭터 한 명. now 는 여기서만 읽어서, 매 프레임 이 캐릭터만 다시 그린다.
+ * 위치가 그대로면(서 있으면) derivedStateOf 덕분에 다시 그리지도 않는다.
+ */
+@Composable
+private fun SceneScope.MovingCharacter(p: Presence, now: LongState) {
+    val pos by remember(p) { derivedStateOf { Movement.positionAt(p, now.longValue) } }
+    Character3D(
+        outfit = p.outfit,
+        holding = Snack.of(p.holding),
+        roasted = p.roasted,
+        position = World3D.toWorld(pos.first, pos.second),
+        facingDeg = facing(p),
+    )
+}
+
+/**
+ * 머리 위 닉네임. 위치 계산을 offset { } 안(배치 단계)에서 해서, 매 프레임 글자를 다시 만들지 않고 자리만 옮긴다.
+ * 카메라가 아직 화면 크기를 모르면 화면 밖에 둔다.
+ */
+@Composable
+private fun NickLabel(p: Presence, now: LongState, cameraNode: CameraNode, viewSize: State<IntSize>) {
+    val labelWidth = 96.dp
+    Text(
+        text = p.nick.ifBlank { stringResource(R.string.me_default) },
+        color = MerryColors.Snow,
+        fontSize = 11.sp,
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .offset {
+                val pos = Movement.positionAt(p, now.longValue)
+                val screen = World3D.worldToScreen(
+                    cameraNode, World3D.toWorld(pos.first, pos.second, height = 1.75f), viewSize.value.height.toFloat(),
+                ) ?: return@offset OFFSCREEN
+                IntOffset(screen.first.roundToInt() - labelWidth.roundToPx() / 2, screen.second.roundToInt())
+            }
+            .width(labelWidth)
+            .background(MerryColors.Night.copy(alpha = 0.6f), RoundedCornerShape(50))
+            .padding(horizontal = 6.dp, vertical = 2.dp),
+    )
+}
+
+private val OFFSCREEN = IntOffset(-100_000, -100_000)
 
 /** 걷는 방향을 바라본다. 멈춰 있으면 카메라 쪽(0도). */
 private fun facing(p: Presence): Float {
