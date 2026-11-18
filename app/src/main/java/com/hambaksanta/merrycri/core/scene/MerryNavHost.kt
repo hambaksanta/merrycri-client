@@ -51,6 +51,7 @@ fun MerryNavHost() {
     when (authState) {
         AuthState.Loading -> AuthLoadingScreen()
         AuthState.Error -> AuthErrorScreen(onRetry = { app.repository.signIn() })
+        AuthState.VillageFull -> VillageFullScreen(onRetry = { app.repository.signIn() })
         AuthState.SignedIn, AuthState.Offline -> MerryWorldNavHost()
     }
 }

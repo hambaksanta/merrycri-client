@@ -5,6 +5,8 @@
     <string name="auth_loading">마을에 들어가는 중이에요</string>
     <string name="auth_error">마을에 연결하지 못했어요</string>
     <string name="auth_retry">다시 시도</string>
+    <string name="village_full">마을이 꽉 찼어요</string>
+    <string name="village_full_retry">다시 확인</string>
 
     <!-- 공간 이름 (SceneId) -->
     <string name="space_wardrobe">옷장</string>

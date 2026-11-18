@@ -44,6 +44,10 @@ class FirebaseRepository(context: Context) {
     private val db: DatabaseReference? =
         if (isAvailable) FirebaseDatabase.getInstance().reference else null
 
+    private var connectionRef: DatabaseReference? = null
+    private var connectionListener: ValueEventListener? = null
+    private var admissionInProgress = false
+
     /** 늦게 완료된 onDisconnect 등록이 이전 공간을 다시 쓰지 못하게 막는다. */
     private var activeSpaceId: String? = null
 
@@ -58,22 +62,117 @@ class FirebaseRepository(context: Context) {
         val auth = FirebaseAuth.getInstance()
         auth.currentUser?.let {
             uid = it.uid
-            _authState.value = AuthState.SignedIn
-            onDone(true)
+            observeConnectionAndEnter(onDone)
             return
         }
 
         auth.signInAnonymously().addOnCompleteListener { task ->
             uid = auth.currentUser?.uid
             if (task.isSuccessful && uid != null) {
-                _authState.value = AuthState.SignedIn
-                onDone(true)
+                observeConnectionAndEnter(onDone)
             } else {
                 Log.w(TAG, "anonymous sign-in failed", task.exception)
                 _authState.value = AuthState.Error
                 onDone(false)
             }
         }
+    }
+
+    /**
+     * Firebase 연결 시 online/{uid} 입장을 시도한다.
+     * 연결이 끊겨 onDisconnect 가 실행된 뒤 재연결되면 정원을 다시 확인하고 등록한다.
+     */
+    private fun observeConnectionAndEnter(onDone: (Boolean) -> Unit) {
+        stopConnectionObserver()
+        val root = db ?: run {
+            _authState.value = AuthState.Error
+            onDone(false)
+            return
+        }
+        var pendingCallback: ((Boolean) -> Unit)? = onDone
+        val ref = FirebaseDatabase.getInstance().getReference(DbPath.CONNECTED)
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.getValue(Boolean::class.java) != true) return
+                enterVillage { success ->
+                    pendingCallback?.invoke(success)
+                    pendingCallback = null
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.w(TAG, "connection listen failed: ${error.message}")
+                _authState.value = AuthState.Error
+                pendingCallback?.invoke(false)
+                pendingCallback = null
+            }
+        }
+        connectionRef = ref
+        connectionListener = listener
+        ref.addValueEventListener(listener)
+    }
+
+    private fun enterVillage(onDone: (Boolean) -> Unit) {
+        if (admissionInProgress) return
+        val root = db ?: return
+        val u = uid ?: return
+        admissionInProgress = true
+        _authState.value = AuthState.Loading
+        val onlineRoot = root.child(DbPath.ONLINE)
+        onlineRoot.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val alreadyOnline = snapshot.hasChild(u)
+                if (!alreadyOnline && snapshot.childrenCount >= MAX_ONLINE_USERS) {
+                    admissionInProgress = false
+                    _authState.value = AuthState.VillageFull
+                    onDone(false)
+                    return
+                }
+
+                val myOnlineRef = onlineRoot.child(u)
+                myOnlineRef.onDisconnect().removeValue().addOnCompleteListener { disconnectTask ->
+                    if (!disconnectTask.isSuccessful) {
+                        finishAdmissionError(
+                            "online onDisconnect registration failed",
+                            disconnectTask.exception,
+                            onDone,
+                        )
+                        return@addOnCompleteListener
+                    }
+                    myOnlineRef.setValue(true).addOnCompleteListener { writeTask ->
+                        admissionInProgress = false
+                        if (writeTask.isSuccessful) {
+                            _authState.value = AuthState.SignedIn
+                            onDone(true)
+                        } else {
+                            Log.w(TAG, "online registration failed", writeTask.exception)
+                            _authState.value = AuthState.Error
+                            onDone(false)
+                        }
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                finishAdmissionError("online count failed: ${error.message}", error.toException(), onDone)
+            }
+        })
+    }
+
+    private fun finishAdmissionError(message: String, cause: Throwable?, onDone: (Boolean) -> Unit) {
+        admissionInProgress = false
+        Log.w(TAG, message, cause)
+        _authState.value = AuthState.Error
+        onDone(false)
+    }
+
+    private fun stopConnectionObserver() {
+        val ref = connectionRef
+        val listener = connectionListener
+        if (ref != null && listener != null) ref.removeEventListener(listener)
+        connectionRef = null
+        connectionListener = null
+        admissionInProgress = false
     }
 
     /** users/{uid} */
@@ -225,6 +324,7 @@ class FirebaseRepository(context: Context) {
 
     private companion object {
         const val TAG = "FirebaseRepository"
+        const val MAX_ONLINE_USERS = 10L
         const val CONNECTED_PATH = ".info/connected"
     }
 }

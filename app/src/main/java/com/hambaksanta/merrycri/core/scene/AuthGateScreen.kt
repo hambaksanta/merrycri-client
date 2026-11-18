@@ -57,3 +57,26 @@ fun AuthErrorScreen(onRetry: () -> Unit) {
         }
     }
 }
+
+/** 마을 전체 접속자가 10명이라 입장하지 못한 화면. */
+@Composable
+fun VillageFullScreen(onRetry: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Text(
+            text = stringResource(R.string.village_full),
+            textAlign = TextAlign.Center,
+        )
+        Button(
+            onClick = onRetry,
+            modifier = Modifier.padding(top = 16.dp),
+        ) {
+            Text(stringResource(R.string.village_full_retry))
+        }
+    }
+}
