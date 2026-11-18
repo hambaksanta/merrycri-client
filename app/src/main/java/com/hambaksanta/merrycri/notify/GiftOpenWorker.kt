@@ -1,9 +1,36 @@
 // notify/GiftOpenWorker.kt
 package com.hambaksanta.merrycri.notify
 
-/**
- * 담당: B (단계 2)
- * TODO: WorkManager 로 2026-12-25 00:00 KST 에 '선물을 열 수 있어요' 알림 예약.
- *       첫 실행 때 한 번 enqueueUniqueWork 로 등록.
- */
-object GiftOpenWorker
+import android.content.Context
+import androidx.work.CoroutineWorker
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
+import java.util.concurrent.TimeUnit
+
+/** 선물을 열 수 있다는 로컬 알림. 담당: B */
+class GiftOpenWorker(
+    appContext: Context,
+    params: WorkerParameters,
+) : CoroutineWorker(appContext, params) {
+    override suspend fun doWork(): Result {
+        NotificationHelper.showGiftOpenNotification(applicationContext)
+        return Result.success()
+    }
+
+    companion object {
+        private const val DEBUG_WORK_NAME = "debug_gift_open_notification"
+
+        fun scheduleDebug(context: Context) {
+            val request = OneTimeWorkRequestBuilder<GiftOpenWorker>()
+                .setInitialDelay(1, TimeUnit.MINUTES)
+                .build()
+            WorkManager.getInstance(context).enqueueUniqueWork(
+                DEBUG_WORK_NAME,
+                ExistingWorkPolicy.REPLACE,
+                request,
+            )
+        }
+    }
+}

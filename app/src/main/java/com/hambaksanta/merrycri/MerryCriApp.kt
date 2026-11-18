@@ -6,6 +6,7 @@ import com.hambaksanta.merrycri.core.audio.AudioManager
 import com.hambaksanta.merrycri.core.audio.MerryAudioManager
 import com.hambaksanta.merrycri.data.FirebaseRepository
 import com.hambaksanta.merrycri.data.SettingsStore
+import com.hambaksanta.merrycri.notify.NotificationHelper
 
 /** 앱 전체에서 하나씩만 쓰는 공통 서비스. 담당: B */
 class MerryCriApp : Application() {
@@ -21,6 +22,7 @@ class MerryCriApp : Application() {
         repository = FirebaseRepository(this)
         audio = MerryAudioManager(this)
         settings = SettingsStore(this)
+        NotificationHelper.createChannel(this)
         repository.signIn { }
     }
 }

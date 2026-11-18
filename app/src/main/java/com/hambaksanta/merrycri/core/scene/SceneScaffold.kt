@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.filament.Skybox
-import com.hambaksanta.merrycri.BuildConfig
 import com.hambaksanta.merrycri.R
 import com.hambaksanta.merrycri.core.character.Character3D
 import com.hambaksanta.merrycri.core.character.Snack
@@ -225,13 +223,6 @@ fun SceneScaffold(
                     Button(onClick = onBackToPlaza) { Text(stringResource(R.string.scene_back_to_plaza)) }
                 }
             }
-            if (BuildConfig.DEBUG && sceneId == SceneId.PLAZA) {
-                // AVD 에서 흔들기 대신 쓰는 버튼
-                AssistChip(
-                    onClick = { presence.sendSnowstorm() },
-                    label = { Text(stringResource(R.string.debug_shake), fontSize = 12.sp) },
-                )
-            }
         }
         Box(
             Modifier
@@ -239,6 +230,13 @@ fun SceneScaffold(
                 .safeDrawingPadding()
                 .padding(16.dp)
         ) { bottomBar() }
+        DebugMenu(
+            presence = presence,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .safeDrawingPadding()
+                .padding(12.dp),
+        )
     }
 }
 
