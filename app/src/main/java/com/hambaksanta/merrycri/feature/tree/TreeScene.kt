@@ -2,8 +2,11 @@
 package com.hambaksanta.merrycri.feature.tree
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import com.hambaksanta.merrycri.MerryCriApp
 import com.hambaksanta.merrycri.R
+import com.hambaksanta.merrycri.core.audio.Sfx
 import com.hambaksanta.merrycri.core.scene.PlaceholderLabel
 import com.hambaksanta.merrycri.core.scene.PresenceViewModel
 import com.hambaksanta.merrycri.core.scene.SceneId
@@ -19,10 +22,15 @@ import com.hambaksanta.merrycri.ui.theme.MerryColors
  */
 @Composable
 fun TreeScene(presence: PresenceViewModel, onBack: () -> Unit) {
+    val audio = (LocalContext.current.applicationContext as MerryCriApp).audio
     SceneScaffold(
         sceneId = SceneId.TREE,
         presence = presence,
         onBackToPlaza = onBack,
+        onFloorTap = { x, y ->
+            audio.playSfx(Sfx.SNOW_STEP)
+            presence.moveTo(x, y)
+        },
         objects = { PlaceholderLabel(stringResource(R.string.placeholder_tree)) },
         world = {
             // TODO(C): 공동 트리 꾸미기. 탭하면 tree/ornaments 에 오너먼트 추가
