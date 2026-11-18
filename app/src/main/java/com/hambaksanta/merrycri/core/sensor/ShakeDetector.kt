@@ -6,6 +6,8 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.os.SystemClock
+import android.util.Log
 import kotlin.math.sqrt
 
 /**
@@ -13,7 +15,8 @@ import kotlin.math.sqrt
  * start()/stop() 은 화면에 들어오고 나갈 때 (DisposableEffect) 부른다.
  */
 class ShakeDetector(context: Context, private val onShake: () -> Unit) : SensorEventListener {
-    private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    private val sensorManager =
+        context.applicationContext.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     private var lastShakeAt = 0L
 
     fun start() {
@@ -26,13 +29,20 @@ class ShakeDetector(context: Context, private val onShake: () -> Unit) : SensorE
 
     override fun onSensorChanged(event: SensorEvent) {
         val (x, y, z) = event.values
-        val g = sqrt(x * x + y * y + z * z) / SensorManager.GRAVITY_EARTH
-        val now = System.currentTimeMillis()
-        if (g > 2.5f && now - lastShakeAt > 10_000) { // 1인 10초 쿨다운
+        val acceleration = sqrt(x * x + y * y + z * z) - SensorManager.GRAVITY_EARTH
+        val now = SystemClock.elapsedRealtime()
+        if (acceleration > SHAKE_THRESHOLD && now - lastShakeAt >= SHAKE_COOLDOWN_MS) {
             lastShakeAt = now
+            Log.d(TAG, "Shake detected: acceleration=$acceleration")
             onShake()
         }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
+
+    private companion object {
+        const val TAG = "ShakeDetector"
+        const val SHAKE_THRESHOLD = 12f
+        const val SHAKE_COOLDOWN_MS = 2_000L
+    }
 }
