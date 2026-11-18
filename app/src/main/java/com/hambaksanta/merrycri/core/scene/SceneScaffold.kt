@@ -72,7 +72,8 @@ import kotlin.math.roundToInt
  * 2D 로 띄울 안내·패널이 있으면 objects 에 넣는다 (3D 위에 겹쳐 보임).
  *
  * 바닥을 탭하면 그 자리로 걷는다. onFloorTap 을 주면 걷는 대신 그걸 부른다 (x, y 는 0~1 비율).
- * 흔들기 → events/snowstorm → 모두에게 폭설. 디버그 빌드에서는 상단에 '흔들기 (디버그)' 버튼이 대신 보인다.
+ * 광장에서 흔들기 → events/snowstorm → 모두에게 폭설.
+ * 디버그 빌드의 광장에서는 '흔들기 (디버그)' 버튼으로도 확인할 수 있다.
  */
 @Composable
 fun SceneScaffold(
@@ -99,12 +100,15 @@ fun SceneScaffold(
         while (true) withFrameMillis { now = presence.serverNow() }
     }
 
-    // 흔들기 감지. 화면을 떠나면 센서 해제.
+    // 광장이 화면에 보일 때만 흔들기 센서를 등록한다.
     val context = LocalContext.current
-    DisposableEffect(Unit) {
-        val detector = ShakeDetector(context) { presence.sendSnowstorm() }
-        detector.start()
-        onDispose { detector.stop() }
+    DisposableEffect(sceneId) {
+        val detector = if (sceneId == SceneId.PLAZA) {
+            ShakeDetector(context) { presence.sendSnowstorm() }.also { it.start() }
+        } else {
+            null
+        }
+        onDispose { detector?.stop() }
     }
 
     val merry = LocalMerry3D.current

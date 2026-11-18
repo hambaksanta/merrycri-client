@@ -2,8 +2,11 @@
 package com.hambaksanta.merrycri.feature.post
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import com.hambaksanta.merrycri.MerryCriApp
 import com.hambaksanta.merrycri.R
+import com.hambaksanta.merrycri.core.audio.Sfx
 import com.hambaksanta.merrycri.core.scene.PlaceholderLabel
 import com.hambaksanta.merrycri.core.scene.PresenceViewModel
 import com.hambaksanta.merrycri.core.scene.SceneId
@@ -19,10 +22,15 @@ import com.hambaksanta.merrycri.ui.theme.MerryColors
  */
 @Composable
 fun PostOfficeScene(presence: PresenceViewModel, onBack: () -> Unit) {
+    val audio = (LocalContext.current.applicationContext as MerryCriApp).audio
     SceneScaffold(
         sceneId = SceneId.POST,
         presence = presence,
         onBackToPlaza = onBack,
+        onFloorTap = { x, y ->
+            audio.playSfx(Sfx.SNOW_STEP)
+            presence.moveTo(x, y)
+        },
         objects = { PlaceholderLabel(stringResource(R.string.placeholder_post)) },
         world = {
             // TODO(C): 편지 쓰기 → 포장 → 트리 아래. 지금은 우체국 건물과 선물 더미 자리표시
