@@ -48,6 +48,9 @@ class FirebaseRepository(context: Context) {
     private var connectionListener: ValueEventListener? = null
     private var admissionInProgress = false
 
+    /** 늦게 완료된 onDisconnect 등록이 이전 공간을 다시 쓰지 못하게 막는다. */
+    private var activeSpaceId: String? = null
+
     fun signIn(onDone: (Boolean) -> Unit = {}) {
         if (!isAvailable) {
             _authState.value = AuthState.Offline
@@ -185,24 +188,53 @@ class FirebaseRepository(context: Context) {
     fun enterRoom(spaceId: String, p: Presence) {
         val u = uid ?: return
         val ref = db?.child(DbPath.presence(spaceId))?.child(u) ?: return
-        ref.onDisconnect().removeValue()
-        ref.setValue(
-            mapOf(
-                "nick" to p.nick, "outfit" to p.outfit,
-                "x" to p.x, "y" to p.y, "tx" to p.tx, "ty" to p.ty,
-                "moveStartAt" to ServerValue.TIMESTAMP,
-                "holding" to p.holding, "bites" to p.bites, "roasted" to p.roasted,
-                "updatedAt" to ServerValue.TIMESTAMP,
-            ).filterValues { it != null }
-        )
+        activeSpaceId = spaceId
+
+        // 서버에 제거 예약이 등록된 뒤에 presence 를 쓴다.
+        // 그래야 등록과 쓰기 사이에 연결이 끊겨도 유령 presence 가 남지 않는다.
+        ref.onDisconnect().removeValue().addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w(TAG, "failed to register onDisconnect for $spaceId", task.exception)
+                return@addOnCompleteListener
+            }
+            if (activeSpaceId == spaceId) ref.setValue(p.toFirebaseValue())
+        }
     }
 
     /** 공간을 나갈 때. 다른 공간으로 갈 때는 leaveRoom → enterRoom 순서. */
     fun leaveRoom(spaceId: String) {
         val u = uid ?: return
         val ref = db?.child(DbPath.presence(spaceId))?.child(u) ?: return
-        ref.onDisconnect().cancel()
-        ref.removeValue()
+        if (activeSpaceId == spaceId) activeSpaceId = null
+        ref.onDisconnect().cancel().addOnFailureListener { error ->
+            Log.w(TAG, "failed to cancel onDisconnect for $spaceId", error)
+        }
+        ref.removeValue().addOnFailureListener { error ->
+            Log.w(TAG, "failed to leave room $spaceId", error)
+        }
+    }
+
+    /**
+     * Firebase 연결 상태. 연결이 false 가 되면 서버가 onDisconnect 제거 예약을 실행한다.
+     * 다시 true 가 되면 PresenceViewModel 이 현재 공간의 presence 를 다시 등록한다.
+     */
+    internal fun observeConnection(): Flow<Boolean> {
+        if (!isAvailable) return flowOf(false)
+        return callbackFlow {
+            val ref = FirebaseDatabase.getInstance().getReference(CONNECTED_PATH)
+            val listener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    trySend(snapshot.getValue(Boolean::class.java) == true)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.w(TAG, "connection listen failed: ${error.message}")
+                    trySend(false)
+                }
+            }
+            ref.addValueEventListener(listener)
+            awaitClose { ref.removeEventListener(listener) }
+        }
     }
 
     /** 걷기 시작: 출발점·목적지만 보낸다. moveStartAt 은 서버 시간. */
@@ -277,8 +309,22 @@ class FirebaseRepository(context: Context) {
         }
     }
 
+    private fun Presence.toFirebaseValue(): Map<String, Any> = mapOf(
+        "nick" to nick,
+        "outfit" to outfit,
+        "x" to x,
+        "y" to y,
+        "tx" to tx,
+        "ty" to ty,
+        "moveStartAt" to ServerValue.TIMESTAMP,
+        "bites" to bites,
+        "roasted" to roasted,
+        "updatedAt" to ServerValue.TIMESTAMP,
+    ) + (holding?.let { mapOf("holding" to it) } ?: emptyMap())
+
     private companion object {
         const val TAG = "FirebaseRepository"
         const val MAX_ONLINE_USERS = 10L
+        const val CONNECTED_PATH = ".info/connected"
     }
 }
