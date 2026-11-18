@@ -117,9 +117,53 @@ SceneScaffold(
 
 ## 7. 출처와 라이선스 (C가 채운다)
 
+> 20개 다운로드 파일 중 5개는 아이유·엑소·더보이즈 등 실제 발매곡(ID3 태그로 확인됨)이라 제외했고,
+> 남은 15개 중 Pixabay 카탈로그에서 아티스트명·재생시간이 일치함을 확인한 14개(중복 1개 제외) 중 8개를 최종 채택함.
+
+> 다운로드 과정에서 일부 파일이 중간에 유실돼 최종적으로 8개가 아닌 **7개(bgm_01~07)**로 확정함.
+
 | 파일 | 출처 | 라이선스 |
 | --- | --- | --- |
-| | | |
+| bgm_01.mp3 | [Christmas Party Time — BFCMUSIC](https://pixabay.com/users/bfcmusic-16674938/) (Pixabay) | Pixabay Content License (출처 표기 불필요) |
+| bgm_02.mp3 | [Festive Christmas Music — BFCMUSIC](https://pixabay.com/users/bfcmusic-16674938/) (Pixabay) | Pixabay Content License (출처 표기 불필요) |
+| bgm_03.mp3 | [Christmas Spirit — SOULFULJAMTRACKS](https://pixabay.com/music/search/christmas/) (Pixabay) | Pixabay Content License (출처 표기 불필요) |
+| bgm_04.mp3 | [Christmas Cheerful — SOULFULJAMTRACKS](https://pixabay.com/music/search/christmas/) (Pixabay) | Pixabay Content License (출처 표기 불필요) |
+| bgm_05.mp3 | [Christmas Melody — SOULFULJAMTRACKS](https://pixabay.com/music/search/christmas/) (Pixabay) | Pixabay Content License (출처 표기 불필요) |
+| bgm_06.mp3 | [Christmas — VIBEHORN](https://pixabay.com/music/search/christmas/) (Pixabay) | Pixabay Content License (출처 표기 불필요) |
+| bgm_07.mp3 | [Magic Christmas Holiday — VIBEHORN](https://pixabay.com/music/search/christmas/) (Pixabay) | Pixabay Content License (출처 표기 불필요) |
+
+**제외된 파일 (사용 금지 — 저작권 있는 상업곡):**
+- 아이유(IU) - 미리 메리 크리스마스 (Feat. 천둥 of MBLAQ)
+- 엑소(EXO) - 첫눈
+- 성시경 외 - 크리스마스니까 (Jelly Christmas 2012)
+- 더보이즈 - 화이트 (White)
+- SG워너비 & 브라운아이드걸스 - Must Have Love
+
+### 효과음(SFX) 출처 — 17개, `res/raw/sfx_*.ogg`
+
+Pixabay Sound Effects에서 전부 받았고, Pixabay Content License(상업적 이용 가능, 출처 표기 불필요)라 저작권 문제 없음. 0.2~1초로 잘라 모노 44.1kHz OGG(Vorbis)로 변환함.
+
+| 파일 | 용도 | 원본 제목 (제작자) | 길이 | 라이선스 |
+| --- | --- | --- | --- | --- |
+| sfx_snow_step.ogg | 눈 밟기 | [Footsteps in the Snow](https://pixabay.com/sound-effects/nature-footsteps-in-the-snow-499652/) (DRAGON-STUDIO) | 0.6s | Pixabay Content License |
+| sfx_bell.ogg | 방울 딸랑 | Bells Jingling (DRAGON-STUDIO) | 0.8s | Pixabay Content License |
+| sfx_paper.ogg | 종이 바스락 | Paper Rustle (freesound_community) | 0.8s | Pixabay Content License |
+| sfx_ribbon.ogg | 리본 묶기 | Moving fabric (freesound_community) | 0.7s | Pixabay Content License |
+| sfx_bell_ring.ogg | 종소리 | Ding (DRAGON-STUDIO) | 0.72s | Pixabay Content License |
+| sfx_sip.ogg | 홀짝 | Drink Sip and Swallow (freesound_community) | 0.8s | Pixabay Content License |
+| sfx_crunch.ogg | 바삭 | Bite potato chips (freesound_community) | 0.8s | Pixabay Content License |
+| sfx_snap.ogg | 똑(초콜릿) | Snap Sound (SoundReality) | 0.6s | Pixabay Content License |
+| sfx_whoosh.ogg | 휙 | Simple Whoosh (DRAGON-STUDIO) | 0.57s | Pixabay Content License |
+| sfx_thud.ogg | 퍽 | Thud Sound Effect (DRAGON-STUDIO) | 0.6s | Pixabay Content License |
+| sfx_sled_slide.ogg | 썰매 미끄러짐 | Sledding on Snow (SSPsurvival) | 1.0s | Pixabay Content License |
+| sfx_crackle.ogg | 장작 타닥 | Crackle Fireplace Campfire (CapaholiczSFX) | 1.0s | Pixabay Content License |
+| sfx_wind.ogg | 바람 | Wind Gust (DRAGON-STUDIO) | 1.0s | Pixabay Content License |
+| sfx_button.ogg | 버튼 | UI Button Click (Universfield) | 0.8s | Pixabay Content License |
+| sfx_hanger.ogg | 옷걸이 딸깍 | Hangers Sliding On Metal (mrjutsumaster) | 0.8s | Pixabay Content License |
+| sfx_chime.ogg | 종소리(차임) | Clear Bell Chime (Universfield) | 1.0s | Pixabay Content License |
+| sfx_chew.ogg | 씹기 | Chewing a cracker (freesound_community) | 0.8s | Pixabay Content License |
+
+(`똑(초콜릿)`은 초콜릿 쪼개는 소리를 Pixabay에서 찾지 못해 깔끔한 스냅/클릭음으로 대체함. 코드에서 쓸 이름은 `core/audio/AudioManager.kt`의 `Sfx` 목록과 맞춰서 B에게 확인받을 것.)
 
 ## 8. AI 활용 범위
 
