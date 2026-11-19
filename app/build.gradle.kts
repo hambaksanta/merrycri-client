@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 // google-services.json 이 있을 때만 Firebase 플러그인을 켠다.
@@ -33,8 +33,8 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
-        compose = true
-        buildConfig = true // BuildConfig.DEBUG 로 디버그용 버튼(흔들기 대체 등)을 보여준다
+        viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -47,16 +47,13 @@ kotlin {
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.navigation.compose)
-    debugImplementation(libs.androidx.ui.tooling)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    kapt(libs.androidx.room.compiler)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
@@ -65,7 +62,4 @@ dependencies {
     implementation(libs.media3.exoplayer)
     implementation(libs.datastore.preferences)
     implementation(libs.work.runtime.ktx)
-
-    // 3D 렌더링 (마을·캐릭터). glb 모델은 app/src/main/assets/models/ 에 넣는다
-    implementation(libs.sceneview)
 }
