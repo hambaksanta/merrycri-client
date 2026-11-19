@@ -25,21 +25,21 @@
 
 | 타입 | 언제 | 예 |
 | --- | --- | --- |
-| `FEAT` | 새 기능, 공간 오브젝트, 상호작용 | 라운지 장작 넣기 |
-| `FIX` | 버그 수정 | 공간 이동 후 presence가 남는 문제 |
-| `DESIGN` | 화면 배치, 색, 폰트, 애니메이션 느낌 조정 | 광장 전구 색 바꾸기 |
+| `FEAT` | 새 기능, 화면, 상호작용 | 편지 쓰기 화면 추가 |
+| `FIX` | 버그 수정 | 친구 코드 중복 발급 문제 |
+| `DESIGN` | 화면 배치, 색, 폰트, 애니메이션 느낌 조정 | 트리 장식 색 바꾸기 |
 | `ASSET` | 이미지, 음원 추가·교체 | BGM 8곡 추가 |
-| `REFACTOR` | 동작은 그대로, 코드만 정리 | SceneScaffold 레이어 함수 분리 |
+| `REFACTOR` | 동작은 그대로, 코드만 정리 | Repository 함수 분리 |
 | `DOCS` | README, 문서, 주석 | 출처 표 채우기 |
-| `CHORE` | 빌드 설정, 의존성, 템플릿, 기타 | Compose BOM 올리기 |
+| `CHORE` | 빌드 설정, 의존성, 템플릿, 기타 | Room 버전 올리기 |
 
 ## 3. 브랜치
 
 `타입소문자/이슈번호-짧은설명` (영어 소문자와 하이픈)
 
 ```
-feat/12-lounge-fire
-fix/15-presence-leave
+feat/32-letter-write
+fix/35-friendcode-duplicate
 asset/9-bgm
 ```
 
@@ -52,8 +52,8 @@ asset/9-bgm
 `타입: [담당] 한 줄 설명`
 
 ```
-FEAT: [C] 라운지 벽난로 불 일렁임
-FIX: [B] 공간 이동 시 presence 삭제
+FEAT: [C] 편지 쓰기 화면 레이아웃
+FIX: [B] 친구 코드 중복 발급 문제 수정
 ASSET: [C] BGM 8곡 추가
 ```
 
@@ -62,7 +62,7 @@ ASSET: [C] BGM 8곡 추가
 
 ## 5. Pull Request
 
-- 제목: 커밋과 같은 형식 `FEAT: [C] 라운지 벽난로 불 일렁임`
+- 제목: 커밋과 같은 형식 `FEAT: [C] 편지 쓰기 화면 레이아웃`
 - 본문: PR 템플릿이 자동으로 뜬다. `Closes #이슈번호`를 적으면 Merge될 때 이슈가 자동으로 닫힌다.
 - 리뷰어: 나머지 두 명 중 한 명 이상 지정
 - **Merge 조건 (GitHub이 강제)**
