@@ -1,3 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/values/themes.xml · 앱 테마 · 담당: A
+     버튼·카드·입력칸·하단 탭은 여기서 기본 스타일이 정해지므로, 레이아웃에서는 style을 따로 안 적어도 된다.
+     다른 모양이 필요할 때만 style="@style/Widget.MerryCri.Button.Kakao" 처럼 적는다. -->
 <resources>
-    <style name="Theme.MerryCri" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
+    <style name="Theme.MerryCri" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/pine</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/pine_light</item>
+        <item name="colorOnPrimaryContainer">@color/pine_dark</item>
+        <item name="colorSecondary">@color/berry</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondaryContainer">@color/berry_light</item>
+        <item name="colorOnSecondaryContainer">@color/berry</item>
+        <item name="colorTertiary">@color/gold</item>
+        <item name="colorOnTertiary">@color/ink</item>
+        <item name="colorError">@color/berry</item>
+        <item name="colorSurface">@color/card</item>
+        <item name="colorOnSurface">@color/ink</item>
+        <item name="colorOnSurfaceVariant">@color/ink_muted</item>
+        <item name="colorOutline">@color/line</item>
+        <item name="android:colorBackground">@color/cream</item>
+        <item name="colorOnBackground">@color/ink</item>
+
+        <item name="android:windowBackground">@color/cream</item>
+        <item name="android:statusBarColor">@color/cream</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@color/white</item>
+        <item name="android:windowLightNavigationBar">true</item>
+
+        <item name="materialButtonStyle">@style/Widget.MerryCri.Button</item>
+        <item name="materialButtonOutlinedStyle">@style/Widget.MerryCri.Button.Secondary</item>
+        <item name="materialCardViewStyle">@style/Widget.MerryCri.Card</item>
+        <item name="textInputStyle">@style/Widget.MerryCri.TextInput</item>
+        <item name="bottomNavigationStyle">@style/Widget.MerryCri.BottomNav</item>
+
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.MerryCri.Title</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.MerryCri.Subtitle</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.MerryCri.Body</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.MerryCri.Body</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.MerryCri.Caption</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.MerryCri.Button</item>
+    </style>
+
+    <!-- 미니게임(GameActivity) 전용: 밤하늘 바탕. Manifest에서 GameActivity에 android:theme 로 지정 -->
+    <style name="Theme.MerryCri.Game">
+        <item name="android:windowBackground">@color/night</item>
+        <item name="android:statusBarColor">@color/night</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">@color/night</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="colorOnBackground">@color/white</item>
+    </style>
 </resources>

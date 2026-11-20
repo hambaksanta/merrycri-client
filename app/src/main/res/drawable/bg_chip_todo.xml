@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/bg_chip_todo.xml · '편지 쓰기' 칩 · 담당: A -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/berry_light" />
+    <corners android:radius="@dimen/radius_chip" />
+</shape>

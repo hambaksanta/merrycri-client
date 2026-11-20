@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/tree_lv1.xml · Lv1 앙상한 나무 (투명 배경, 편지 장식은 TreeView가 그린다) · 담당: A -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp"
+    android:height="380dp"
+    android:viewportWidth="320"
+    android:viewportHeight="380">
+    <path
+        android:pathData="M160,334V176"
+        android:strokeColor="#FF5A4332"
+        android:strokeWidth="11"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M160,262L112,214"
+        android:strokeColor="#FF5A4332"
+        android:strokeWidth="6"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M160,240L210,192"
+        android:strokeColor="#FF5A4332"
+        android:strokeWidth="6"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M160,210L128,168"
+        android:strokeColor="#FF5A4332"
+        android:strokeWidth="5"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M160,200L192,160"
+        android:strokeColor="#FF5A4332"
+        android:strokeWidth="5"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M126,228L104,230"
+        android:strokeColor="#FF5A4332"
+        android:strokeWidth="3"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M196,206L218,210"
+        android:strokeColor="#FF5A4332"
+        android:strokeWidth="3"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M160,178L152,150"
+        android:strokeColor="#FF5A4332"
+        android:strokeWidth="3"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M112.0,212.0L124.0,224.0"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.9" />
+    <path
+        android:pathData="M210.0,190.0L198.0,202.0"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.9" />
+    <path
+        android:pathData="M128.0,166.0L138.0,178.0"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.9" />
+    <path
+        android:pathData="M192.0,158.0L182.0,170.0"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.9" />
+    <path
+        android:pathData="M146,336Q160,324 174,336Z"
+        android:fillColor="#FFFFFFFF" />
+</vector>

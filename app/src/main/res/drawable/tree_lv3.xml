@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/tree_lv3.xml · Lv3 겨울 트리 (투명 배경, 편지 장식은 TreeView가 그린다) · 담당: A -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp"
+    android:height="380dp"
+    android:viewportWidth="320"
+    android:viewportHeight="380">
+    <path
+        android:pathData="M150,306h20a3,3 0,0 1,3,3v22a3,3 0,0 1,-3,3h-20a3,3 0,0 1,-3,-3v-22a3,3 0,0 1,3,-3Z"
+        android:fillColor="#FF6B4F3A" />
+    <path
+        android:pathData="M160.0,198.0L76.0,312.0L244.0,312.0Z"
+        android:fillColor="#FF276B4B" />
+    <path
+        android:pathData="M160.0,146.0L92.0,256.0L228.0,256.0Z"
+        android:fillColor="#FF2E7D57" />
+    <path
+        android:pathData="M160.0,100.0L108.0,196.0L212.0,196.0Z"
+        android:fillColor="#FF379065" />
+    <path
+        android:pathData="M86,304Q160,318 234,304"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.8" />
+    <path
+        android:pathData="M100,250Q160,262 220,250"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.8" />
+    <path
+        android:pathData="M116,192Q160,202 204,192"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.8" />
+    <path
+        android:pathData="M160.0,83.0L163.2,91.6L172.4,92.0L165.2,97.7L167.6,106.5L160.0,101.5L152.4,106.5L154.8,97.7L147.6,92.0L156.8,91.6Z"
+        android:fillColor="#FFE8B54A" />
+</vector>

@@ -13,6 +13,27 @@
     <string name="placeholder_leaderboard">리더보드 화면</string>
     <string name="placeholder_game">선물 벽돌깨기 화면</string>
 
+    <!-- 트리 단계 이름 · 문구 (ui/tree, TreeArt) -->
+    <string name="tree_stage_1">Lv1 앙상한 나무</string>
+    <string name="tree_stage_2">Lv2 새싹 트리</string>
+    <string name="tree_stage_3">Lv3 겨울 트리</string>
+    <string name="tree_stage_4">Lv4 빛나는 트리</string>
+    <string name="tree_stage_5">Lv5 세계수</string>
+    <string name="tree_stage_message_1">너무 추워요… 친구를 불러주세요</string>
+    <string name="tree_stage_message_2">조금 따뜻해졌어요</string>
+    <string name="tree_stage_message_3">트리가 자라고 있어요</string>
+    <string name="tree_stage_message_4">반짝반짝 빛나요</string>
+    <string name="tree_stage_message_5">풍요로운 크리스마스!</string>
+    <string name="tree_letters_to_next">%1$d통 더 받으면 다음 단계</string>
+
+    <!-- 편지 장식 이름 -->
+    <string name="ornament_bauble">방울</string>
+    <string name="ornament_star">별</string>
+    <string name="ornament_cane">사탕</string>
+    <string name="ornament_snow">눈송이</string>
+    <string name="ornament_gift">선물</string>
+    <string name="ornament_bell">종</string>
+
     <string name="notification_channel_gifts">편지 알림</string>
     <string name="notification_gift_title">편지를 열 수 있어요</string>
     <string name="notification_gift_body">내 트리에 도착한 편지를 확인해 보세요.</string>
