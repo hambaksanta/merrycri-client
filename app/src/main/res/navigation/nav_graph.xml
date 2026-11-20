@@ -35,4 +35,9 @@
         android:name="com.hambaksanta.merrycri.ui.letter.OpenLettersFragment"
         android:label="@string/placeholder_letter_read" />
 
+    <fragment
+        android:id="@+id/leaderboardFragment"
+        android:name="com.hambaksanta.merrycri.ui.leaderboard.LeaderboardFragment"
+        android:label="@string/placeholder_leaderboard" />
+
 </navigation>

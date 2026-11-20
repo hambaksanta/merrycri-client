@@ -10,6 +10,8 @@
     <string name="placeholder_letter_write">편지 쓰기 화면</string>
     <string name="placeholder_friend_tree">친구 트리 화면</string>
     <string name="placeholder_letter_read">편지 열람 화면</string>
+    <string name="placeholder_leaderboard">리더보드 화면</string>
+    <string name="placeholder_game">선물 벽돌깨기 화면</string>
 
     <string name="notification_channel_gifts">편지 알림</string>
     <string name="notification_gift_title">편지를 열 수 있어요</string>
