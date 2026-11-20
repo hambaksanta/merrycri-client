@@ -2,22 +2,24 @@
 package com.hambaksanta.merrycri
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import com.hambaksanta.merrycri.core.scene.MerryNavHost
-import com.hambaksanta.merrycri.ui.theme.MerryTheme
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
+import com.hambaksanta.merrycri.databinding.ActivityMainBinding
 
-/** 담당: B. 앱이 화면에서 사라지면 BGM을 멈추고, 돌아오면 이어서 튼다. */
-class MainActivity : ComponentActivity() {
+/** v2의 단일 Activity. Navigation Component로 Fragment 전환을 담당한다. 담당: B */
+class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
     private val app get() = application as MerryCriApp
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            MerryTheme {
-                MerryNavHost()
-            }
-        }
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        val navHost = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        binding.bottomNavigation.setupWithNavController(navHost.navController)
     }
 
     override fun onStart() {

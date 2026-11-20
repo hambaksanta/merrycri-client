@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/navigation/nav_graph.xml -->
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/navigation_tree">
+
+    <fragment
+        android:id="@+id/navigation_tree"
+        android:name="com.hambaksanta.merrycri.ui.tree.TreeFragment"
+        android:label="@string/tab_tree" />
+
+    <fragment
+        android:id="@+id/navigation_friends"
+        android:name="com.hambaksanta.merrycri.ui.friends.FriendsFragment"
+        android:label="@string/tab_friends" />
+
+    <fragment
+        android:id="@+id/onboardingFragment"
+        android:name="com.hambaksanta.merrycri.ui.onboarding.OnboardingFragment"
+        android:label="@string/placeholder_onboarding" />
+
+    <fragment
+        android:id="@+id/friendTreeFragment"
+        android:name="com.hambaksanta.merrycri.ui.letter.FriendTreeFragment"
+        android:label="@string/placeholder_friend_tree" />
+
+    <fragment
+        android:id="@+id/writeFragment"
+        android:name="com.hambaksanta.merrycri.ui.letter.WriteFragment"
+        android:label="@string/placeholder_letter_write" />
+
+    <fragment
+        android:id="@+id/openLettersFragment"
+        android:name="com.hambaksanta.merrycri.ui.letter.OpenLettersFragment"
+        android:label="@string/placeholder_letter_read" />
+
+    <fragment
+        android:id="@+id/leaderboardFragment"
+        android:name="com.hambaksanta.merrycri.ui.leaderboard.LeaderboardFragment"
+        android:label="@string/placeholder_leaderboard" />
+
+</navigation>
