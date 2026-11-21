@@ -1,14 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- res/drawable/bg_sky_lv1.xml · Lv1 하늘·땅 (눈송이·별 파티클은 WeatherView가 그린다) · 담당: A -->
+<!-- 하늘·땅 1단계 · 흐린 회색 하늘 (내리는 눈·반짝임은 WeatherView) · 담당: A -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="320dp"
     android:height="380dp"
     android:viewportWidth="320"
     android:viewportHeight="380">
     <path
-        android:pathData="M0,0h320v380h-320Z"
-        android:fillColor="#FF7C8898" />
+        android:pathData="M0.0,0.0L320.0,0.0L320.0,380.0L0.0,380.0Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="0"
+                android:startY="0"
+                android:endX="0"
+                android:endY="310">
+                <item android:offset="0" android:color="#FF86929F" />
+                <item android:offset="0.6" android:color="#FFB7C1CB" />
+                <item android:offset="1" android:color="#FFD8DEE4" />
+            </gradient>
+        </aapt:attr>
+    </path>
     <path
-        android:pathData="M0,330Q160,302 320,330V380H0Z"
-        android:fillColor="#FFF3F6F9" />
+        android:pathData="M-100.0,300.0a260.0,40.0 0,1 0,520.0,0a260.0,40.0 0,1 0,-520.0,0Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="160"
+                android:centerY="300"
+                android:gradientRadius="260">
+                <item android:offset="0" android:color="#73FFFFFF" />
+                <item android:offset="1" android:color="#00FFFFFF" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M-20.0,306.0C-10.0,300.7 18.3,289.7 40.0,288.0C61.7,286.3 88.3,296.7 110.0,296.0C131.7,295.3 148.3,284.3 170.0,284.0C191.7,283.7 218.3,294.3 240.0,294.0C261.7,293.7 283.3,281.0 300.0,282.0C316.7,283.0 333.3,293.7 340.0,300.0C346.7,306.3 400.0,316.7 340.0,320.0C280.0,323.3 40.0,322.3 -20.0,320.0C-80.0,317.7 -30.0,311.3 -20.0,306.0Z"
+        android:fillColor="#8CA9B4BF" />
+    <path
+        android:pathData="M0,304C55,295 115,309 175,301S285,293 320,301V380H0Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="0"
+                android:startY="294"
+                android:endX="0"
+                android:endY="380">
+                <item android:offset="0" android:color="#FFFFFFFF" />
+                <item android:offset="0.55" android:color="#FFF6F8FA" />
+                <item android:offset="1" android:color="#FFD3DAE2" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M0,334C60,324 120,338 190,330S290,322 320,328"
+        android:strokeColor="#8CD3DAE2"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M30,362C90,354 150,364 220,358"
+        android:strokeColor="#66D3DAE2"
+        android:strokeWidth="1.4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
 </vector>
