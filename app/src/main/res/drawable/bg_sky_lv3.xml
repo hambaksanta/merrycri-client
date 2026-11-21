@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/bg_sky_lv3.xml · Lv3 하늘·땅 (눈송이·별 파티클은 WeatherView가 그린다) · 담당: A -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp"
+    android:height="380dp"
+    android:viewportWidth="320"
+    android:viewportHeight="380">
+    <path
+        android:pathData="M0,0h320v380h-320Z"
+        android:fillColor="#FFCFE5F2" />
+    <path
+        android:pathData="M238.0,64.0a24.0,24.0 0,1 0,48.0,0a24.0,24.0 0,1 0,-48.0,0Z"
+        android:fillColor="#FFFFE29A" />
+    <path
+        android:pathData="M0,330Q160,302 320,330V380H0Z"
+        android:fillColor="#FFF3F6F9" />
+</vector>

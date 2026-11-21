@@ -1,3 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/values/colors.xml · 메리크리 색 (프로토 UI 기준) · 담당: A
+     화면 코드에서는 가능하면 테마 속성(?attr/colorPrimary 등)을 쓰고, 여기 이름은 테마·스타일·그림에서 쓴다. -->
 <resources>
+    <!-- 브랜드 -->
+    <color name="pine">#FF1F5E46</color>          <!-- 주 버튼, 강조 -->
+    <color name="pine_dark">#FF163F30</color>
+    <color name="pine_light">#FFE3F0E8</color>    <!-- 선택됨, '편지 씀' 칩 -->
+    <color name="berry">#FFB83A28</color>         <!-- 편지 남기기, 경고 -->
+    <color name="berry_light">#FFFBE7E2</color>   <!-- '편지 쓰기' 칩 -->
+    <color name="gold">#FFE8B54A</color>          <!-- 진행바, 1등, 별 -->
+    <color name="gold_light">#FFFFF3D1</color>    <!-- 내 순위 강조 -->
+    <color name="silver">#FFC9CED6</color>
+    <color name="bronze">#FFD49A6A</color>
+
+    <!-- 바탕·글자 -->
+    <color name="cream">#FFFBF6EC</color>         <!-- 화면 바탕 -->
+    <color name="card">#FFFFFFFF</color>
+    <color name="line">#FFE6DDCB</color>          <!-- 카드·입력칸 테두리 -->
+    <color name="locked">#FFEFE9DC</color>        <!-- 잠긴 버튼 -->
+    <color name="ink">#FF1E2A28</color>           <!-- 본문 글자 -->
+    <color name="ink_muted">#FF5B6762</color>     <!-- 보조 글자 -->
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- 미니게임 (밤하늘) -->
     <color name="night">#FF14213D</color>
+    <color name="night_board">#FF1C2C52</color>
+    <color name="night_text_muted">#FFC5CCE0</color>
+
+    <!-- 트리 단계별 하늘 (WeatherView · bg_sky_lv1~5) -->
+    <color name="sky_lv1">#FF7C8898</color>       <!-- 눈보라 -->
+    <color name="sky_lv2">#FFA9B8C8</color>       <!-- 흐림, 잔눈 -->
+    <color name="sky_lv3">#FFCFE5F2</color>       <!-- 맑은 겨울 낮 -->
+    <color name="sky_lv4">#FF1D2B4C</color>       <!-- 별빛 밤 -->
+    <color name="sky_lv5">#FF16204A</color>       <!-- 오로라 -->
+    <color name="aurora_green">#FF5BE3B0</color>
+    <color name="aurora_purple">#FFA58BFF</color>
+    <color name="snow">#FFFFFFFF</color>
+    <color name="star_light">#FFFFF6D8</color>
+
+    <!-- 카카오 공유 버튼 (카카오 가이드 색) -->
+    <color name="kakao_yellow">#FFFEE500</color>
+    <color name="kakao_text">#FF191919</color>
 </resources>

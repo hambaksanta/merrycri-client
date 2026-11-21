@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/bg_progress_track.xml · 진행바 바탕 · 담당: A -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#FFEFE7D6" />
+    <corners android:radius="5dp" />
+</shape>

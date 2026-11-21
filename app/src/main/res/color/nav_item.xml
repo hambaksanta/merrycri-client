@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/color/nav_item.xml · 하단 탭 아이콘·글자 색 · 담당: A -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/pine" android:state_checked="true" />
+    <item android:color="#FF7A857F" />
+</selector>

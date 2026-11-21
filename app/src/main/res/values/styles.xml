@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/values/styles.xml · 글자·버튼·카드·칩 스타일 · 담당: A
+     글꼴: 제목은 둥근 글씨(Jua)를 쓸 계획. Android Studio → Resource Manager → Font → + → More Fonts → 'Jua'
+     → Downloadable font로 추가하면 res/font/jua.xml이 생긴다. 그 뒤 아래 TODO(font) 줄의 주석을 푼다. -->
+<resources>
+    <!-- ===== 글자 ===== -->
+    <style name="TextAppearance.MerryCri.Display" parent="TextAppearance.Material3.HeadlineMedium">
+        <!-- D-day 숫자, 큰 점수 -->
+        <item name="android:textSize">30sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">?attr/colorOnBackground</item>
+        <!-- TODO(font) <item name="fontFamily">@font/jua</item> -->
+    </style>
+    <style name="TextAppearance.MerryCri.Title" parent="TextAppearance.Material3.HeadlineSmall">
+        <!-- 화면 제목 -->
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/ink</item>
+        <!-- TODO(font) <item name="fontFamily">@font/jua</item> -->
+    </style>
+    <style name="TextAppearance.MerryCri.Subtitle" parent="TextAppearance.Material3.TitleMedium">
+        <!-- 카드 제목, 'Lv3 겨울 트리', 친구 이름 -->
+        <item name="android:textSize">17sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/ink</item>
+    </style>
+    <style name="TextAppearance.MerryCri.Body" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textSize">15sp</item>
+        <item name="android:lineSpacingMultiplier">1.4</item>
+        <item name="android:textColor">@color/ink</item>
+    </style>
+    <style name="TextAppearance.MerryCri.Caption" parent="TextAppearance.Material3.BodySmall">
+        <!-- 보조 설명, '편지 7통 · D-37' -->
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/ink_muted</item>
+    </style>
+    <style name="TextAppearance.MerryCri.Label" parent="TextAppearance.Material3.LabelMedium">
+        <!-- 칩, 작은 라벨 -->
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="TextAppearance.MerryCri.Button" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <!-- ===== 버튼 =====
+         기본(초록): 트리에 달기, 다시 도전하기  /  .Accent(빨강): 편지 남기기
+         .Secondary(흰색 테두리): 리더보드 보기  /  .Kakao(노랑): 카톡으로 초대  /  .Locked(회색): 잠긴 미니게임·리더보드 -->
+    <style name="Widget.MerryCri.Button" parent="Widget.Material3.Button">
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">@dimen/radius_button</item>
+        <item name="backgroundTint">@color/pine</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="iconTint">@color/white</item>
+        <item name="android:textAppearance">@style/TextAppearance.MerryCri.Button</item>
+    </style>
+    <style name="Widget.MerryCri.Button.Accent">
+        <item name="android:minHeight">@dimen/button_height_large</item>
+        <item name="backgroundTint">@color/berry</item>
+    </style>
+    <style name="Widget.MerryCri.Button.Kakao">
+        <item name="backgroundTint">@color/kakao_yellow</item>
+        <item name="android:textColor">@color/kakao_text</item>
+        <item name="iconTint">@color/kakao_text</item>
+    </style>
+    <style name="Widget.MerryCri.Button.Locked">
+        <item name="backgroundTint">@color/locked</item>
+        <item name="android:textColor">@color/ink_muted</item>
+        <item name="iconTint">@color/ink_muted</item>
+    </style>
+    <style name="Widget.MerryCri.Button.Secondary" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="cornerRadius">@dimen/radius_button</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="strokeColor">@color/line</item>
+        <item name="strokeWidth">1.5dp</item>
+        <item name="android:textColor">@color/ink</item>
+        <item name="iconTint">@color/ink</item>
+        <item name="android:textAppearance">@style/TextAppearance.MerryCri.Button</item>
+    </style>
+
+    <!-- ===== 카드 · 입력칸 · 하단 탭 ===== -->
+    <style name="Widget.MerryCri.Card" parent="Widget.Material3.CardView.Outlined">
+        <item name="cardBackgroundColor">@color/card</item>
+        <item name="strokeColor">@color/line</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cardCornerRadius">@dimen/radius_card</item>
+        <item name="cardElevation">0dp</item>
+    </style>
+    <!-- 초록 카드: D-day 카운트다운, 내 친구 코드 -->
+    <style name="Widget.MerryCri.Card.Highlight">
+        <item name="cardBackgroundColor">@color/pine</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+    <style name="Widget.MerryCri.TextInput" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">@dimen/radius_input</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/radius_input</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/radius_input</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/radius_input</item>
+        <item name="boxStrokeColor">@color/pine</item>
+        <item name="boxBackgroundColor">@color/white</item>
+        <item name="hintTextColor">@color/pine</item>
+        <item name="counterTextColor">@color/ink_muted</item>
+    </style>
+    <style name="Widget.MerryCri.BottomNav" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:background">@color/white</item>
+        <item name="itemIconTint">@color/nav_item</item>
+        <item name="itemTextColor">@color/nav_item</item>
+        <item name="itemActiveIndicatorStyle">@style/Widget.MerryCri.BottomNav.Indicator</item>
+    </style>
+    <style name="Widget.MerryCri.BottomNav.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/pine_light</item>
+    </style>
+
+    <!-- ===== 칩 (TextView에 style로) ===== -->
+    <style name="Widget.MerryCri.Chip" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.MerryCri.Label</item>
+    </style>
+    <!-- '편지 씀' -->
+    <style name="Widget.MerryCri.Chip.Done">
+        <item name="android:background">@drawable/bg_chip_done</item>
+        <item name="android:textColor">@color/pine</item>
+    </style>
+    <!-- '편지 쓰기' -->
+    <style name="Widget.MerryCri.Chip.Todo">
+        <item name="android:background">@drawable/bg_chip_todo</item>
+        <item name="android:textColor">@color/berry</item>
+    </style>
+</resources>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/orn_cane.xml · 편지 장식: 사탕 · 담당: A -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="40"
+    android:viewportHeight="40">
+    <path
+        android:pathData="M24,36V14a6,6 0,0 0,-12,0"
+        android:strokeColor="#FFE6DDCB"
+        android:strokeWidth="9"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M24,36V14a6,6 0,0 0,-12,0"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="7"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M24.0,14.0L24.0,18.0"
+        android:strokeColor="#FFC8432F"
+        android:strokeWidth="7"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M24.0,22.0L24.0,26.0"
+        android:strokeColor="#FFC8432F"
+        android:strokeWidth="7"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M24.0,30.0L24.0,34.0"
+        android:strokeColor="#FFC8432F"
+        android:strokeWidth="7"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M12,14a6,6 0,0 1,4.5,-5.8"
+        android:strokeColor="#FFC8432F"
+        android:strokeWidth="7"
+        android:strokeLineCap="round" />
+</vector>
