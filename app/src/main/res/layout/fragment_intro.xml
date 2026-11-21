@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/fragment_intro.xml · 앱 첫 화면: 편지 트리가 자라서 내 트리가 된다 · 담당: A
+     봉투 3장(안쪽·트리·앞면)은 시스템 스플래시 아이콘과 같은 288dp·화면 가운데에 겹쳐 둔다.
+     움직임은 IntroFragment.playIntro() 참고. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_intro"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cream"
+    android:clickable="true"
+    android:focusable="true">
+
+    <ImageView
+        android:id="@+id/image_sky"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no"
+        android:scaleType="centerCrop"
+        android:visibility="invisible"
+        tools:src="@drawable/bg_sky_lv4"
+        tools:visibility="visible" />
+
+    <!-- 오로라 (Lv5만, 물결치며 움직임) -->
+    <com.hambaksanta.merrycri.ui.tree.AuroraView
+        android:id="@+id/aurora"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:visibility="gone" />
+
+    <com.hambaksanta.merrycri.ui.tree.WeatherView
+        android:id="@+id/weather"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0" />
+
+    <!-- 내 트리: 트리·전구·별·소품만 (하늘은 위 image_sky). 도착하면 흔들림·깜빡임이 시작된다 -->
+    <com.hambaksanta.merrycri.ui.tree.TreeSceneView
+        android:id="@+id/tree_scene"
+        android:layout_width="340dp"
+        android:layout_height="404dp"
+        android:layout_gravity="center"
+        android:alpha="0"
+        android:contentDescription="@string/intro_cd_my_tree" />
+
+    <ImageView
+        android:id="@+id/image_envelope_back"
+        android:layout_width="@dimen/intro_icon_size"
+        android:layout_height="@dimen/intro_icon_size"
+        android:layout_gravity="center"
+        android:importantForAccessibility="no"
+        android:src="@drawable/intro_envelope_back" />
+
+    <ImageView
+        android:id="@+id/image_intro_tree"
+        android:layout_width="@dimen/intro_icon_size"
+        android:layout_height="@dimen/intro_icon_size"
+        android:layout_gravity="center"
+        android:importantForAccessibility="no"
+        android:src="@drawable/intro_tree" />
+
+    <ImageView
+        android:id="@+id/image_envelope_front"
+        android:layout_width="@dimen/intro_icon_size"
+        android:layout_height="@dimen/intro_icon_size"
+        android:layout_gravity="center"
+        android:importantForAccessibility="no"
+        android:src="@drawable/intro_envelope_front" />
+
+    <LinearLayout
+        android:id="@+id/layout_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_marginTop="96dp"
+        android:alpha="0"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        tools:alpha="1">
+
+        <TextView
+            android:id="@+id/text_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textAppearance="@style/TextAppearance.MerryCri.Display"
+            android:textSize="34sp" />
+
+        <TextView
+            android:id="@+id/text_dday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_intro_dday"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="5dp"
+            android:textAppearance="@style/TextAppearance.MerryCri.Label"
+            android:textColor="@color/ink"
+            tools:text="크리스마스까지 D-33" />
+
+        <TextView
+            android:id="@+id/text_stage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAppearance="@style/TextAppearance.MerryCri.Caption"
+            tools:text="내 트리 · Lv4 빛나는 트리" />
+    </LinearLayout>
+
+</FrameLayout>

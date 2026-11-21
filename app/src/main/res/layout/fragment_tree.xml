@@ -1,14 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- res/layout/fragment_tree.xml -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- res/layout/fragment_tree.xml · 내 트리 홈 · 담당: A
+     지금은 트리 장면만 올려 둔 상태. 상단 D-day·진행바·버튼은 "홈 화면 조립" 작업에서 붙인다. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="@dimen/screen_padding">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="@dimen/radius_tree"
+        app:cardElevation="0dp"
+        app:strokeWidth="0dp">
+
+        <com.hambaksanta.merrycri.ui.tree.TreeSceneView
+            android:id="@+id/tree_scene"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/text_stage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:textAppearance="@style/TextAppearance.MerryCri.Subtitle" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/placeholder_tree"
-        android:textAppearance="?attr/textAppearanceHeadlineSmall" />
+        android:layout_marginTop="4dp"
+        android:text="@string/tree_demo_hint"
+        android:textAppearance="@style/TextAppearance.MerryCri.Caption" />
 
-</FrameLayout>
+</LinearLayout>

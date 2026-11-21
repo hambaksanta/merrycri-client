@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 인트로 3층: 봉투 앞면·봉인 · 담당: A -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:pivotX="54"
+        android:pivotY="54"
+        android:scaleX="0.72"
+        android:scaleY="0.72">
+        <path
+            android:pathData="M22,60L54,78L86,60L86,85Q86,90 81,90L27,90Q22,90 22,85Z"
+            android:fillColor="#FFB83A28" />
+        <path
+            android:pathData="M22.0,88.0L46.0,72.0"
+            android:strokeColor="#FFD2604C"
+            android:strokeWidth="2"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M86.0,88.0L62.0,72.0"
+            android:strokeColor="#FFD2604C"
+            android:strokeWidth="2"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M48.8,77.0a5.2,5.2 0,1 0,10.4,0a5.2,5.2 0,1 0,-10.4,0Z"
+            android:fillColor="#FFE8B54A" />
+        <path
+            android:pathData="M51.4,77l2.1,2.1l3.6,-4.2"
+            android:strokeColor="#FFB83A28"
+            android:strokeWidth="1.7"
+            android:strokeLineCap="round" />
+    </group>
+</vector>

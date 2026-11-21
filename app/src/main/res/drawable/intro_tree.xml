@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 인트로 2층: 봉투 속 트리 (자라서 내 트리가 됨) · 담당: A -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:pivotX="54"
+        android:pivotY="54"
+        android:scaleX="0.72"
+        android:scaleY="0.72">
+        <path
+            android:pathData="M54.0,21.0L68.0,43.0L40.0,43.0Z"
+            android:fillColor="#FF2B7B54" />
+        <path
+            android:pathData="M54.0,30.0L73.0,56.0L35.0,56.0Z"
+            android:fillColor="#FF1F5E46" />
+        <path
+            android:pathData="M54.0,40.0L77.0,67.0L31.0,67.0Z"
+            android:fillColor="#FF2B7B54" />
+        <path
+            android:pathData="M54.0,11.5L55.8,16.0L60.7,16.3L56.9,19.5L58.1,24.2L54.0,21.6L49.9,24.2L51.1,19.5L47.3,16.3L52.2,16.0Z"
+            android:fillColor="#FFE8B54A" />
+    </group>
+</vector>
