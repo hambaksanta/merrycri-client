@@ -37,4 +37,10 @@
     <string name="notification_channel_gifts">편지 알림</string>
     <string name="notification_gift_title">편지를 열 수 있어요</string>
     <string name="notification_gift_body">내 트리에 도착한 편지를 확인해 보세요.</string>
+
+    <!-- 첫 화면 (담당: A) -->
+    <string name="intro_dday">크리스마스까지 D-%1$d</string>
+    <string name="intro_christmas">메리 크리스마스!</string>
+    <string name="intro_my_tree">내 트리 · %1$s</string>
+    <string name="intro_cd_my_tree">내 트리</string>
 </resources>

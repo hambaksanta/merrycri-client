@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/values-v31/themes.xml · 안드로이드 12+ 시스템 스플래시 · 담당: A
+     앱을 켜면 시스템이 크림 배경 + 편지 트리 아이콘을 먼저 띄우고,
+     IntroFragment가 같은 자리·같은 크기(288dp)의 봉투에서 이어받아 트리를 키운다. -->
+<resources>
+    <style name="Theme.MerryCri" parent="Base.Theme.MerryCri">
+        <item name="android:windowSplashScreenBackground">@color/cream</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+    </style>
+</resources>
