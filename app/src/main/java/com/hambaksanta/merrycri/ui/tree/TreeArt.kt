@@ -9,7 +9,10 @@ import com.hambaksanta.merrycri.R
 /**
  * 트리 그림 자료: 단계 계산, 단계별 그림, 장식 그림, 장식 자리. 담당: A
  *
- * 화면에 그리는 순서 (TreeView): bg_sky_lvN → (WeatherView 파티클) → tree_lvN → 편지 장식(orn_*)을 SLOTS 자리에
+ * 겹쳐 그리는 순서 (TreeSceneView):
+ *   bg_sky_lvN → AuroraView(Lv5, 물결치는 오로라) → WeatherView(내리는 눈·반짝이는 별)
+ *   → [흔들림] tree_lvN → tree_lights_a/b(번갈아 깜빡임) → tree_star_lv5(반짝임) → 편지 장식(orn_*, SLOTS 자리)
+ *   → props_lvN (랜턴·선물·발자국 등 땅 위 소품) → mailbox_lvN_empty/full (우체통, 맨 앞)
  * 모든 그림은 320 x 380 기준이고, SLOTS는 그 안의 비율(0~1)이다.
  */
 object TreeArt {
@@ -51,6 +54,44 @@ object TreeArt {
         4 -> R.drawable.bg_sky_lv4
         else -> R.drawable.bg_sky_lv5
     }
+
+    /** 땅 위 소품(랜턴·선물·발자국 등). 트리 앞에 그린다. Lv1은 없음. */
+    @DrawableRes
+    fun propsRes(stage: Int): Int? = when (stage) {
+        1 -> null
+        2 -> R.drawable.props_lv2
+        3 -> R.drawable.props_lv3
+        4 -> R.drawable.props_lv4
+        else -> R.drawable.props_lv5
+    }
+
+    /** 번갈아 깜빡이는 전구 두 장 (Lv4·Lv5만). 없으면 null. */
+    fun lightsRes(stage: Int): Pair<Int, Int>? = when (stage) {
+        4 -> R.drawable.tree_lights_a_lv4 to R.drawable.tree_lights_b_lv4
+        5 -> R.drawable.tree_lights_a_lv5 to R.drawable.tree_lights_b_lv5
+        else -> null
+    }
+
+    /** 꼭대기 별 (Lv5만). 별 중심은 그림 안 (160, 52). */
+    @DrawableRes
+    fun starRes(stage: Int): Int? = if (stage >= 5) R.drawable.tree_star_lv5 else null
+    val STAR_CENTER = PointF(160f / 320f, 52f / 380f)
+
+    /** 오로라는 그림 파일이 아니라 AuroraView가 직접 그린다 (Lv5만). */
+    fun hasAurora(stage: Int): Boolean = stage >= 5
+
+    /** 우체통: 비어 있음 / 편지 가득. 단계마다 색이 다르다 (회색 → 나무 → 빨강 → 나무 → 빨강). */
+    @DrawableRes
+    fun mailboxRes(stage: Int, full: Boolean): Int = when (stage) {
+        1 -> if (full) R.drawable.mailbox_lv1_full else R.drawable.mailbox_lv1_empty
+        2 -> if (full) R.drawable.mailbox_lv2_full else R.drawable.mailbox_lv2_empty
+        3 -> if (full) R.drawable.mailbox_lv3_full else R.drawable.mailbox_lv3_empty
+        4 -> if (full) R.drawable.mailbox_lv4_full else R.drawable.mailbox_lv4_empty
+        else -> if (full) R.drawable.mailbox_lv5_full else R.drawable.mailbox_lv5_empty
+    }
+
+    /** 트리 밑동(흔들림 기준점) 높이 비율 */
+    const val TREE_BASE_Y = 334f / 380f
 
     @StringRes
     fun nameRes(stage: Int): Int = when (stage) {
@@ -113,7 +154,7 @@ object TreeArt {
             PointF(0.722f, 0.766f),
         ),
         5 to listOf(
-            PointF(0.500f, 0.279f),
+            PointF(0.500f, 0.276f),
             PointF(0.391f, 0.413f),
             PointF(0.609f, 0.413f),
             PointF(0.347f, 0.526f),

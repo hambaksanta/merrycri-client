@@ -79,7 +79,10 @@ class IntroFragment : Fragment() {
 
     private fun bindStage(stage: Int) = with(binding) {
         imageSky.setImageResource(TreeArt.skyRes(stage))
-        imageMyTree.setImageResource(TreeArt.treeRes(stage))
+        treeScene.setStage(stage)
+        treeScene.setBackgroundVisible(false)
+        weather.setStage(stage)
+        aurora.visibility = if (TreeArt.hasAurora(stage)) View.VISIBLE else View.GONE
         textStage.text = getString(R.string.intro_my_tree, getString(TreeArt.nameRes(stage)))
         textDday.text = ddayText()
         // Lv4·Lv5는 밤하늘이라 흰 글씨
@@ -95,7 +98,7 @@ class IntroFragment : Fragment() {
     private fun alignTreeToGround() = with(binding) {
         val scale = max(imageSky.width / ART_W, imageSky.height / ART_H)
         val groundY = (imageSky.height - ART_H * scale) / 2f + GROUND_Y * scale
-        imageMyTree.translationY = groundY - (imageMyTree.top + imageMyTree.height * MY_TREE_BASE)
+        treeScene.translationY = groundY - (treeScene.top + treeScene.height * MY_TREE_BASE)
     }
 
     private fun playIntro() = with(binding) {
@@ -104,10 +107,10 @@ class IntroFragment : Fragment() {
         // 트리는 밑동을 기준으로 커진다. 밑동 위치: 아이콘 칸의 58.7%, 내 트리 그림의 334/380.
         imageIntroTree.pivotX = imageIntroTree.width / 2f
         imageIntroTree.pivotY = imageIntroTree.height * ICON_TREE_BASE
-        imageMyTree.pivotX = imageMyTree.width / 2f
-        imageMyTree.pivotY = imageMyTree.height.toFloat()
+        treeScene.pivotX = treeScene.width / 2f
+        treeScene.pivotY = treeScene.height.toFloat()
         val fromBase = imageIntroTree.top + imageIntroTree.pivotY
-        val toBase = imageMyTree.top + imageMyTree.translationY + imageMyTree.height * MY_TREE_BASE
+        val toBase = treeScene.top + treeScene.translationY + treeScene.height * MY_TREE_BASE
         val treeDrop = toBase - fromBase
 
         val wiggle = ObjectAnimator.ofFloat(imageIntroTree, View.ROTATION, 0f, -7f, 6f, -4f, 2f, 0f).apply {
@@ -138,7 +141,7 @@ class IntroFragment : Fragment() {
 
         // 하늘: 트리 자리에서 둥글게 펼쳐진다
         val cx = imageSky.width / 2
-        val cy = (toBase - imageMyTree.height * 0.4f).toInt()
+        val cy = (toBase - treeScene.height * 0.4f).toInt()
         val skyReveal = ViewAnimationUtils.createCircularReveal(
             imageSky, cx, cy, 0f, hypot(imageSky.width.toFloat(), imageSky.height.toFloat()),
         ).apply {
@@ -150,11 +153,18 @@ class IntroFragment : Fragment() {
             startDelay = 1800; duration = 500
         }
         val myTreeIn = ObjectAnimator.ofPropertyValuesHolder(
-            imageMyTree,
+            treeScene,
             PropertyValuesHolder.ofFloat(View.ALPHA, 0f, 1f),
             PropertyValuesHolder.ofFloat(View.SCALE_X, 0.94f, 1f),
             PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.94f, 1f),
         ).apply { startDelay = 1800; duration = 500; interpolator = OvershootInterpolator(1.2f) }
+
+        val snowIn = ObjectAnimator.ofFloat(weather, View.ALPHA, 0f, 1f).apply {
+            startDelay = 1600; duration = 800
+        }
+        val auroraIn = ObjectAnimator.ofFloat(aurora, View.ALPHA, 0f, 1f).apply {
+            startDelay = 1700; duration = 1000
+        }
 
         val headerIn = ObjectAnimator.ofPropertyValuesHolder(
             layoutHeader,
@@ -163,7 +173,7 @@ class IntroFragment : Fragment() {
         ).apply { startDelay = 2200; duration = 600; interpolator = DecelerateInterpolator() }
 
         animator = AnimatorSet().apply {
-            playTogether(listOf(wiggle, sealPop, popOut, grow, skyReveal, treeOut, myTreeIn, headerIn) + envelopeOut)
+            playTogether(listOf(wiggle, sealPop, popOut, grow, skyReveal, treeOut, myTreeIn, snowIn, auroraIn, headerIn) + envelopeOut)
             doOnEnd { finishAfter(HOLD_MS) }
             start()
         }
@@ -175,7 +185,9 @@ class IntroFragment : Fragment() {
         imageEnvelopeFront.alpha = 0f
         imageIntroTree.alpha = 0f
         imageSky.visibility = View.VISIBLE
-        imageMyTree.alpha = 1f
+        treeScene.alpha = 1f
+        weather.alpha = 1f
+        aurora.alpha = 1f
         layoutHeader.alpha = 1f
     }
 

@@ -21,15 +21,28 @@
         tools:src="@drawable/bg_sky_lv4"
         tools:visibility="visible" />
 
-    <ImageView
-        android:id="@+id/image_my_tree"
+    <!-- 오로라 (Lv5만, 물결치며 움직임) -->
+    <com.hambaksanta.merrycri.ui.tree.AuroraView
+        android:id="@+id/aurora"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:visibility="gone" />
+
+    <com.hambaksanta.merrycri.ui.tree.WeatherView
+        android:id="@+id/weather"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0" />
+
+    <!-- 내 트리: 트리·전구·별·소품만 (하늘은 위 image_sky). 도착하면 흔들림·깜빡임이 시작된다 -->
+    <com.hambaksanta.merrycri.ui.tree.TreeSceneView
+        android:id="@+id/tree_scene"
         android:layout_width="340dp"
         android:layout_height="404dp"
         android:layout_gravity="center"
         android:alpha="0"
-        android:contentDescription="@string/intro_cd_my_tree"
-        tools:alpha="1"
-        tools:src="@drawable/tree_lv4" />
+        android:contentDescription="@string/intro_cd_my_tree" />
 
     <ImageView
         android:id="@+id/image_envelope_back"

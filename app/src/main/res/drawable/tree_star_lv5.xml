@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 5단계 찬란한 트리 · 꼭대기 별 (반짝임) · 320x380 겹쳐 그림 · 담당: A -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="320dp"
+    android:height="380dp"
+    android:viewportWidth="320"
+    android:viewportHeight="380">
+    <path
+        android:pathData="M124.0,52.0a36.0,36.0 0,1 0,72.0,0a36.0,36.0 0,1 0,-72.0,0Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="160"
+                android:centerY="52"
+                android:gradientRadius="36.0">
+                <item android:offset="0" android:color="#99FFE7A0" />
+                <item android:offset="1" android:color="#00FFE7A0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M160.0,37.0L164.1,46.4L174.3,47.4L166.6,54.1L168.8,64.1L160.0,58.9L151.2,64.1L153.4,54.1L145.7,47.4L155.9,46.4Z"
+        android:fillColor="#FFF2C14E"
+        android:strokeColor="#FFF2C14E"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M159.0,42.8L161.2,48.0L166.8,48.5L162.6,52.2L163.8,57.7L159.0,54.8L154.2,57.7L155.4,52.2L151.2,48.5L156.8,48.0Z"
+        android:fillColor="#E6FFE69A" />
+</vector>

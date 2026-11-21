@@ -38,6 +38,10 @@
     <string name="notification_gift_title">편지를 열 수 있어요</string>
     <string name="notification_gift_body">내 트리에 도착한 편지를 확인해 보세요.</string>
 
+    <!-- 트리 장면 (담당: A) -->
+    <string name="tree_cd_ornament">%1$d번째 편지 장식</string>
+    <string name="tree_demo_hint">길게 누르면 단계, 누르면 우체통이 바뀌어요 (임시 미리보기)</string>
+
     <!-- 첫 화면 (담당: A) -->
     <string name="intro_dday">크리스마스까지 D-%1$d</string>
     <string name="intro_christmas">메리 크리스마스!</string>
