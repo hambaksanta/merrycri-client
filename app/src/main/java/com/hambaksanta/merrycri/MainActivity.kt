@@ -3,6 +3,7 @@ package com.hambaksanta.merrycri
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.hambaksanta.merrycri.databinding.ActivityMainBinding
@@ -19,7 +20,11 @@ class MainActivity : AppCompatActivity() {
 
         val navHost = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        binding.bottomNavigation.setupWithNavController(navHost.navController)
+        val navController = navHost.navController
+        binding.bottomNavigation.setupWithNavController(navController)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            binding.bottomNavigation.isVisible = destination.id != R.id.onboardingFragment
+        }
     }
 
     override fun onStart() {
