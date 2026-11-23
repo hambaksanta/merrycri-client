@@ -27,7 +27,8 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             binding.bottomNavigation.isVisible = destination.id !in FULL_SCREEN_DESTINATIONS
         }
-        // 앱을 새로 켤 때만 첫 화면(편지 트리 인트로)을 홈 위에 띄운다. 회전 등으로 다시 만들 때는 건너뜀.
+        // 앱을 새로 켤 때만 첫 화면(편지 트리 인트로)을 시작 화면(온보딩) 위에 띄운다. 회전 등으로 다시 만들 때는 건너뜀.
+        // 인트로가 끝나면 닫히고, 아래 온보딩이 기존 사용자는 홈으로, 새 사용자는 닉네임 입력으로 보낸다.
         if (savedInstanceState == null) {
             navController.navigate(
                 R.id.introFragment,

@@ -4,6 +4,7 @@ package com.hambaksanta.merrycri.data
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -15,13 +16,24 @@ class SettingsStore(private val context: Context) {
     private val demoModeKey = booleanPreferencesKey("demo_mode")
     private val bgmKey = booleanPreferencesKey("bgm_on")
     private val sfxKey = booleanPreferencesKey("sfx_on")
+    private val nicknameKey = stringPreferencesKey("nickname")
+    private val friendCodeKey = stringPreferencesKey("friend_code")
 
     /** 켜면 12/25 전에도 선물이 열린다 (채점·시연용). */
     val demoMode: Flow<Boolean> = context.dataStore.data.map { it[demoModeKey] ?: false }
     val bgmOn: Flow<Boolean> = context.dataStore.data.map { it[bgmKey] ?: true }
     val sfxOn: Flow<Boolean> = context.dataStore.data.map { it[sfxKey] ?: true }
+    val nickname: Flow<String?> = context.dataStore.data.map { it[nicknameKey] }
+    val friendCode: Flow<String?> = context.dataStore.data.map { it[friendCodeKey] }
 
     suspend fun setDemoMode(on: Boolean) = context.dataStore.edit { it[demoModeKey] = on }
     suspend fun setBgmOn(on: Boolean) = context.dataStore.edit { it[bgmKey] = on }
     suspend fun setSfxOn(on: Boolean) = context.dataStore.edit { it[sfxKey] = on }
+
+    suspend fun saveUserProfile(nickname: String, friendCode: String) {
+        context.dataStore.edit {
+            it[nicknameKey] = nickname
+            it[friendCodeKey] = friendCode
+        }
+    }
 }

@@ -3,11 +3,10 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/navigation_tree">
+    app:startDestination="@id/onboardingFragment">
 
-    <!-- 앱 첫 화면 (담당: A). MainActivity가 앱을 처음 켤 때 홈 위에 한 번 띄우고,
-         끝나면 popBackStack()으로 닫아 홈(navigation_tree)이 보이게 한다.
-         시작 화면을 홈으로 둬야 하단 탭의 뒤로 가기 동작이 꼬이지 않는다. -->
+    <!-- 앱 첫 화면 (담당: A). MainActivity가 앱을 처음 켤 때 시작 화면(온보딩) 위에 한 번 띄우고,
+         끝나면 popBackStack()으로 닫는다. 그 다음 길(홈/닉네임 입력)은 온보딩이 정한다. -->
     <fragment
         android:id="@+id/introFragment"
         android:name="com.hambaksanta.merrycri.ui.intro.IntroFragment"

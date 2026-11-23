@@ -205,8 +205,7 @@ class IntroFragment : Fragment() {
         animator?.cancel()
         val nav = findNavController()
         if (nav.currentDestination?.id == R.id.introFragment) {
-            // TODO(B): 처음 쓰는 사람이면 온보딩으로 보내 주세요 (R.id.action_intro_to_onboarding).
-            nav.popBackStack() // 아래에 있던 홈(내 트리)이 나타난다
+            nav.popBackStack() // 아래의 온보딩이 나타나서 기존 사용자는 홈, 새 사용자는 닉네임 입력으로 보낸다
         }
     }
 
