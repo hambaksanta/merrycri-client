@@ -1,14 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- res/layout/fragment_leaderboard.xml -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- res/layout/fragment_leaderboard.xml · 친구 트리별 미니게임 리더보드. 담당: C -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/cream">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/leaderboard_title"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/placeholder_leaderboard"
-        android:textAppearance="?attr/textAppearanceHeadlineSmall" />
+        android:layout_marginTop="@dimen/space_20"
+        android:paddingHorizontal="@dimen/screen_padding"
+        android:textAppearance="@style/TextAppearance.MerryCri.Title"
+        tools:text="박지우의 트리 리더보드"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</FrameLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/score_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/space_12"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/space_12"
+        app:layout_constraintBottom_toTopOf="@id/play_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/leaderboard_title" />
+
+    <TextView
+        android:id="@+id/leaderboard_empty_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/screen_padding"
+        android:text="@string/leaderboard_empty"
+        android:textAppearance="@style/TextAppearance.MerryCri.Body"
+        android:textColor="@color/ink_muted"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/play_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/leaderboard_title" />
+
+    <Button
+        android:id="@+id/play_button"
+        style="@style/Widget.MerryCri.Button.Accent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/screen_padding"
+        android:layout_marginBottom="@dimen/space_20"
+        android:text="@string/leaderboard_play_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

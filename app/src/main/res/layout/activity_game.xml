@@ -14,6 +14,8 @@
         android:orientation="horizontal"
         android:paddingHorizontal="@dimen/screen_padding"
         android:paddingVertical="@dimen/space_12"
+        android:layout_marginTop="@dimen/space_16"
+        android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
@@ -68,15 +70,86 @@
         app:layout_constraintTop_toBottomOf="@id/top_bar"
         app:layout_constraintBottom_toBottomOf="parent" />
 
+    <!-- 1단계: 흰(크림) 화면 — 친구 트리 전체 순위 + 하단 '게임 시작하기'. 게임이 끝나고 돌아오는 화면이기도 하다. 담당: C -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/rank_overlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/cream"
+        android:paddingHorizontal="@dimen/screen_padding"
+        android:paddingTop="@dimen/space_20"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/top_bar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/rank_board_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/leaderboard_list_label"
+            android:textColor="@color/ink"
+            android:textAppearance="@style/TextAppearance.MerryCri.Subtitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rank_score_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/space_8"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/space_16"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/rank_play_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rank_board_label" />
+
+        <TextView
+            android:id="@+id/rank_board_empty_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_20"
+            android:gravity="center"
+            android:text="@string/leaderboard_empty"
+            android:textColor="@color/ink_muted"
+            android:textAppearance="@style/TextAppearance.MerryCri.Body"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/rank_play_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rank_board_label" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/rank_play_button"
+            style="@style/Widget.MerryCri.Button.Accent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/space_20"
+            android:minHeight="64dp"
+            android:textSize="19sp"
+            android:text="@string/game_start_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- 2단계: 게임 설명 화면. rank_overlay에서 '게임 시작하기'를 누르면 여기로 오고,
+         여기를 탭하면 실제로 공이 움직이기 시작한다. owner가 없는 연습 모드는 처음부터 바로 여기. 담당: C -->
     <LinearLayout
         android:id="@+id/start_overlay"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
         android:gravity="center"
-        android:background="#CC14213D"
+        android:background="#E614213D"
         android:padding="@dimen/space_24"
-        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/top_bar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -113,10 +186,10 @@
         android:layout_height="0dp"
         android:orientation="vertical"
         android:gravity="center"
-        android:background="#CC14213D"
+        android:background="@color/cream"
         android:padding="@dimen/space_24"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_bar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -126,7 +199,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/game_over_title"
-            android:textColor="@color/white"
+            android:textColor="@color/ink"
             android:textAppearance="@style/TextAppearance.MerryCri.Title" />
 
         <TextView
@@ -134,7 +207,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_12"
-            android:textColor="@color/gold"
+            android:textColor="@color/pine"
             android:textAppearance="@style/TextAppearance.MerryCri.Display"
             tools:text="130점" />
 
@@ -143,7 +216,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_8"
-            android:textColor="@color/night_text_muted"
+            android:textColor="@color/ink_muted"
             android:textAppearance="@style/TextAppearance.MerryCri.Body"
             android:visibility="gone"
             tools:text="@string/game_new_best" />

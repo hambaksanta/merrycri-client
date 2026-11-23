@@ -7,11 +7,16 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import com.hambaksanta.merrycri.MerryCriApp
 import com.hambaksanta.merrycri.R
 import com.hambaksanta.merrycri.core.audio.Sfx
 import com.hambaksanta.merrycri.databinding.ActivityGameBinding
+import com.hambaksanta.merrycri.ui.leaderboard.ScoreAdapter
 import kotlinx.coroutines.launch
 
 /**
@@ -25,6 +30,7 @@ class GameActivity : AppCompatActivity(), BreakoutListener {
     private lateinit var binding: ActivityGameBinding
     private val app get() = application as MerryCriApp
     private val ownerUid get() = intent.getStringExtra(EXTRA_OWNER_UID)
+    private val scoreAdapter by lazy { ScoreAdapter(FirebaseAuth.getInstance().currentUser?.uid) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,24 +44,56 @@ class GameActivity : AppCompatActivity(), BreakoutListener {
 
         binding.startOverlay.setOnClickListener {
             binding.startOverlay.isVisible = false
-            binding.breakoutView.start()
+            startPlaying()
         }
+        binding.rankPlayButton.setOnClickListener {
+            binding.rankOverlay.isVisible = false
+            startPlaying()
+        }
+        setUpLeaderboardPreview()
+        showPreGameScreen()
         binding.retryButton.setOnClickListener {
             binding.resultOverlay.isVisible = false
             binding.resultNote.isVisible = false
-            binding.startOverlay.isVisible = true
+            resetHud()
             binding.breakoutView.restart()
-            binding.timeText.text = getString(R.string.game_time_format, 60)
-            binding.livesText.text = heartsText(3)
-            binding.scoreText.text = getString(R.string.game_score_format, 0)
+            startPlaying()
         }
-        binding.closeButton.setOnClickListener { finish() }
+        binding.closeButton.setOnClickListener {
+            binding.resultOverlay.isVisible = false
+            binding.resultNote.isVisible = false
+            resetHud()
+            binding.breakoutView.restart()
+            showPreGameScreen()
+        }
         binding.exitButton.setOnClickListener { onExitRequested() }
+    }
+
+    /** 친구 트리 모드면 1단계(순위) 화면, 연습 모드면 바로 2단계(설명) 화면을 보여준다. 둘 다 상단 바는 숨긴다. */
+    private fun showPreGameScreen() {
+        binding.topBar.isVisible = false
+        if (ownerUid != null) {
+            binding.rankOverlay.isVisible = true
+        } else {
+            binding.startOverlay.isVisible = true
+        }
+    }
+
+    /** 실제 플레이 시작. 이때만 상단 바(타이머·하트·점수·나가기)가 보인다. */
+    private fun startPlaying() {
+        binding.topBar.isVisible = true
+        binding.breakoutView.start()
+    }
+
+    private fun resetHud() {
+        binding.timeText.text = getString(R.string.game_time_format, 60)
+        binding.livesText.text = heartsText(3)
+        binding.scoreText.text = getString(R.string.game_score_format, 0)
     }
 
     /** 상단 나가기(✕) 버튼. 아직 시작 전/결과 화면이면 바로 닫고, 플레이 중이면 확인 후 닫는다. */
     private fun onExitRequested() {
-        if (binding.startOverlay.isVisible || binding.resultOverlay.isVisible) {
+        if (binding.rankOverlay.isVisible || binding.startOverlay.isVisible || binding.resultOverlay.isVisible) {
             finish()
             return
         }
@@ -76,7 +114,7 @@ class GameActivity : AppCompatActivity(), BreakoutListener {
 
     override fun onResume() {
         super.onResume()
-        if (!binding.startOverlay.isVisible && !binding.resultOverlay.isVisible) {
+        if (!binding.rankOverlay.isVisible && !binding.startOverlay.isVisible && !binding.resultOverlay.isVisible) {
             binding.breakoutView.resumeGame()
         }
     }
@@ -103,6 +141,7 @@ class GameActivity : AppCompatActivity(), BreakoutListener {
 
     override fun onGameOver(finalScore: Int) {
         app.audio.playSfx(Sfx.BELL)
+        binding.topBar.isVisible = false
         binding.resultScore.text = getString(R.string.game_score_format, finalScore)
         binding.resultNote.isVisible = false
         binding.resultOverlay.isVisible = true
@@ -116,6 +155,23 @@ class GameActivity : AppCompatActivity(), BreakoutListener {
                         binding.resultNote.isVisible = true
                     }
                 }
+        }
+    }
+
+    /** 친구 트리에서 들어온 경우(=owner 있음)만 [rank_overlay]의 순위 목록을 실시간으로 채운다. */
+    private fun setUpLeaderboardPreview() {
+        val owner = ownerUid ?: return
+        binding.rankScoreRecycler.layoutManager = LinearLayoutManager(this)
+        binding.rankScoreRecycler.adapter = scoreAdapter
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                app.repository.observeScores(owner).collect { scores ->
+                    scoreAdapter.submitList(scores)
+                    binding.rankBoardEmptyText.isVisible = scores.isEmpty()
+                    binding.rankScoreRecycler.isVisible = scores.isNotEmpty()
+                }
+            }
         }
     }
 

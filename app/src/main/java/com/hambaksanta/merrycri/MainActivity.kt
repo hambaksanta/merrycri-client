@@ -6,8 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
+import com.google.firebase.auth.FirebaseAuth
 import com.hambaksanta.merrycri.databinding.ActivityMainBinding
+import com.hambaksanta.merrycri.ui.game.GameActivity
 
 /** v2의 단일 Activity. Navigation Component로 Fragment 전환을 담당한다. 담당: B */
 class MainActivity : AppCompatActivity() {
@@ -23,6 +26,18 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHost.navController
         binding.bottomNavigation.setupWithNavController(navController)
+        // '미니게임' 탭은 바로 Fragment로 가지 않고, 내 트리의 리더보드(+게임 시작하기)부터 보여줘야 해서 직접 처리한다.
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            if (item.itemId == R.id.navigation_game) {
+                val myUid = FirebaseAuth.getInstance().currentUser?.uid
+                startActivity(
+                    if (myUid != null) GameActivity.forOwner(this, myUid) else GameActivity.practice(this),
+                )
+                true
+            } else {
+                NavigationUI.onNavDestinationSelected(item, navController)
+            }
+        }
         // 첫 화면·온보딩에서는 하단 탭을 숨긴다
         navController.addOnDestinationChangedListener { _, destination, _ ->
             binding.bottomNavigation.isVisible = destination.id !in FULL_SCREEN_DESTINATIONS

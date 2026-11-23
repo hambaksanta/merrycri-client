@@ -12,11 +12,31 @@
     <string name="placeholder_friend_tree">친구 트리 화면</string>
     <string name="placeholder_letter_read">편지 열람 화면</string>
     <string name="placeholder_leaderboard">리더보드 화면</string>
+
+    <!-- 친구 목록 화면. 담당: C (리더보드 연동) -->
+    <string name="friends_title">내 친구</string>
+    <string name="friends_subtitle">친구 트리에서 누가 1등인지 확인하고 겨뤄보세요</string>
+    <string name="friends_empty">아직 친구가 없어요
+친구 코드로 친구를 추가해보세요</string>
+    <string name="friends_top_score_format">🏆 %1$s님 %2$d점</string>
+    <string name="friends_no_score_yet">아직 플레이한 사람이 없어요 · 내가 1등 도전!</string>
+    <string name="friends_loading_score">점수 불러오는 중…</string>
+
+    <!-- 리더보드(친구 트리) 화면. 담당: C -->
+    <string name="leaderboard_title_format">%1$s의 트리 리더보드</string>
+    <string name="leaderboard_empty">아직 아무도 플레이하지 않았어요
+첫 번째로 도전해보세요!</string>
+    <string name="leaderboard_me_suffix"> (나)</string>
+    <string name="leaderboard_play_button">미니게임으로 도전하기</string>
+    <string name="leaderboard_rank_format">%1$d위</string>
+    <string name="leaderboard_score_format">%1$d점</string>
+    <string name="leaderboard_list_label">🏆 전체 순위</string>
     <string name="placeholder_game">선물 벽돌깨기 화면</string>
 
     <string name="game_title">선물 벽돌깨기</string>
     <string name="game_rules">60초 동안 선물 상자를 깨요!\n일반 상자 10점 · 황금 상자 30점\n화면을 밀어서 지팡이사탕을 움직여요</string>
     <string name="game_tap_to_start">탭해서 시작</string>
+    <string name="game_start_button">🎮 게임 시작하기</string>
     <string name="game_time_format">%1$d초</string>
     <string name="game_score_format">%1$d점</string>
     <string name="game_over_title">게임 종료!</string>

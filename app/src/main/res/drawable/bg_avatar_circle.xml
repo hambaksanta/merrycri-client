@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/bg_avatar_circle.xml · 친구 목록 아바타 배경(원형) · 담당: C -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <solid android:color="@color/pine" />
+</shape>
