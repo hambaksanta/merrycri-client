@@ -13,8 +13,10 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.MutableData
 import com.google.firebase.database.ServerValue
 import com.google.firebase.database.Transaction
+import com.hambaksanta.merrycri.data.model.Letter
 import com.hambaksanta.merrycri.data.model.UserProfile
 import java.security.SecureRandom
+import java.util.Locale
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -96,6 +98,69 @@ class FirebaseRepository(context: Context) {
         throw IllegalStateException("친구 코드를 발급하지 못했습니다.")
     }
 
+    /**
+     * 친구 코드로 수신자를 찾아 편지와 트리 장식을 한 번에 저장한다.
+     * 트리 단계용 편지 수는 ornaments/{recipientUid}의 자식 개수로 계산한다.
+     */
+    suspend fun sendLetter(
+        recipientFriendCode: String,
+        content: String,
+        ornamentType: String,
+    ) {
+        val code = recipientFriendCode.trim().uppercase(Locale.ROOT)
+        require(code.length == FRIEND_CODE_LENGTH) { "friend code must be 6 characters" }
+        val cleanContent = content.trim()
+        require(cleanContent.isNotEmpty() && cleanContent.length <= MAX_LETTER_LENGTH) {
+            "letter must be 1..300 characters"
+        }
+        val cleanOrnamentType = ornamentType.trim().lowercase(Locale.ROOT)
+        require(cleanOrnamentType in ORNAMENT_TYPES) { "unsupported ornament type" }
+
+        val senderUid = requireUid()
+        val root = requireDatabase()
+        val recipientUid = root.child(FRIEND_CODES).child(code).get().awaitResult()
+            .getValue(String::class.java)
+            ?: throw NoSuchElementException("friend code not found")
+        require(recipientUid != senderUid) { "cannot send a letter to self" }
+
+        val sender = getCurrentUser() ?: throw IllegalStateException("user profile not found")
+        val recipientOrnaments = root.child(ORNAMENTS).child(recipientUid).get().awaitResult()
+        val slot = recipientOrnaments.childrenCount.toInt().coerceAtMost(MAX_ORNAMENT_SLOT)
+        val letterId = root.child(LETTERS).child(recipientUid).push().key
+            ?: throw IllegalStateException("letter id creation failed")
+
+        root.updateChildren(
+            mapOf(
+                "$LETTERS/$recipientUid/$letterId" to mapOf(
+                    "senderUid" to senderUid,
+                    "senderNickname" to sender.nickname,
+                    "content" to cleanContent,
+                    "ornamentType" to cleanOrnamentType,
+                    "createdAt" to ServerValue.TIMESTAMP,
+                    "opened" to false,
+                ),
+                "$ORNAMENTS/$recipientUid/$senderUid" to mapOf(
+                    "type" to cleanOrnamentType,
+                    "slot" to slot,
+                    "createdAt" to ServerValue.TIMESTAMP,
+                ),
+            ),
+        ).awaitResult()
+    }
+
+    /** 공개일 이후 로그인 사용자가 받은 편지를 최신순으로 읽는다. */
+    suspend fun getReceivedLetters(): List<Letter> {
+        val snapshot = requireDatabase().child(LETTERS).child(requireUid()).get().awaitResult()
+        return snapshot.children.mapNotNull { it.toLetter() }.sortedByDescending { it.createdAt }
+    }
+
+    /** 수신자가 편지를 열었음을 저장한다. */
+    suspend fun markLetterOpened(letterId: String) {
+        require(letterId.isNotBlank()) { "letter id must not be blank" }
+        requireDatabase().child(LETTERS).child(requireUid()).child(letterId).child("opened")
+            .setValue(true).awaitResult()
+    }
+
     private suspend fun reserveFriendCode(
         root: DatabaseReference,
         userId: String,
@@ -145,6 +210,21 @@ class FirebaseRepository(context: Context) {
         return UserProfile(nickname, friendCode, createdAt)
     }
 
+    private fun DataSnapshot.toLetter(): Letter? {
+        val letterId = key ?: return null
+        val senderNickname = child("senderNickname").getValue(String::class.java) ?: return null
+        val content = child("content").getValue(String::class.java) ?: return null
+        val ornamentType = child("ornamentType").getValue(String::class.java) ?: return null
+        return Letter(
+            id = letterId,
+            senderNickname = senderNickname,
+            content = content,
+            ornamentType = ornamentType,
+            createdAt = child("createdAt").getValue(Long::class.java) ?: 0L,
+            opened = child("opened").getValue(Boolean::class.java) ?: false,
+        )
+    }
+
     private suspend fun <T> Task<T>.awaitResult(): T = suspendCancellableCoroutine { continuation ->
         addOnCompleteListener { task ->
             if (!continuation.isActive) return@addOnCompleteListener
@@ -159,9 +239,14 @@ class FirebaseRepository(context: Context) {
         const val TAG = "FirebaseRepository"
         const val USERS = "users"
         const val FRIEND_CODES = "friendCodes"
+        const val LETTERS = "letters"
+        const val ORNAMENTS = "ornaments"
         const val FRIEND_CODE_LENGTH = 6
         const val MAX_CODE_ATTEMPTS = 20
+        const val MAX_LETTER_LENGTH = 300
+        const val MAX_ORNAMENT_SLOT = 14
         const val FRIEND_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+        val ORNAMENT_TYPES = setOf("bauble", "star", "cane", "snow", "gift", "bell")
         val random = SecureRandom()
     }
 }
