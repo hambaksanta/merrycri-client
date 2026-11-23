@@ -55,4 +55,11 @@
         android:name="com.hambaksanta.merrycri.ui.leaderboard.LeaderboardFragment"
         android:label="@string/placeholder_leaderboard" />
 
+    <!-- 하단 '미니게임' 탭. 연습 모드로 바로 GameActivity를 띄운다(여분 데이터 없음 = 리더보드 미저장).
+         친구 트리에서 경쟁 모드로 들어갈 때는 GameActivity.forOwner(context, ownerUid)를 직접 써서 띄운다. -->
+    <activity
+        android:id="@+id/navigation_game"
+        android:name="com.hambaksanta.merrycri.ui.game.GameActivity"
+        android:label="@string/tab_game" />
+
 </navigation>
