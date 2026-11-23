@@ -28,6 +28,11 @@
     <string name="onboarding_friend_code_label">내 친구 코드</string>
     <string name="onboarding_continue">내 트리 보기</string>
 
+    <string name="letter_write_title">편지 쓰기</string>
+    <string name="letter_write_hint">마음을 담아 편지를 써보세요</string>
+    <string name="letter_write_save">편지 남기기</string>
+    <string name="letter_write_error_blank">편지 내용을 입력해 주세요.</string>
+
     <!-- 트리 단계 이름 · 문구 (ui/tree, TreeArt) -->
     <string name="tree_stage_1">Lv1 앙상한 나무</string>
     <string name="tree_stage_2">Lv2 새싹 트리</string>
