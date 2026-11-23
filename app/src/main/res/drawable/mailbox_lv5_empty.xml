@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 5단계 찬란한 트리 · 우체통 · 비어 있음 · 320x380 겹쳐 그림 · 담당: A -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="320dp"
+    android:height="380dp"
+    android:viewportWidth="320"
+    android:viewportHeight="380">
+    <path
+        android:pathData="M21.0,336.0a13.0,3.5 0,1 0,26.0,0a13.0,3.5 0,1 0,-26.0,0Z"
+        android:fillColor="#E6D6E0EA" />
+    <path
+        android:pathData="M31.5,280.0h5.0a1.5,1.5 0,0 1,1.5,1.5v54.0a1.5,1.5 0,0 1,-1.5,1.5h-5.0a1.5,1.5 0,0 1,-1.5,-1.5v-54.0a1.5,1.5 0,0 1,1.5,-1.5Z"
+        android:fillColor="#FF8A6446" />
+    <path
+        android:pathData="M34.5,280.0L38.0,280.0L38.0,337.0L34.5,337.0Z"
+        android:fillColor="#996E4E36" />
+    <path
+        android:pathData="M9,282V267Q9,254 22,254H44Q57,254 57,267V282Z"
+        android:fillColor="#FFC8433A" />
+    <group>
+        <clip-path android:pathData="M9,282V267Q9,254 22,254H44Q57,254 57,267V282Z" />
+        <path
+            android:pathData="M9.0,269.0L57.0,269.0L57.0,281.0L9.0,281.0Z"
+            android:fillColor="#59962E27" />
+        <path
+            android:pathData="M14.5,257.0h17.0a1.5,1.5 0,0 1,1.5,1.5v0.0a1.5,1.5 0,0 1,-1.5,1.5h-17.0a1.5,1.5 0,0 1,-1.5,-1.5v-0.0a1.5,1.5 0,0 1,1.5,-1.5Z"
+            android:fillColor="#38FFFFFF" />
+    </group>
+    <path
+        android:pathData="M54,282V265Q54,255.5 56.5,257"
+        android:strokeColor="#FF962E27"
+        android:strokeWidth="2.2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M49.4,270.0a1.6,1.6 0,1 0,3.2,0a1.6,1.6 0,1 0,-3.2,0Z"
+        android:fillColor="#FF962E27" />
+    <path
+        android:pathData="M15.0,258.0h0.6a1.0,1.0 0,0 1,1.0,1.0v12.0a1.0,1.0 0,0 1,-1.0,1.0h-0.6a1.0,1.0 0,0 1,-1.0,-1.0v-12.0a1.0,1.0 0,0 1,1.0,-1.0Z"
+        android:fillColor="#FF5E4A3A" />
+    <path
+        android:pathData="M16.0,258.0h8.0a1.0,1.0 0,0 1,1.0,1.0v4.0a1.0,1.0 0,0 1,-1.0,1.0h-8.0a1.0,1.0 0,0 1,-1.0,-1.0v-4.0a1.0,1.0 0,0 1,1.0,-1.0Z"
+        android:fillColor="#FFB65040" />
+    <path
+        android:pathData="M13.0,256.5C12.9,255.4 17.1,252.6 20.4,251.5C23.7,250.4 28.8,250.0 33.0,250.0C37.2,250.0 42.3,250.4 45.6,251.5C48.9,252.6 53.1,255.4 53.0,256.5C52.9,257.6 47.3,258.2 45.0,258.1C42.7,258.0 41.0,255.9 39.0,256.1C37.0,256.3 35.0,259.3 33.0,259.3C31.0,259.3 29.0,256.3 27.0,256.1C25.0,255.9 23.3,258.0 21.0,258.1C18.7,258.2 13.1,257.6 13.0,256.5Z"
+        android:fillColor="#FFFFFFFF" />
+</vector>

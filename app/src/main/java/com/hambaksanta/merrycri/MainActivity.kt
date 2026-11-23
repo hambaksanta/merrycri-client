@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.navOptions
 import androidx.navigation.ui.setupWithNavController
 import com.hambaksanta.merrycri.databinding.ActivityMainBinding
 
@@ -22,8 +23,23 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHost.navController
         binding.bottomNavigation.setupWithNavController(navController)
+        // 첫 화면·온보딩에서는 하단 탭을 숨긴다
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            binding.bottomNavigation.isVisible = destination.id != R.id.onboardingFragment
+            binding.bottomNavigation.isVisible = destination.id !in FULL_SCREEN_DESTINATIONS
+        }
+        // 앱을 새로 켤 때만 첫 화면(편지 트리 인트로)을 시작 화면(온보딩) 위에 띄운다. 회전 등으로 다시 만들 때는 건너뜀.
+        // 인트로가 끝나면 닫히고, 아래 온보딩이 기존 사용자는 홈으로, 새 사용자는 닉네임 입력으로 보낸다.
+        if (savedInstanceState == null) {
+            navController.navigate(
+                R.id.introFragment,
+                null,
+                navOptions {
+                    anim {
+                        popEnter = android.R.anim.fade_in
+                        popExit = android.R.anim.fade_out
+                    }
+                },
+            )
         }
     }
 
@@ -35,5 +51,9 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         app.audio.pause()
         super.onStop()
+    }
+
+    companion object {
+        private val FULL_SCREEN_DESTINATIONS = setOf(R.id.introFragment, R.id.onboardingFragment)
     }
 }

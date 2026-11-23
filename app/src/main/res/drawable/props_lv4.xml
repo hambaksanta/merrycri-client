@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 4단계 불빛이 켜진 트리 · 땅 위 소품 (트리 앞에 그림) · 320x380 겹쳐 그림 · 담당: A -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="320dp"
+    android:height="380dp"
+    android:viewportWidth="320"
+    android:viewportHeight="380">
+    <path
+        android:pathData="M246.0,316.0a40.0,40.0 0,1 0,80.0,0a40.0,40.0 0,1 0,-80.0,0Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="286"
+                android:centerY="316"
+                android:gradientRadius="40">
+                <item android:offset="0" android:color="#8CFFD27A" />
+                <item android:offset="1" android:color="#00FFD27A" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M274.0,335.0a12.0,3.0 0,1 0,24.0,0a12.0,3.0 0,1 0,-24.0,0Z"
+        android:fillColor="#E6D6E0EA" />
+    <path
+        android:pathData="M278.5,328.0h15.0a1.5,1.5 0,0 1,1.5,1.5v3.0a1.5,1.5 0,0 1,-1.5,1.5h-15.0a1.5,1.5 0,0 1,-1.5,-1.5v-3.0a1.5,1.5 0,0 1,1.5,-1.5Z"
+        android:fillColor="#FF3D3834" />
+    <path
+        android:pathData="M279.0,305.0L293.0,305.0L293.0,328.0L279.0,328.0Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="0"
+                android:startY="305"
+                android:endX="0"
+                android:endY="328">
+                <item android:offset="0" android:color="#FFFFE8A8" />
+                <item android:offset="1" android:color="#FFFFC25E" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M284.2,322C282.5,318 286,314 286,312C286,314 289.5,318 287.8,322Z"
+        android:fillColor="#FFFF9A3C" />
+    <path
+        android:pathData="M279.0,305.0L279.0,328.0"
+        android:strokeColor="#FF3D3834"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M286.0,305.0L286.0,328.0"
+        android:strokeColor="#FF3D3834"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M293.0,305.0L293.0,328.0"
+        android:strokeColor="#FF3D3834"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M276.0,305.0L296.0,305.0L291.0,297.0L281.0,297.0Z"
+        android:fillColor="#FF3D3834" />
+    <path
+        android:pathData="M282.4,293.0a3.6,3.6 0,1 0,7.2,0a3.6,3.6 0,1 0,-7.2,0Z"
+        android:strokeColor="#FF3D3834"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M275.0,304.0C274.7,302.8 277.9,300.5 279.7,299.5C281.5,298.5 283.9,298.0 286.0,298.0C288.1,298.0 290.5,298.5 292.3,299.5C294.1,300.5 297.3,303.0 297.0,304.0C296.7,305.0 292.3,305.7 290.5,305.6C288.7,305.5 287.5,303.4 286.0,303.6C284.5,303.8 283.3,306.7 281.5,306.8C279.7,306.9 275.3,305.2 275.0,304.0Z"
+        android:fillColor="#FFFFFFFF" />
+</vector>

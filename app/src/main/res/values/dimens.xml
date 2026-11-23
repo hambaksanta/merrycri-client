@@ -27,4 +27,7 @@
     <dimen name="ornament_picker_size">34dp</dimen> <!-- 편지 쓰기 화면의 장식 고르기 -->
     <dimen name="avatar_size">44dp</dimen>         <!-- 친구 목록 트리 아이콘 -->
     <dimen name="progress_height">10dp</dimen>
+
+    <!-- 첫 화면: 시스템 스플래시 아이콘 칸과 같은 크기(안드로이드 12+ 288dp) -->
+    <dimen name="intro_icon_size">288dp</dimen>
 </resources>

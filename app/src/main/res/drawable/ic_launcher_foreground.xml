@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 앱 아이콘 B 편지 트리 (적응형 전경, 스플래시 아이콘) · 담당: A -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:pivotX="54"
+        android:pivotY="54"
+        android:scaleX="0.72"
+        android:scaleY="0.72">
+        <path
+            android:pathData="M27,50h54a5,5 0,0 1,5,5v30a5,5 0,0 1,-5,5h-54a5,5 0,0 1,-5,-5v-30a5,5 0,0 1,5,-5Z"
+            android:fillColor="#FF8E2A1C" />
+        <path
+            android:pathData="M54.0,21.0L68.0,43.0L40.0,43.0Z"
+            android:fillColor="#FF2B7B54" />
+        <path
+            android:pathData="M54.0,30.0L73.0,56.0L35.0,56.0Z"
+            android:fillColor="#FF1F5E46" />
+        <path
+            android:pathData="M54.0,40.0L77.0,67.0L31.0,67.0Z"
+            android:fillColor="#FF2B7B54" />
+        <path
+            android:pathData="M54.0,11.5L55.8,16.0L60.7,16.3L56.9,19.5L58.1,24.2L54.0,21.6L49.9,24.2L51.1,19.5L47.3,16.3L52.2,16.0Z"
+            android:fillColor="#FFE8B54A" />
+        <path
+            android:pathData="M22,60L54,78L86,60L86,85Q86,90 81,90L27,90Q22,90 22,85Z"
+            android:fillColor="#FFB83A28" />
+        <path
+            android:pathData="M22.0,88.0L46.0,72.0"
+            android:strokeColor="#FFD2604C"
+            android:strokeWidth="2"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M86.0,88.0L62.0,72.0"
+            android:strokeColor="#FFD2604C"
+            android:strokeWidth="2"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M48.8,77.0a5.2,5.2 0,1 0,10.4,0a5.2,5.2 0,1 0,-10.4,0Z"
+            android:fillColor="#FFE8B54A" />
+        <path
+            android:pathData="M51.4,77l2.1,2.1l3.6,-4.2"
+            android:strokeColor="#FFB83A28"
+            android:strokeWidth="1.7"
+            android:strokeLineCap="round" />
+    </group>
+</vector>
