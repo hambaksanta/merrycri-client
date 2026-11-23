@@ -30,8 +30,17 @@
 
     <string name="letter_write_title">편지 쓰기</string>
     <string name="letter_write_hint">마음을 담아 편지를 써보세요</string>
+    <string name="letter_write_recipient_label">받을 친구 코드</string>
+    <string name="letter_write_ornament_label">트리에 달 장식 고르기</string>
     <string name="letter_write_save">편지 남기기</string>
     <string name="letter_write_error_blank">편지 내용을 입력해 주세요.</string>
+    <string name="letter_write_error_recipient_blank">친구 코드를 입력해 주세요.</string>
+    <string name="letter_write_error_recipient_invalid">6자리 친구 코드를 입력해 주세요.</string>
+    <string name="letter_write_error_recipient_not_found">존재하지 않는 친구 코드예요.</string>
+    <string name="letter_write_error_self">자기 자신에게는 보낼 수 없어요.</string>
+    <string name="letter_write_error_ornament">장식을 선택해 주세요.</string>
+    <string name="letter_write_error_generic">편지를 보내지 못했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="letter_write_success">편지를 보냈어요!</string>
 
     <!-- 트리 단계 이름 · 문구 (ui/tree, TreeArt) -->
     <string name="tree_stage_1">Lv1 앙상한 나무</string>
