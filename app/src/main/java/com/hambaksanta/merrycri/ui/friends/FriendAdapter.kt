@@ -1,0 +1,63 @@
+// ui/friends/FriendAdapter.kt
+package com.hambaksanta.merrycri.ui.friends
+
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.hambaksanta.merrycri.R
+import com.hambaksanta.merrycri.databinding.ItemFriendBinding
+
+class FriendAdapter : ListAdapter<FriendListItem, FriendAdapter.FriendViewHolder>(DiffCallback) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendViewHolder {
+        val binding = ItemFriendBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return FriendViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: FriendViewHolder, position: Int) {
+        holder.bind(getItem(position))
+    }
+
+    class FriendViewHolder(
+        private val binding: ItemFriendBinding,
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: FriendListItem) = with(binding) {
+            friendNickname.text = item.nickname
+            friendCode.text = root.context.getString(R.string.friends_code_value, item.friendCode)
+            friendTreeStage.text = root.context.getString(
+                when (item.treeStage) {
+                    1 -> R.string.tree_stage_1
+                    2 -> R.string.tree_stage_2
+                    3 -> R.string.tree_stage_3
+                    4 -> R.string.tree_stage_4
+                    else -> R.string.tree_stage_5
+                },
+            )
+            friendLetterCount.text = root.context.getString(
+                R.string.friends_letter_count,
+                item.letterCount,
+            )
+            friendTreeImage.setImageResource(
+                when (item.treeStage) {
+                    1 -> R.drawable.tree_lv1
+                    2 -> R.drawable.tree_lv2
+                    3 -> R.drawable.tree_lv3
+                    4 -> R.drawable.tree_lv4
+                    else -> R.drawable.tree_lv5
+                },
+            )
+            statusDone.isVisible = item.hasWritten
+            statusTodo.isVisible = !item.hasWritten
+        }
+    }
+
+    private object DiffCallback : DiffUtil.ItemCallback<FriendListItem>() {
+        override fun areItemsTheSame(oldItem: FriendListItem, newItem: FriendListItem): Boolean =
+            oldItem.uid == newItem.uid
+
+        override fun areContentsTheSame(oldItem: FriendListItem, newItem: FriendListItem): Boolean =
+            oldItem == newItem
+    }
+}
