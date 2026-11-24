@@ -30,9 +30,8 @@
     <string name="friends_error_already_added">이미 추가한 친구입니다.</string>
     <string name="friends_error_connection">친구 목록을 불러오지 못했습니다. 인터넷 연결을 확인해 주세요.</string>
 
-    <!-- 내 친구 코드 보여주기·복사·공유 (트리 홈, 담당: A) -->
+    <!-- 내 친구 코드 보여주기·복사·공유 (친구 화면 위쪽 카드, 담당: A) -->
     <string name="my_code_label">내 친구 코드</string>
-    <string name="my_code_hint">친구에게 알려 주면 내 트리에 편지를 남길 수 있어요</string>
     <string name="my_code_copy">복사</string>
     <string name="my_code_share">공유</string>
     <string name="my_code_copied">친구 코드를 복사했어요</string>
