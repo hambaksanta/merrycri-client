@@ -40,6 +40,7 @@ class GameActivity : AppCompatActivity(), BreakoutListener {
         setContentView(binding.root)
 
         binding.breakoutView.listener = this
+        binding.timeText.text = getString(R.string.game_time_format, GAME_DURATION_SEC)
         binding.timeProgress.progress = GAME_DURATION_SEC
         binding.livesText.text = heartsText(3)
         binding.scoreText.text = getString(R.string.game_score_format, 0)
@@ -75,6 +76,7 @@ class GameActivity : AppCompatActivity(), BreakoutListener {
     /** 친구 트리 모드면 1단계(순위) 화면, 연습 모드면 바로 2단계(설명) 화면을 보여준다. 둘 다 상단 바는 숨긴다. */
     private fun showPreGameScreen() {
         binding.topBar.isVisible = false
+        binding.timeIcon.isVisible = false
         binding.timeProgress.isVisible = false
         if (ownerUid != null) {
             binding.rankOverlay.isVisible = true
@@ -86,11 +88,13 @@ class GameActivity : AppCompatActivity(), BreakoutListener {
     /** 실제 플레이 시작. 이때만 상단 바(타이머·하트·점수·나가기)가 보인다. */
     private fun startPlaying() {
         binding.topBar.isVisible = true
+        binding.timeIcon.isVisible = true
         binding.timeProgress.isVisible = true
         binding.breakoutView.start()
     }
 
     private fun resetHud() {
+        binding.timeText.text = getString(R.string.game_time_format, GAME_DURATION_SEC)
         binding.timeProgress.progress = GAME_DURATION_SEC
         binding.livesText.text = heartsText(3)
         binding.scoreText.text = getString(R.string.game_score_format, 0)
@@ -135,7 +139,9 @@ class GameActivity : AppCompatActivity(), BreakoutListener {
     }
 
     override fun onTimeChanged(secondsLeft: Int) {
-        binding.timeProgress.progress = secondsLeft.coerceIn(0, GAME_DURATION_SEC)
+        val clamped = secondsLeft.coerceIn(0, GAME_DURATION_SEC)
+        binding.timeText.text = getString(R.string.game_time_format, clamped)
+        binding.timeProgress.progress = clamped
     }
 
     override fun onBrickHit(golden: Boolean, scoreGained: Int) {
@@ -165,6 +171,7 @@ class GameActivity : AppCompatActivity(), BreakoutListener {
     override fun onGameOver(finalScore: Int) {
         app.audio.playSfx(Sfx.BELL)
         binding.topBar.isVisible = false
+        binding.timeIcon.isVisible = false
         binding.timeProgress.isVisible = false
         binding.resultScore.text = getString(R.string.game_score_format, finalScore)
         binding.resultNote.isVisible = false

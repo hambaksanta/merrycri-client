@@ -37,6 +37,7 @@
     <string name="game_tap_to_start">탭해서 시작</string>
     <string name="game_start_button">🎮 게임 시작하기</string>
     <string name="game_time_format">%1$d초</string>
+    <string name="game_time_icon">⏳</string>
     <string name="game_score_format">%1$d점</string>
     <string name="game_level_up_format">🎄 레벨 %1$d!</string>
     <string name="game_score_popup_format">+%1$d</string>

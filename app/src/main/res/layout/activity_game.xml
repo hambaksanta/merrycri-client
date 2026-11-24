@@ -33,6 +33,19 @@
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <TextView
+            android:id="@+id/time_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_12"
+            android:gravity="start"
+            android:textColor="@color/white"
+            android:textAppearance="@style/TextAppearance.MerryCri.Subtitle"
+            tools:text="52초"
+            app:layout_constraintStart_toEndOf="@id/exit_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <TextView
             android:id="@+id/score_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -59,20 +72,34 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- 남은 시간을 숫자 대신 줄어드는 막대로 보여주는 구분선 겸 프로그레스바. 선물(벽돌) 영역과 상단 HUD 사이에 위치. -->
+    <!-- 남은 시간을 모래시계 아이콘 + 줄어드는 막대로 보여주는 구분선 겸 프로그레스바. 선물(벽돌) 영역과 상단 HUD 사이에 위치. -->
+    <TextView
+        android:id="@+id/time_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/screen_padding"
+        android:text="@string/game_time_icon"
+        android:textColor="@color/gold"
+        android:textAppearance="@style/TextAppearance.MerryCri.Subtitle"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/time_progress"
+        app:layout_constraintBottom_toBottomOf="@id/time_progress" />
+
     <ProgressBar
         android:id="@+id/time_progress"
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_width="0dp"
         android:layout_height="6dp"
-        android:layout_marginHorizontal="@dimen/screen_padding"
+        android:layout_marginStart="@dimen/space_8"
+        android:layout_marginEnd="@dimen/screen_padding"
         android:layout_marginTop="@dimen/space_8"
         android:max="60"
         android:progress="60"
         android:progressTint="@color/gold"
         android:progressBackgroundTint="@color/night_text_muted"
         android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/time_icon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/top_bar" />
 
