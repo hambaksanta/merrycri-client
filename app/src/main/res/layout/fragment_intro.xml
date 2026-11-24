@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- res/layout/fragment_intro.xml · 앱 첫 화면: 편지 트리가 자라서 내 트리가 된다 · 담당: A
-     봉투 3장(안쪽·트리·앞면)은 시스템 스플래시 아이콘과 같은 288dp·화면 가운데에 겹쳐 둔다.
-     움직임은 IntroFragment.playIntro() 참고. -->
+<!-- res/layout/fragment_intro.xml · 앱 첫 화면 · 담당: A
+     봉투 속 트리가 점프해서 땅에 뿌리내리고(Lv1), 우체통에서 편지가 한 통씩 날아와 맞을 때마다 한 단계씩 자란다.
+     신규 사용자는 Lv5까지(시연), 기존 사용자는 내 단계까지. 움직임은 IntroFragment.render() 한 곳에서 시간표대로 그린다.
+     봉투 3장(안쪽·트리·앞면)은 시스템 스플래시 아이콘과 같은 288dp·화면 가운데에 겹쳐 둔다. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_intro"
     android:layout_width="match_parent"
@@ -11,15 +13,30 @@
     android:clickable="true"
     android:focusable="true">
 
-    <ImageView
-        android:id="@+id/image_sky"
+    <!-- 하늘 2장: 단계가 바뀔 때 번갈아 덮는다 -->
+    <FrameLayout
+        android:id="@+id/layout_skies"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:importantForAccessibility="no"
-        android:scaleType="centerCrop"
-        android:visibility="invisible"
-        tools:src="@drawable/bg_sky_lv4"
-        tools:visibility="visible" />
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/image_sky_a"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:importantForAccessibility="no"
+            android:scaleType="centerCrop"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/image_sky_b"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:importantForAccessibility="no"
+            android:scaleType="centerCrop"
+            android:visibility="invisible"
+            tools:src="@drawable/bg_sky_lv5"
+            tools:visibility="visible" />
+    </FrameLayout>
 
     <!-- 오로라 (Lv5만, 물결치며 움직임) -->
     <com.hambaksanta.merrycri.ui.tree.AuroraView
@@ -35,14 +52,30 @@
         android:layout_height="match_parent"
         android:alpha="0" />
 
-    <!-- 내 트리: 트리·전구·별·소품만 (하늘은 위 image_sky). 도착하면 흔들림·깜빡임이 시작된다 -->
+    <!-- 트리 장면 2개: 단계가 오를 때 번갈아 쓴다 (트리·전구·별·장식·소품·우체통만, 하늘은 위에서 깔았음) -->
     <com.hambaksanta.merrycri.ui.tree.TreeSceneView
-        android:id="@+id/tree_scene"
+        android:id="@+id/scene_a"
+        android:layout_width="340dp"
+        android:layout_height="404dp"
+        android:layout_gravity="center"
+        android:alpha="0"
+        android:importantForAccessibility="no" />
+
+    <com.hambaksanta.merrycri.ui.tree.TreeSceneView
+        android:id="@+id/scene_b"
         android:layout_width="340dp"
         android:layout_height="404dp"
         android:layout_gravity="center"
         android:alpha="0"
         android:contentDescription="@string/intro_cd_my_tree" />
+
+    <ImageView
+        android:id="@+id/image_letter"
+        android:layout_width="22dp"
+        android:layout_height="15dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/intro_letter"
+        android:visibility="invisible" />
 
     <ImageView
         android:id="@+id/image_envelope_back"
@@ -73,39 +106,56 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:layout_marginTop="96dp"
+        android:layout_marginTop="92dp"
         android:alpha="0"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         tools:alpha="1">
 
-        <TextView
-            android:id="@+id/text_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textAppearance="@style/TextAppearance.MerryCri.Display"
-            android:textSize="34sp" />
+        <!-- 타이틀: 109 박스테이프 글자 조각을 다시 배치한 그림 (폰트 파일은 넣지 않음) -->
+        <ImageView
+            android:id="@+id/image_title"
+            android:layout_width="236dp"
+            android:layout_height="63dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/title_merrycri"
+            app:tint="@color/white" />
 
         <TextView
             android:id="@+id/text_dday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/bg_intro_dday"
             android:paddingHorizontal="14dp"
             android:paddingVertical="5dp"
             android:textAppearance="@style/TextAppearance.MerryCri.Label"
             android:textColor="@color/ink"
-            tools:text="크리스마스까지 D-33" />
+            tools:text="크리스마스까지 D-31" />
 
         <TextView
             android:id="@+id/text_stage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="9dp"
+            android:gravity="center"
+            android:lineSpacingExtra="2dp"
             android:textAppearance="@style/TextAppearance.MerryCri.Caption"
-            tools:text="내 트리 · Lv4 빛나는 트리" />
+            android:textStyle="bold"
+            tools:text="친구들의 편지가 모이면\n이렇게 자라요" />
     </LinearLayout>
+
+    <!-- 신규 사용자만: 누르면 인트로가 닫히고 온보딩(닉네임 입력)으로 -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_start"
+        style="@style/Widget.MerryCri.Button.Accent"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/button_height"
+        android:layout_gravity="bottom"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="34dp"
+        android:alpha="0"
+        android:text="@string/intro_start"
+        android:visibility="gone" />
 
 </FrameLayout>
