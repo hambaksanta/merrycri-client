@@ -4,6 +4,7 @@ package com.hambaksanta.merrycri.ui.game
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -155,6 +156,15 @@ class GameActivity : AppCompatActivity(), BreakoutListener {
                         binding.resultNote.text = getString(R.string.game_new_best)
                         binding.resultNote.isVisible = true
                     }
+                }
+                .onFailure { error ->
+                    // 순위에 점수가 안 보인다는 문의가 있어 원인을 바로 확인할 수 있도록 임시로 에러를 노출한다.
+                    android.util.Log.e("GameActivity", "saveBestScore 실패: owner=$owner", error)
+                    Toast.makeText(
+                        this@GameActivity,
+                        "점수 저장 실패: ${error.message}",
+                        Toast.LENGTH_LONG,
+                    ).show()
                 }
         }
     }
