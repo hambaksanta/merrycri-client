@@ -24,8 +24,7 @@
 
     <!-- 리더보드(친구 트리) 화면. 담당: C -->
     <string name="leaderboard_title_format">%1$s의 트리 리더보드</string>
-    <string name="leaderboard_empty">아직 아무도 플레이하지 않았어요
-첫 번째로 도전해보세요!</string>
+    <string name="leaderboard_empty">아직 아무도 플레이하지 않았어요! \n첫 번째로 도전해보세요! \n(편지쓰기를 완료해야 순위에 등록됩니다)</string>
     <string name="leaderboard_me_suffix"> (나)</string>
     <string name="leaderboard_play_button">벽돌게임으로 도전하기</string>
     <string name="leaderboard_rank_format">%1$d위</string>
