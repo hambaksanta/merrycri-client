@@ -39,6 +39,7 @@
     <string name="game_time_format">%1$d초</string>
     <string name="game_score_format">%1$d점</string>
     <string name="game_level_up_format">🎄 레벨 %1$d!</string>
+    <string name="game_score_popup_format">+%1$d</string>
     <string name="game_over_title">게임 종료!</string>
     <string name="game_new_best">새 최고기록이에요!</string>
     <string name="game_play_again">다시하기</string>

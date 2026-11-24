@@ -21,7 +21,7 @@ interface BreakoutListener {
     fun onScoreChanged(score: Int)
     fun onLivesChanged(lives: Int)
     fun onTimeChanged(secondsLeft: Int)
-    fun onBrickHit(golden: Boolean)
+    fun onBrickHit(golden: Boolean, scoreGained: Int)
     fun onLifeLost()
     fun onGameOver(finalScore: Int)
     /** 보드를 다 깨서 다음 레벨(새 벽돌 배치 패턴)로 넘어갈 때 호출. */
@@ -355,7 +355,7 @@ class BreakoutView @JvmOverloads constructor(
                     val base = if (brick.golden) goldenBrickScore else normalBrickScore
                     score += base * multiplier
                     listener?.onScoreChanged(score)
-                    listener?.onBrickHit(brick.golden)
+                    listener?.onBrickHit(brick.golden, base * multiplier)
                     val hitFromSide = ball.x < brick.rect.left || ball.x > brick.rect.right
                     if (hitFromSide) ball.dx = -ball.dx else ball.dy = -ball.dy
                     break

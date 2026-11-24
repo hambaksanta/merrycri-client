@@ -125,6 +125,7 @@ class GameActivity : AppCompatActivity(), BreakoutListener {
 
     override fun onScoreChanged(score: Int) {
         binding.scoreText.text = getString(R.string.game_score_format, score)
+        pulseScore()
     }
 
     override fun onLivesChanged(lives: Int) {
@@ -135,8 +136,9 @@ class GameActivity : AppCompatActivity(), BreakoutListener {
         binding.timeText.text = getString(R.string.game_time_format, secondsLeft)
     }
 
-    override fun onBrickHit(golden: Boolean) {
+    override fun onBrickHit(golden: Boolean, scoreGained: Int) {
         app.audio.playSfx(if (golden) Sfx.CHIME else Sfx.SNAP)
+        showScorePopup(scoreGained)
     }
 
     override fun onLifeLost() {
@@ -203,11 +205,50 @@ class GameActivity : AppCompatActivity(), BreakoutListener {
         }
     }
 
-    private fun heartsText(lives: Int): String =
-        List(lives.coerceAtLeast(0)) { HEART_CHAR }.joinToString(" ")
+    /** 목숨은 오른쪽 정렬, 잃은 목숨(빈 하트)이 왼쪽부터 보이도록 한다. */
+    private fun heartsText(lives: Int): String {
+        val filled = lives.coerceIn(0, MAX_LIVES)
+        val empty = MAX_LIVES - filled
+        return (List(empty) { HEART_EMPTY_CHAR } + List(filled) { HEART_CHAR }).joinToString(" ")
+    }
+
+    /** 점수가 오를 때마다 점수 글자가 살짝 커졌다 돌아오는 하트비트 효과. */
+    private fun pulseScore() {
+        binding.scoreText.animate().cancel()
+        binding.scoreText.scaleX = 1f
+        binding.scoreText.scaleY = 1f
+        binding.scoreText.animate()
+            .scaleX(1.35f)
+            .scaleY(1.35f)
+            .setDuration(90)
+            .withEndAction {
+                binding.scoreText.animate().scaleX(1f).scaleY(1f).setDuration(140).start()
+            }
+            .start()
+    }
+
+    /** 벽돌이 깨질 때마다 "+N" 점수가 위로 떠오르며 사라지는 효과. */
+    private fun showScorePopup(delta: Int) {
+        val popup = binding.scorePopupText
+        popup.animate().cancel()
+        popup.text = getString(R.string.game_score_popup_format, delta)
+        popup.translationY = 0f
+        popup.alpha = 1f
+        popup.animate()
+            .translationY(-60f)
+            .alpha(0f)
+            .setDuration(650)
+            .withEndAction {
+                popup.alpha = 0f
+                popup.translationY = 0f
+            }
+            .start()
+    }
 
     companion object {
         private const val HEART_CHAR = "♥"
+        private const val HEART_EMPTY_CHAR = "♡"
+        private const val MAX_LIVES = 3
         private const val EXTRA_OWNER_UID = "owner_uid"
 
         /** 친구 트리 화면에서 미니게임을 시작할 때 쓴다. 결과가 그 친구의 리더보드에 반영된다. */
