@@ -10,10 +10,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hambaksanta.merrycri.R
 import com.hambaksanta.merrycri.databinding.ItemFriendBinding
 
-class FriendAdapter : ListAdapter<FriendListItem, FriendAdapter.FriendViewHolder>(DiffCallback) {
+/** 친구 목록 줄. 탭하면 그 친구 트리 경쟁 모드로 미니게임을 띄운다(onClick). 1등 점수 표시 담당: C */
+class FriendAdapter(
+    private val onClick: (FriendListItem) -> Unit = {},
+) : ListAdapter<FriendListItem, FriendAdapter.FriendViewHolder>(DiffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendViewHolder {
         val binding = ItemFriendBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return FriendViewHolder(binding)
+        return FriendViewHolder(binding, onClick)
     }
 
     override fun onBindViewHolder(holder: FriendViewHolder, position: Int) {
@@ -22,10 +25,14 @@ class FriendAdapter : ListAdapter<FriendListItem, FriendAdapter.FriendViewHolder
 
     class FriendViewHolder(
         private val binding: ItemFriendBinding,
+        private val onClick: (FriendListItem) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: FriendListItem) = with(binding) {
             friendNickname.text = item.nickname
             friendCode.text = root.context.getString(R.string.friends_code_value, item.friendCode)
+            topScoreText.text = item.topScore?.let { score ->
+                root.context.getString(R.string.friends_top_score_format, score.nickname, score.best)
+            } ?: root.context.getString(R.string.friends_no_score_yet)
             friendTreeStage.text = root.context.getString(
                 when (item.treeStage) {
                     1 -> R.string.tree_stage_1
@@ -50,6 +57,7 @@ class FriendAdapter : ListAdapter<FriendListItem, FriendAdapter.FriendViewHolder
             )
             statusDone.isVisible = item.hasWritten
             statusTodo.isVisible = !item.hasWritten
+            root.setOnClickListener { onClick(item) }
         }
     }
 
