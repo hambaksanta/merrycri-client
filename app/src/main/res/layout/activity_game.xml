@@ -84,6 +84,45 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <LinearLayout
+            android:id="@+id/rank_top_nav"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/space_12"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/rank_back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/space_4"
+                android:text="@string/game_back_button"
+                android:textColor="@color/ink"
+                android:textAppearance="@style/TextAppearance.MerryCri.Body"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/rank_home_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/space_4"
+                android:text="@string/game_home_button"
+                android:textColor="@color/ink"
+                android:textAppearance="@style/TextAppearance.MerryCri.Body"
+                android:clickable="true"
+                android:focusable="true" />
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/rank_board_label"
             android:layout_width="0dp"
@@ -93,7 +132,7 @@
             android:textAppearance="@style/TextAppearance.MerryCri.Subtitle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/rank_top_nav" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rank_score_recycler"

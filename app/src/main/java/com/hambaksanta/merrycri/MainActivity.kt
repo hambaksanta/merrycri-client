@@ -63,6 +63,15 @@ class MainActivity : AppCompatActivity() {
         app.audio.resume()
     }
 
+    override fun onResume() {
+        super.onResume()
+        // GameActivity의 '홈으로 가기' 버튼에서 돌아온 경우, 트리(홈) 탭을 선택해 보여준다.
+        if (pendingHomeTab) {
+            pendingHomeTab = false
+            binding.bottomNavigation.selectedItemId = R.id.navigation_tree
+        }
+    }
+
     override fun onStop() {
         app.audio.pause()
         super.onStop()
@@ -70,5 +79,8 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private val FULL_SCREEN_DESTINATIONS = setOf(R.id.introFragment, R.id.onboardingFragment)
+
+        /** GameActivity의 '홈으로 가기' 버튼이 true로 설정하고 finish()한다. 담당: C(게임) → 소비는 B(MainActivity) 영역. */
+        var pendingHomeTab = false
     }
 }

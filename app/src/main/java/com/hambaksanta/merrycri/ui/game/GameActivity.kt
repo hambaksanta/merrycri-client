@@ -67,6 +67,11 @@ class GameActivity : AppCompatActivity(), BreakoutListener {
             showPreGameScreen()
         }
         binding.exitButton.setOnClickListener { onExitRequested() }
+        binding.rankBackButton.setOnClickListener { finish() }
+        binding.rankHomeButton.setOnClickListener {
+            com.hambaksanta.merrycri.MainActivity.pendingHomeTab = true
+            finish()
+        }
     }
 
     /** 친구 트리 모드면 1단계(순위) 화면, 연습 모드면 바로 2단계(설명) 화면을 보여준다. 둘 다 상단 바는 숨긴다. */

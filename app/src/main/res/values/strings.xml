@@ -43,6 +43,8 @@
     <string name="game_new_best">새 최고기록이에요!</string>
     <string name="game_play_again">다시하기</string>
     <string name="game_close">내 순위 보러가기</string>
+    <string name="game_back_button">← 뒤로가기</string>
+    <string name="game_home_button">🏠 홈으로 가기</string>
     <string name="game_exit_symbol">✕</string>
     <string name="game_exit">나가기</string>
     <string name="game_exit_confirm_title">게임을 나가시겠어요?</string>
