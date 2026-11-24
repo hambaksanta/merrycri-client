@@ -7,11 +7,10 @@
     android:layout_height="match_parent"
     android:background="@color/night">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/top_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:paddingHorizontal="@dimen/screen_padding"
         android:paddingVertical="@dimen/space_12"
         android:layout_marginTop="@dimen/space_16"
@@ -22,52 +21,66 @@
             android:id="@+id/exit_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/space_12"
             android:padding="@dimen/space_4"
             android:text="@string/game_exit_symbol"
             android:contentDescription="@string/game_exit"
             android:textColor="@color/white"
             android:textAppearance="@style/TextAppearance.MerryCri.Subtitle"
             android:clickable="true"
-            android:focusable="true" />
-
-        <TextView
-            android:id="@+id/time_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="start"
-            android:textColor="@color/white"
-            android:textAppearance="@style/TextAppearance.MerryCri.Subtitle"
-            tools:text="⏱ 0:60" />
+            android:focusable="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <TextView
             android:id="@+id/score_text"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:gravity="center"
             android:textColor="@color/gold"
             android:textAppearance="@style/TextAppearance.MerryCri.Subtitle"
-            tools:text="0점" />
+            tools:text="0점"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <TextView
             android:id="@+id/lives_text"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:gravity="end"
             android:textColor="@color/berry_light"
             android:textAppearance="@style/TextAppearance.MerryCri.Subtitle"
-            tools:text="♥ ♥ ♥" />
+            tools:text="♥ ♥ ♥"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- 남은 시간을 숫자 대신 줄어드는 막대로 보여주는 구분선 겸 프로그레스바. 선물(벽돌) 영역과 상단 HUD 사이에 위치. -->
+    <ProgressBar
+        android:id="@+id/time_progress"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="6dp"
+        android:layout_marginHorizontal="@dimen/screen_padding"
+        android:layout_marginTop="@dimen/space_8"
+        android:max="60"
+        android:progress="60"
+        android:progressTint="@color/gold"
+        android:progressBackgroundTint="@color/night_text_muted"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_bar" />
 
     <com.hambaksanta.merrycri.ui.game.BreakoutView
         android:id="@+id/breakout_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/top_bar"
+        app:layout_constraintTop_toBottomOf="@id/time_progress"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <TextView
@@ -82,7 +95,7 @@
         tools:text="+30"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/top_bar" />
+        app:layout_constraintTop_toBottomOf="@id/time_progress" />
 
     <!-- 1단계: 흰(크림) 화면 — 친구 트리 전체 순위 + 하단 '게임 시작하기'. 게임이 끝나고 돌아오는 화면이기도 하다. 담당: C -->
     <androidx.constraintlayout.widget.ConstraintLayout
