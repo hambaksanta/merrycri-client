@@ -42,7 +42,7 @@ class BreakoutView @JvmOverloads constructor(
     // ===== 게임 상수 =====
     private val totalMillis = GAME_DURATION_MS
     private val maxLives = 3
-    private val rows = 6
+    private val rows = 5
     private val cols = 7
     private val goldenChance = 0.12
     private val baseSpeedPxPerSec = 680f

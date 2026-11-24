@@ -3,7 +3,7 @@
 
     <string name="tab_tree">트리</string>
     <string name="tab_friends">친구</string>
-    <string name="tab_game">미니게임</string>
+    <string name="tab_game">게임</string>
 
     <string name="placeholder_tree">내 트리 화면</string>
     <string name="placeholder_friends">친구 목록 화면</string>
@@ -27,7 +27,7 @@
     <string name="leaderboard_empty">아직 아무도 플레이하지 않았어요
 첫 번째로 도전해보세요!</string>
     <string name="leaderboard_me_suffix"> (나)</string>
-    <string name="leaderboard_play_button">미니게임으로 도전하기</string>
+    <string name="leaderboard_play_button">벽돌게임으로 도전하기</string>
     <string name="leaderboard_rank_format">%1$d위</string>
     <string name="leaderboard_score_format">%1$d점</string>
     <string name="leaderboard_list_label">🏆 전체 순위</string>
@@ -42,7 +42,7 @@
     <string name="game_over_title">게임 종료!</string>
     <string name="game_new_best">새 최고기록이에요!</string>
     <string name="game_play_again">다시하기</string>
-    <string name="game_close">닫기</string>
+    <string name="game_close">내 순위 보러가기</string>
     <string name="game_exit_symbol">✕</string>
     <string name="game_exit">나가기</string>
     <string name="game_exit_confirm_title">게임을 나가시겠어요?</string>
