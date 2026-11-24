@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- 인트로 3층: 봉투 앞면·봉인 · 담당: A -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
@@ -13,23 +14,29 @@
         <path
             android:pathData="M22,60L54,78L86,60L86,85Q86,90 81,90L27,90Q22,90 22,85Z"
             android:fillColor="#FFB83A28" />
+        <group>
+            <clip-path android:pathData="M22,60L54,78L86,60L86,85Q86,90 81,90L27,90Q22,90 22,85Z" />
+            <path
+                android:pathData="M21,91L54,77M87,91L54,77"
+                android:strokeColor="#FFD2604C"
+                android:strokeWidth="2"
+                android:strokeLineCap="round"
+                android:strokeLineJoin="round" />
+        </group>
         <path
-            android:pathData="M22.0,88.0L46.0,72.0"
-            android:strokeColor="#FFD2604C"
-            android:strokeWidth="2"
-            android:strokeLineCap="round" />
+            android:pathData="M54,77C49,70 43,71 43.5,76.5C44,81.5 49.5,80.5 54,77M54,77C59,70 65,71 64.5,76.5C64,81.5 58.5,80.5 54,77"
+            android:strokeColor="#FFE8B54A"
+            android:strokeWidth="1.8"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
         <path
-            android:pathData="M86.0,88.0L62.0,72.0"
-            android:strokeColor="#FFD2604C"
-            android:strokeWidth="2"
-            android:strokeLineCap="round" />
+            android:pathData="M53.2,78Q51.4,83 48.5,87M54.8,78Q56.6,83 59.5,87"
+            android:strokeColor="#FFE8B54A"
+            android:strokeWidth="1.8"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
         <path
-            android:pathData="M48.8,77.0a5.2,5.2 0,1 0,10.4,0a5.2,5.2 0,1 0,-10.4,0Z"
+            android:pathData="M51.9,77.0a2.1,2.1 0,1 0,4.2,0a2.1,2.1 0,1 0,-4.2,0Z"
             android:fillColor="#FFE8B54A" />
-        <path
-            android:pathData="M51.4,77l2.1,2.1l3.6,-4.2"
-            android:strokeColor="#FFB83A28"
-            android:strokeWidth="1.7"
-            android:strokeLineCap="round" />
     </group>
 </vector>
