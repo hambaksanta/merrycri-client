@@ -4,6 +4,7 @@ package com.hambaksanta.merrycri.ui.game
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.TypedValue
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -91,6 +92,7 @@ class GameActivity : AppCompatActivity(), BreakoutListener {
         binding.timeText.text = getString(R.string.game_time_format, 60)
         binding.livesText.text = heartsText(3)
         binding.scoreText.text = getString(R.string.game_score_format, 0)
+        onComboChanged(0)
     }
 
     /** 상단 나가기(✕) 버튼. 아직 시작 전/결과 화면이면 바로 닫고, 플레이 중이면 확인 후 닫는다. */
@@ -139,6 +141,21 @@ class GameActivity : AppCompatActivity(), BreakoutListener {
 
     override fun onLifeLost() {
         app.audio.playSfx(Sfx.THUD)
+    }
+
+    override fun onLevelUp(level: Int) {
+        Toast.makeText(this, getString(R.string.game_level_up_format, level), Toast.LENGTH_SHORT).show()
+    }
+
+    /** 콤보 배율(x1~x3)에 따라 점수 글자 색·크기를 조금씩 키워서 연속 성공을 눈에 띄게 한다. */
+    override fun onComboChanged(multiplier: Int) {
+        val (colorRes, sizeSp) = when {
+            multiplier >= 3 -> R.color.berry to 22f
+            multiplier == 2 -> R.color.white to 19f
+            else -> R.color.gold to 17f
+        }
+        binding.scoreText.setTextColor(getColor(colorRes))
+        binding.scoreText.setTextSize(TypedValue.COMPLEX_UNIT_SP, sizeSp)
     }
 
     override fun onGameOver(finalScore: Int) {

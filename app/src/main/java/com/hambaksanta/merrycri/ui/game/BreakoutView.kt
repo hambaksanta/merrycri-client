@@ -24,6 +24,10 @@ interface BreakoutListener {
     fun onBrickHit(golden: Boolean)
     fun onLifeLost()
     fun onGameOver(finalScore: Int)
+    /** 보드를 다 깨서 다음 레벨(새 벽돌 배치 패턴)로 넘어갈 때 호출. */
+    fun onLevelUp(level: Int)
+    /** 연속으로 벽돌을 깰 때의 콤보 배율(x1~x3)이 바뀔 때마다 호출. */
+    fun onComboChanged(multiplier: Int)
 }
 
 /**
@@ -42,7 +46,7 @@ class BreakoutView @JvmOverloads constructor(
     // ===== 게임 상수 =====
     private val totalMillis = GAME_DURATION_MS
     private val maxLives = 3
-    private val rows = 5
+    private val rows = 7
     private val cols = 7
     private val goldenChance = 0.12
     private val baseSpeedPxPerSec = 680f
@@ -54,12 +58,16 @@ class BreakoutView @JvmOverloads constructor(
     private val ballCount = 2
     private val brickAreaTopRatio = 0.07f
     private val brickAreaBottomRatio = 0.62f
+    private val maxComboMultiplier = 3
+    private val patternCount = 3
 
     // ===== 상태 =====
     private var score = 0
     private var lives = maxLives
     private var remainingMillis = totalMillis
     private var speedSteps = 0
+    private var level = 1
+    private var combo = 0
     private var running = false
     private var started = false
     private var gameOver = false
@@ -195,13 +203,15 @@ class BreakoutView @JvmOverloads constructor(
         val marginX = w * 0.035f
         val top = height * brickAreaTopRatio
         val bottom = height * brickAreaBottomRatio
-        val gapX = w * 0.015f
-        val gapY = height * 0.012f
+        val gapX = w * 0.012f
+        val gapY = height * 0.009f
         val brickW = (w - marginX * 2 - gapX * (cols - 1)) / cols
         val brickH = (bottom - top - gapY * (rows - 1)) / rows
+        val pattern = (level - 1) % patternCount
         val newBricks = mutableListOf<Brick>()
         for (row in 0 until rows) {
             for (col in 0 until cols) {
+                if (!isCellFilled(row, col, pattern)) continue
                 val left = marginX + col * (brickW + gapX)
                 val t = top + row * (brickH + gapY)
                 val rect = RectF(left, t, left + brickW, t + brickH)
@@ -210,6 +220,22 @@ class BreakoutView @JvmOverloads constructor(
             }
         }
         bricks = newBricks
+    }
+
+    /**
+     * 레벨(=깬 보드 수)에 따라 벽돌 배치 모양을 바꿔서 매번 같은 네모 그리드가 반복되지 않게 한다.
+     * 0: 꽉 찬 그리드, 1: 가운데가 넓은 트리(다이아몬드) 모양, 2: 체크무늬(구멍 뚫린 패턴). 3개를 순환.
+     */
+    private fun isCellFilled(row: Int, col: Int, pattern: Int): Boolean = when (pattern) {
+        0 -> true
+        1 -> {
+            val midRow = (rows - 1) / 2f
+            val maxDist = midRow.coerceAtLeast(1f)
+            val dist = abs(row - midRow)
+            val remove = ((dist / maxDist) * (cols / 2f)).toInt()
+            col >= remove && col < cols - remove
+        }
+        else -> (row + col) % 2 == 0
     }
 
     /** 처음 탭하면 호출. */
@@ -244,6 +270,8 @@ class BreakoutView @JvmOverloads constructor(
         lives = maxLives
         remainingMillis = totalMillis
         speedSteps = 0
+        level = 1
+        combo = 0
         started = false
         gameOver = false
         running = false
@@ -321,8 +349,11 @@ class BreakoutView @JvmOverloads constructor(
                 )
                 if (expanded.contains(ball.x, ball.y)) {
                     brick.alive = false
-                    val gained = if (brick.golden) goldenBrickScore else normalBrickScore
-                    score += gained
+                    combo += 1
+                    val multiplier = combo.coerceAtMost(maxComboMultiplier)
+                    listener?.onComboChanged(multiplier)
+                    val base = if (brick.golden) goldenBrickScore else normalBrickScore
+                    score += base * multiplier
                     listener?.onScoreChanged(score)
                     listener?.onBrickHit(brick.golden)
                     val hitFromSide = ball.x < brick.rect.left || ball.x > brick.rect.right
@@ -340,6 +371,10 @@ class BreakoutView @JvmOverloads constructor(
             lives -= 1
             listener?.onLivesChanged(lives)
             listener?.onLifeLost()
+            if (combo != 0) {
+                combo = 0
+                listener?.onComboChanged(0)
+            }
             if (lives <= 0) {
                 endGame()
                 return
@@ -352,6 +387,8 @@ class BreakoutView @JvmOverloads constructor(
             score += clearBonusScore
             listener?.onScoreChanged(score)
             if (speedSteps < maxSpeedSteps) speedSteps += 1
+            level += 1
+            listener?.onLevelUp(level)
             generateBricks(width)
             rescaleBallsToCurrentSpeed()
         }
