@@ -11,9 +11,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.hambaksanta.merrycri.MerryCriApp
-import com.hambaksanta.merrycri.data.model.FriendProfile
+import com.hambaksanta.merrycri.R
 import com.hambaksanta.merrycri.databinding.FragmentFriendsBinding
 import com.hambaksanta.merrycri.ui.game.GameActivity
 import kotlinx.coroutines.launch
@@ -27,8 +27,10 @@ class FriendsFragment : Fragment() {
     private var _binding: FragmentFriendsBinding? = null
     private val binding get() = requireNotNull(_binding)
     private val app get() = requireActivity().application as MerryCriApp
-    private val viewModel by viewModels<FriendsViewModel> { FriendsViewModel.factory(app.repository) }
-    private val adapter = FriendsAdapter(::onFriendClicked)
+    private val viewModel by viewModels<FriendsViewModel> {
+        FriendsViewModel.factory(app.repository)
+    }
+    private val friendAdapter = FriendAdapter(onClick = ::onFriendClicked)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,28 +42,60 @@ class FriendsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.friendsRecycler.layoutManager = LinearLayoutManager(requireContext())
-        binding.friendsRecycler.adapter = adapter
+        binding.friendList.adapter = friendAdapter
+        binding.addFriendButton.setOnClickListener {
+            binding.friendCodeInputLayout.error = null
+            viewModel.addFriend(binding.friendCodeInput.text?.toString().orEmpty())
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect(::render)
+                launch { viewModel.uiState.collect(::render) }
+                launch { viewModel.events.collect(::handleEvent) }
             }
         }
     }
 
-    private fun render(state: FriendsUiState) {
-        adapter.submitList(state.items)
-        binding.friendsRecycler.isVisible = state.items.isNotEmpty()
-        binding.friendsEmptyText.isVisible = !state.loading && state.items.isEmpty()
+    private fun render(state: FriendsUiState) = with(binding) {
+        loadingIndicator.isVisible = state.isLoading
+        addFriendButton.isEnabled = !state.isAdding
+        friendCodeInput.isEnabled = !state.isAdding
+        friendList.isVisible = !state.isLoading && state.friends.isNotEmpty()
+        emptyText.isVisible = !state.isLoading && state.friends.isEmpty() && state.error == null
+        connectionErrorText.isVisible = state.error == FriendsError.CONNECTION
+        friendAdapter.submitList(state.friends)
     }
 
-    private fun onFriendClicked(friend: FriendProfile) {
+    private fun handleEvent(event: FriendsEvent) {
+        when (event) {
+            is FriendsEvent.Added -> {
+                binding.friendCodeInput.text?.clear()
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.friends_add_success, event.nickname),
+                    Snackbar.LENGTH_SHORT,
+                ).show()
+            }
+            is FriendsEvent.Error -> {
+                val message = when (event.reason) {
+                    FriendsError.INVALID_CODE -> R.string.friends_error_invalid_code
+                    FriendsError.NOT_FOUND -> R.string.friends_error_not_found
+                    FriendsError.SELF -> R.string.friends_error_self
+                    FriendsError.ALREADY_ADDED -> R.string.friends_error_already_added
+                    FriendsError.CONNECTION -> R.string.friends_error_connection
+                }
+                binding.friendCodeInputLayout.error = getString(message)
+            }
+        }
+    }
+
+    private fun onFriendClicked(item: FriendListItem) {
         // '게임쪽'에 바로 띄움: GameActivity 시작 화면 상단 큰 버튼 + 하단 전체 순위로 바로 들어간다.
-        startActivity(GameActivity.forOwner(requireContext(), friend.uid))
+        startActivity(GameActivity.forOwner(requireContext(), item.uid))
     }
 
     override fun onDestroyView() {
+        binding.friendList.adapter = null
         _binding = null
         super.onDestroyView()
     }

@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- res/layout/fragment_friends.xml · 친구 목록 + 각 친구 트리의 1등 점수. 담당: B(목록) · C(점수 연동) -->
+<!-- res/layout/fragment_friends.xml · 친구 목록(친구 코드로 추가) + 각 친구 트리의 1등 점수. 담당: B(목록) · C(점수 연동) -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cream">
+    android:background="@color/cream"
+    android:paddingStart="@dimen/screen_padding"
+    android:paddingEnd="@dimen/screen_padding">
 
     <TextView
         android:id="@+id/friends_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_20"
-        android:paddingHorizontal="@dimen/screen_padding"
+        android:layout_marginTop="@dimen/space_24"
         android:text="@string/friends_title"
         android:textAppearance="@style/TextAppearance.MerryCri.Title"
         app:layout_constraintEnd_toEndOf="parent"
@@ -19,42 +20,96 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/friends_subtitle"
+        android:id="@+id/friends_description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/space_4"
-        android:paddingHorizontal="@dimen/screen_padding"
-        android:text="@string/friends_subtitle"
+        android:text="@string/friends_description"
         android:textAppearance="@style/TextAppearance.MerryCri.Caption"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/friends_title" />
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/friend_code_input_layout"
+        style="@style/Widget.MerryCri.TextInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_16"
+        android:hint="@string/friends_code_hint"
+        app:layout_constraintEnd_toStartOf="@id/add_friend_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/friends_description">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/friend_code_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+            android:imeOptions="actionDone"
+            android:inputType="textCapCharacters"
+            android:maxLength="6"
+            android:singleLine="true" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/add_friend_button"
+        style="@style/Widget.MerryCri.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_8"
+        android:text="@string/friends_add"
+        app:layout_constraintBottom_toBottomOf="@id/friend_code_input_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/friend_code_input_layout" />
+
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/friends_recycler"
-        android:layout_width="match_parent"
+        android:id="@+id/friend_list"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/space_8"
+        android:layout_marginTop="@dimen/space_16"
         android:clipToPadding="false"
-        android:paddingBottom="@dimen/space_20"
+        android:paddingBottom="@dimen/space_24"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/friends_subtitle" />
+        app:layout_constraintTop_toBottomOf="@id/friend_code_input_layout" />
 
     <TextView
-        android:id="@+id/friends_empty_text"
-        android:layout_width="0dp"
+        android:id="@+id/empty_text"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:paddingHorizontal="@dimen/screen_padding"
         android:text="@string/friends_empty"
         android:textAppearance="@style/TextAppearance.MerryCri.Body"
-        android:textColor="@color/ink_muted"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/friends_subtitle" />
+        app:layout_constraintTop_toBottomOf="@id/friend_code_input_layout" />
+
+    <TextView
+        android:id="@+id/connection_error_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/friends_error_connection"
+        android:textAppearance="@style/TextAppearance.MerryCri.Body"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/friend_code_input_layout" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/loading_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/friend_code_input_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

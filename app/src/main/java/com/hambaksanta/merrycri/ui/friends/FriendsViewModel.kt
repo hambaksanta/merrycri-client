@@ -7,49 +7,116 @@ import androidx.lifecycle.viewModelScope
 import com.hambaksanta.merrycri.data.FirebaseRepository
 import com.hambaksanta.merrycri.data.model.FriendProfile
 import com.hambaksanta.merrycri.data.model.Score
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 /**
- * 친구 목록 + 각 친구 트리의 미니게임 1등 점수. 담당: C (리더보드 연동)
- *
- * 친구가 많아져도 매번 전체 리스트를 다시 그리지 않도록, 친구 목록이 바뀔 때만
- * 각 친구 트리의 [FirebaseRepository.observeScores] 최신 값을 한 번씩 읽어 온다.
+ * 친구 목록(친구 코드로 추가) + 각 친구 트리의 미니게임 1등 점수. 담당: B(목록) · C(1등 점수 연동)
  */
-class FriendsViewModel(private val repository: FirebaseRepository) : ViewModel() {
+class FriendsViewModel(
+    private val repository: FirebaseRepository,
+) : ViewModel() {
     private val _uiState = MutableStateFlow(FriendsUiState())
     val uiState: StateFlow<FriendsUiState> = _uiState.asStateFlow()
 
-    private var scoreJob: Job? = null
+    private val _events = MutableSharedFlow<FriendsEvent>()
+    val events: SharedFlow<FriendsEvent> = _events.asSharedFlow()
 
     init {
         viewModelScope.launch {
-            repository.observeFriends().collect { friends -> loadTopScores(friends) }
+            observeFriendItems()
+                .catch {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = FriendsError.CONNECTION,
+                    )
+                }
+                .collect { friends ->
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        friends = friends,
+                        error = null,
+                    )
+                }
         }
     }
 
-    private fun loadTopScores(friends: List<FriendProfile>) {
-        scoreJob?.cancel()
-        if (friends.isEmpty()) {
-            _uiState.value = FriendsUiState(loading = false, items = emptyList())
+    fun addFriend(friendCode: String) {
+        val code = friendCode.trim().uppercase()
+        if (code.length != FRIEND_CODE_LENGTH) {
+            viewModelScope.launch { _events.emit(FriendsEvent.Error(FriendsError.INVALID_CODE)) }
             return
         }
-        scoreJob = viewModelScope.launch {
-            val items = friends.map { friend ->
-                val topScore = runCatching { repository.observeScores(friend.uid).first() }
-                    .getOrNull()
-                    ?.maxByOrNull(Score::best)
-                FriendListItem(friend = friend, topScore = topScore)
-            }
-            _uiState.value = FriendsUiState(loading = false, items = items)
+        if (_uiState.value.friends.any { it.friendCode == code }) {
+            viewModelScope.launch { _events.emit(FriendsEvent.Error(FriendsError.ALREADY_ADDED)) }
+            return
         }
+
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isAdding = true)
+            runCatching { repository.addFriendByCode(code) }
+                .onSuccess { _events.emit(FriendsEvent.Added(it.nickname)) }
+                .onFailure { error -> _events.emit(FriendsEvent.Error(error.toFriendsError())) }
+            _uiState.value = _uiState.value.copy(isAdding = false)
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun observeFriendItems(): Flow<List<FriendListItem>> =
+        repository.observeFriends().flatMapLatest { friends ->
+            if (friends.isEmpty()) return@flatMapLatest flowOf(emptyList())
+            combine(friends.map(::observeFriendItem)) { items -> items.toList() }
+        }
+
+    /** 친구 한 명의 트리 정보 + 그 트리의 미니게임 1등 점수(담당: C)를 합쳐서 내보낸다. */
+    private fun observeFriendItem(friend: FriendProfile): Flow<FriendListItem> =
+        repository.observeOrnaments(friend.uid).map { ornaments ->
+            val letterCount = ornaments.size
+            val topScore = runCatching { repository.observeScores(friend.uid).first() }
+                .getOrNull()
+                ?.maxByOrNull(Score::best)
+            FriendListItem(
+                uid = friend.uid,
+                nickname = friend.nickname,
+                friendCode = friend.friendCode,
+                letterCount = letterCount,
+                treeStage = treeStageOf(letterCount),
+                hasWritten = ornaments.any { it.writerUid == repository.uid },
+                topScore = topScore,
+            )
+        }
+
+    private fun Throwable.toFriendsError(): FriendsError = when {
+        this is NoSuchElementException -> FriendsError.NOT_FOUND
+        message?.contains("cannot add self") == true -> FriendsError.SELF
+        this is IllegalArgumentException -> FriendsError.INVALID_CODE
+        else -> FriendsError.CONNECTION
+    }
+
+    private fun treeStageOf(letterCount: Int): Int = when (letterCount) {
+        0 -> 1
+        in 1..2 -> 2
+        in 3..5 -> 3
+        in 6..9 -> 4
+        else -> 5
     }
 
     companion object {
+        private const val FRIEND_CODE_LENGTH = 6
+
         fun factory(repository: FirebaseRepository): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
@@ -60,12 +127,26 @@ class FriendsViewModel(private val repository: FirebaseRepository) : ViewModel()
 }
 
 data class FriendsUiState(
-    val loading: Boolean = true,
-    val items: List<FriendListItem> = emptyList(),
+    val isLoading: Boolean = true,
+    val isAdding: Boolean = false,
+    val friends: List<FriendListItem> = emptyList(),
+    val error: FriendsError? = null,
 )
 
-/** 친구 한 명 + 그 친구 트리에서 지금까지 나온 미니게임 최고점(1등). */
+/** 친구 한 명의 트리 정보 + 그 트리에서 지금까지 나온 미니게임 최고점(1등). topScore 담당: C */
 data class FriendListItem(
-    val friend: FriendProfile,
+    val uid: String,
+    val nickname: String,
+    val friendCode: String,
+    val letterCount: Int,
+    val treeStage: Int,
+    val hasWritten: Boolean,
     val topScore: Score?,
 )
+
+sealed interface FriendsEvent {
+    data class Added(val nickname: String) : FriendsEvent
+    data class Error(val reason: FriendsError) : FriendsEvent
+}
+
+enum class FriendsError { INVALID_CODE, NOT_FOUND, SELF, ALREADY_ADDED, CONNECTION }

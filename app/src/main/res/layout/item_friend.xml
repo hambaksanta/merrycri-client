@@ -1,51 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- res/layout/item_friend.xml · 친구 목록 한 줄 (아바타 · 닉네임 · 그 친구 트리의 1등 점수) · 담당: C -->
+<!-- res/layout/item_friend.xml · 친구 목록 한 줄 (트리 썸네일 · 닉네임/코드 · 1등 점수 · 트리 단계 · 편지 상태). 담당: B(목록) · C(1등 점수) -->
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/friend_card"
     style="@style/Widget.MerryCri.Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="@dimen/screen_padding"
-    android:layout_marginTop="@dimen/space_12"
-    android:checkable="true"
-    android:clickable="true"
-    android:focusable="true"
-    app:rippleColor="@color/pine_light">
+    android:layout_marginBottom="@dimen/space_12">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="@dimen/space_12">
+        android:orientation="horizontal"
+        android:padding="@dimen/space_16">
 
-        <TextView
-            android:id="@+id/avatar_text"
+        <ImageView
+            android:id="@+id/friend_tree_image"
             android:layout_width="@dimen/avatar_size"
             android:layout_height="@dimen/avatar_size"
-            android:background="@drawable/bg_avatar_circle"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:textAppearance="@style/TextAppearance.MerryCri.Subtitle"
-            tools:text="지" />
+            android:contentDescription="@string/friends_tree_image_description"
+            android:scaleType="fitCenter"
+            android:src="@drawable/tree_lv1" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_16"
             android:layout_weight="1"
-            android:layout_marginStart="@dimen/space_12"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/nickname_text"
+                android:id="@+id/friend_nickname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/ink"
                 android:textAppearance="@style/TextAppearance.MerryCri.Subtitle"
                 tools:text="박지우" />
 
+            <TextView
+                android:id="@+id/friend_code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_4"
+                android:textAppearance="@style/TextAppearance.MerryCri.Caption"
+                tools:text="코드 AB12CD" />
+
+            <!-- 그 친구 트리에서 지금까지 나온 미니게임 1등 점수. 담당: C -->
             <TextView
                 android:id="@+id/top_score_text"
                 android:layout_width="wrap_content"
@@ -55,16 +55,40 @@
                 android:textAppearance="@style/TextAppearance.MerryCri.Caption"
                 tools:text="🏆 조온유님 150점" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_8"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/friend_tree_stage"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAppearance="@style/TextAppearance.MerryCri.Caption" />
+
+                <TextView
+                    android:id="@+id/friend_letter_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.MerryCri.Caption" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/status_done"
+                style="@style/Widget.MerryCri.Chip.Done"
+                android:layout_marginTop="@dimen/space_8"
+                android:text="@string/friends_letter_done"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/status_todo"
+                style="@style/Widget.MerryCri.Chip.Todo"
+                android:layout_marginTop="@dimen/space_8"
+                android:text="@string/friends_letter_todo" />
         </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="›"
-            android:textColor="@color/ink_muted"
-            android:textSize="22sp"
-            android:textStyle="bold" />
-
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>
