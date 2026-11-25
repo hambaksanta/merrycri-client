@@ -59,7 +59,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_8"
-                android:gravity="center_vertical"
+                android:gravity="top"
                 android:orientation="horizontal">
 
                 <TextView
@@ -69,33 +69,32 @@
                     android:layout_weight="1"
                     android:textAppearance="@style/TextAppearance.MerryCri.Caption" />
 
-                <TextView
-                    android:id="@+id/friend_letter_count"
+                <!-- 편지는 하루 한 통. 오늘 이미 썼으면 status_done, 아니면 status_todo(클릭해서 쓰기). 게임 버튼과 함께 오른쪽 정렬. 담당: C -->
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.MerryCri.Caption" />
+                    android:gravity="end"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/status_done"
+                        style="@style/Widget.MerryCri.Chip.Done"
+                        android:text="@string/friends_letter_done"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/status_todo"
+                        style="@style/Widget.MerryCri.Chip.Todo"
+                        android:text="@string/friends_letter_todo" />
+
+                    <!-- 카드(root) 전체를 누르면 친구 트리 구경 화면으로 가고, 게임은 이 버튼으로만 이동한다. 담당: C -->
+                    <TextView
+                        android:id="@+id/play_game_button"
+                        style="@style/Widget.MerryCri.Chip.Game"
+                        android:layout_marginTop="@dimen/space_8"
+                        android:text="@string/friends_play_game" />
+                </LinearLayout>
             </LinearLayout>
-
-            <!-- 편지는 하루 한 통. 오늘 이미 썼으면 status_done, 아니면 status_todo(클릭해서 쓰기). 담당: C -->
-            <TextView
-                android:id="@+id/status_done"
-                style="@style/Widget.MerryCri.Chip.Done"
-                android:layout_marginTop="@dimen/space_8"
-                android:text="@string/friends_letter_done"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/status_todo"
-                style="@style/Widget.MerryCri.Chip.Todo"
-                android:layout_marginTop="@dimen/space_8"
-                android:text="@string/friends_letter_todo" />
-
-            <!-- 카드(root) 전체를 누르면 친구 트리 구경 화면으로 가고, 게임은 이 버튼으로만 이동한다. 담당: C -->
-            <TextView
-                android:id="@+id/play_game_button"
-                style="@style/Widget.MerryCri.Chip.Game"
-                android:layout_marginTop="@dimen/space_8"
-                android:text="@string/friends_play_game" />
         </LinearLayout>
     </LinearLayout>
 

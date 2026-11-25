@@ -50,10 +50,6 @@ class FriendAdapter(
                     else -> R.string.tree_stage_5
                 },
             )
-            friendLetterCount.text = root.context.getString(
-                R.string.friends_letter_count,
-                item.letterCount,
-            )
             friendTreeImage.setImageResource(
                 when (item.treeStage) {
                     1 -> R.drawable.tree_lv1
