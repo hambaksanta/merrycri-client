@@ -92,6 +92,7 @@
     <string name="onboarding_friend_code_label">내 친구 코드</string>
     <string name="onboarding_continue">내 트리 보기</string>
 
+    <string name="letter_write_back_button">← 뒤로가기</string>
     <string name="letter_write_title">편지 쓰기</string>
     <string name="letter_write_hint">마음을 담아 편지를 써보세요</string>
     <string name="letter_write_recipient_label">받을 친구 코드</string>
