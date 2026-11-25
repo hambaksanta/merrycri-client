@@ -2,6 +2,7 @@
 <!-- res/layout/fragment_letter_write.xml -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/cream"
@@ -39,6 +40,16 @@
             android:layout_marginTop="@dimen/space_8"
             android:text="@string/letter_write_hint"
             android:textAppearance="@style/TextAppearance.MerryCri.Body" />
+
+        <!-- 편지는 하루 한 통. 크리스마스까지 매일 쓰자는 문구. 담당: C -->
+        <TextView
+            android:id="@+id/daily_hint_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_8"
+            android:textAppearance="@style/TextAppearance.MerryCri.Caption"
+            android:textColor="@color/berry"
+            tools:text="하루에 한 통만 보낼 수 있어요 · 크리스마스까지 30일, 매일 한 통씩 어때요? 🎄" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/recipient_input_layout"

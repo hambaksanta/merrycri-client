@@ -7,6 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.hambaksanta.merrycri.data.FirebaseRepository
 import com.hambaksanta.merrycri.data.model.FriendProfile
 import com.hambaksanta.merrycri.data.model.Score
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -88,16 +91,25 @@ class FriendsViewModel(
             val topScore = runCatching { repository.observeScores(friend.uid).first() }
                 .getOrNull()
                 ?.maxByOrNull(Score::best)
+            // 편지 장식은 친구당 한 자리(같은 writerUid면 덮어씀)라, 그 createdAt이 곧 '내가 이 친구에게
+            // 마지막으로 편지를 쓴 시각'이다. 하루 한 통 제한 여부(오늘 이미 썼는지)를 여기서 판단한다. 담당: C
+            val myOrnament = ornaments.find { it.writerUid == repository.uid }
             FriendListItem(
                 uid = friend.uid,
                 nickname = friend.nickname,
                 friendCode = friend.friendCode,
                 letterCount = letterCount,
                 treeStage = treeStageOf(letterCount),
-                hasWritten = ornaments.any { it.writerUid == repository.uid },
+                wroteToday = myOrnament?.let { isSameDaySeoul(it.createdAt) } ?: false,
                 topScore = topScore,
             )
         }
+
+    private fun isSameDaySeoul(epochMillis: Long): Boolean {
+        val zone = ZoneId.of("Asia/Seoul")
+        val day = Instant.ofEpochMilli(epochMillis).atZone(zone).toLocalDate()
+        return day == LocalDate.now(zone)
+    }
 
     private fun Throwable.toFriendsError(): FriendsError = when {
         this is NoSuchElementException -> FriendsError.NOT_FOUND
@@ -133,14 +145,15 @@ data class FriendsUiState(
     val error: FriendsError? = null,
 )
 
-/** 친구 한 명의 트리 정보 + 그 트리에서 지금까지 나온 미니게임 최고점(1등). topScore 담당: C */
+/** 친구 한 명의 트리 정보 + 그 트리에서 지금까지 나온 미니게임 최고점(1등). topScore·wroteToday 담당: C */
 data class FriendListItem(
     val uid: String,
     val nickname: String,
     val friendCode: String,
     val letterCount: Int,
     val treeStage: Int,
-    val hasWritten: Boolean,
+    /** 오늘(한국시간 기준) 이 친구에게 이미 편지를 썼는지. 편지는 친구당 하루 한 통으로 제한한다. */
+    val wroteToday: Boolean,
     val topScore: Score?,
 )
 

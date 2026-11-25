@@ -15,7 +15,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.hambaksanta.merrycri.MerryCriApp
 import com.hambaksanta.merrycri.R
+import com.hambaksanta.merrycri.data.AlreadySentTodayException
 import com.hambaksanta.merrycri.databinding.FragmentLetterWriteBinding
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import kotlinx.coroutines.launch
 
 /** 롤링페이퍼 편지 작성 화면. 담당: C */
@@ -42,6 +46,7 @@ class WriteFragment : Fragment() {
         applyPrefilledRecipient()
 
         binding.backButton.setOnClickListener { findNavController().popBackStack() }
+        binding.dailyHintText.text = dailyHintText()
 
         binding.letterInput.addTextChangedListener(
             object : TextWatcher {
@@ -74,6 +79,17 @@ class WriteFragment : Fragment() {
         val code = arguments?.getString(ARG_RECIPIENT_CODE)?.takeIf { it.isNotBlank() } ?: return
         binding.recipientInput.setText(code)
         binding.recipientInput.isEnabled = false
+    }
+
+    /** 편지는 하루 한 통이라는 안내 + 크리스마스까지 며칠 남았는지(한국 시간 기준). 담당: C */
+    private fun dailyHintText(): String {
+        val today = LocalDate.now(ZoneId.of("Asia/Seoul"))
+        val daysLeft = ChronoUnit.DAYS.between(today, LocalDate.of(today.year, 12, 25))
+        return if (daysLeft > 0) {
+            getString(R.string.letter_write_daily_hint_format, daysLeft.toInt())
+        } else {
+            getString(R.string.letter_write_daily_hint_today)
+        }
     }
 
     private fun selectOrnament(view: ImageView, ornamentType: String) {
@@ -117,6 +133,12 @@ class WriteFragment : Fragment() {
                 app.repository.sendLetter(friendCode, content, confirmedOrnamentType)
                 Toast.makeText(requireContext(), R.string.letter_write_success, Toast.LENGTH_SHORT).show()
                 findNavController().popBackStack()
+            } catch (e: AlreadySentTodayException) {
+                Toast.makeText(
+                    requireContext(),
+                    R.string.letter_write_error_already_sent_today,
+                    Toast.LENGTH_LONG,
+                ).show()
             } catch (e: NoSuchElementException) {
                 binding.recipientInputLayout.error = getString(R.string.letter_write_error_recipient_not_found)
             } catch (e: IllegalArgumentException) {
