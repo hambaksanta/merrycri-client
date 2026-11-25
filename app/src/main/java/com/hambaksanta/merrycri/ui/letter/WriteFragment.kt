@@ -39,6 +39,8 @@ class WriteFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        applyPrefilledRecipient()
+
         binding.letterInput.addTextChangedListener(
             object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
@@ -63,6 +65,13 @@ class WriteFragment : Fragment() {
         }
 
         binding.saveButton.setOnClickListener { submitLetter() }
+    }
+
+    /** 친구 목록에서 특정 친구에게 바로 쓰기로 들어온 경우, 받는 사람 코드를 미리 채우고 수정 못 하게 잠근다. */
+    private fun applyPrefilledRecipient() {
+        val code = arguments?.getString(ARG_RECIPIENT_CODE)?.takeIf { it.isNotBlank() } ?: return
+        binding.recipientInput.setText(code)
+        binding.recipientInput.isEnabled = false
     }
 
     private fun selectOrnament(view: ImageView, ornamentType: String) {
@@ -123,5 +132,9 @@ class WriteFragment : Fragment() {
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
+    }
+
+    companion object {
+        const val ARG_RECIPIENT_CODE = "recipient_code"
     }
 }

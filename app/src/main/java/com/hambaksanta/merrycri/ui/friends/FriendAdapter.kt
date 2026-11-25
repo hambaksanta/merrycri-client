@@ -10,13 +10,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hambaksanta.merrycri.R
 import com.hambaksanta.merrycri.databinding.ItemFriendBinding
 
-/** 친구 목록 줄. 탭하면 그 친구 트리 경쟁 모드로 미니게임을 띄운다(onClick). 1등 점수 표시 담당: C */
+/**
+ * 친구 목록 줄. 카드를 탭하면 그 친구 트리 경쟁 모드로 미니게임을 띄우고(onClick),
+ * "편지 쓰기" 칩을 탭하면 그 친구에게 편지 쓰기 화면으로 바로 이동한다(onWriteLetterClick). 담당: C
+ */
 class FriendAdapter(
     private val onClick: (FriendListItem) -> Unit = {},
+    private val onWriteLetterClick: (FriendListItem) -> Unit = {},
 ) : ListAdapter<FriendListItem, FriendAdapter.FriendViewHolder>(DiffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendViewHolder {
         val binding = ItemFriendBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return FriendViewHolder(binding, onClick)
+        return FriendViewHolder(binding, onClick, onWriteLetterClick)
     }
 
     override fun onBindViewHolder(holder: FriendViewHolder, position: Int) {
@@ -26,6 +30,7 @@ class FriendAdapter(
     class FriendViewHolder(
         private val binding: ItemFriendBinding,
         private val onClick: (FriendListItem) -> Unit,
+        private val onWriteLetterClick: (FriendListItem) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: FriendListItem) = with(binding) {
             friendNickname.text = item.nickname
@@ -57,6 +62,8 @@ class FriendAdapter(
             )
             statusDone.isVisible = item.hasWritten
             statusTodo.isVisible = !item.hasWritten
+            // "편지 쓰기" 칩은 여기서 따로 소비해서, 카드 전체 탭(게임 연동)으로 안 새도록 한다.
+            statusTodo.setOnClickListener { onWriteLetterClick(item) }
             root.setOnClickListener { onClick(item) }
         }
     }
