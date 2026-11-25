@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- res/layout/item_friend.xml -->
+<!-- res/layout/item_friend.xml · 친구 목록 한 줄 (트리 썸네일 · 닉네임/코드 · 1등 점수 · 트리 단계 · 편지 상태). 담당: B(목록) · C(1등 점수) -->
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     style="@style/Widget.MerryCri.Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -33,14 +34,26 @@
                 android:id="@+id/friend_nickname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.MerryCri.Subtitle" />
+                android:textAppearance="@style/TextAppearance.MerryCri.Subtitle"
+                tools:text="박지우" />
 
             <TextView
                 android:id="@+id/friend_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_4"
-                android:textAppearance="@style/TextAppearance.MerryCri.Caption" />
+                android:textAppearance="@style/TextAppearance.MerryCri.Caption"
+                tools:text="코드 AB12CD" />
+
+            <!-- 그 친구 트리에서 지금까지 나온 미니게임 1등 점수. 담당: C -->
+            <TextView
+                android:id="@+id/top_score_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/ink_muted"
+                android:textAppearance="@style/TextAppearance.MerryCri.Caption"
+                tools:text="🏆 조온유님 150점" />
 
             <LinearLayout
                 android:layout_width="match_parent"

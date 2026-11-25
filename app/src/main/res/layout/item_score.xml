@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/item_score.xml · 리더보드 한 줄 (순위 배지 · 닉네임 · 점수). 내 줄이면 bg_my_rank로 강조. 담당: C -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/score_row"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/space_8"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:background="@drawable/bg_score_row"
+    android:padding="@dimen/space_12">
+
+    <TextView
+        android:id="@+id/rank_badge"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/bg_rank_badge"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textAppearance="@style/TextAppearance.MerryCri.Label"
+        tools:text="1" />
+
+    <TextView
+        android:id="@+id/score_nickname_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="@dimen/space_12"
+        android:textColor="@color/white"
+        android:textAppearance="@style/TextAppearance.MerryCri.Subtitle"
+        tools:text="유수민 (나)" />
+
+    <TextView
+        android:id="@+id/score_value_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/gold"
+        android:textAppearance="@style/TextAppearance.MerryCri.Subtitle"
+        tools:text="150점" />
+
+</LinearLayout>

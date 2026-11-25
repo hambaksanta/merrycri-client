@@ -9,4 +9,8 @@
         android:id="@+id/navigation_friends"
         android:icon="@android:drawable/ic_menu_myplaces"
         android:title="@string/tab_friends" />
+    <item
+        android:id="@+id/navigation_game"
+        android:icon="@android:drawable/ic_menu_crop"
+        android:title="@string/tab_game" />
 </menu>

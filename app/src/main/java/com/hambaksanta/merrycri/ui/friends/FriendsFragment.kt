@@ -20,9 +20,14 @@ import com.google.android.material.snackbar.Snackbar
 import com.hambaksanta.merrycri.MerryCriApp
 import com.hambaksanta.merrycri.R
 import com.hambaksanta.merrycri.databinding.FragmentFriendsBinding
+import com.hambaksanta.merrycri.ui.game.GameActivity
 import kotlinx.coroutines.launch
 
-/** 친구 목록. 담당: B (위쪽 '내 친구 코드' 카드만 A, #45) */
+/**
+ * 친구 목록. 담당: B (위쪽 '내 친구 코드' 카드만 A, #45)
+ * 각 친구 트리에서 지금까지 나온 미니게임 1등 점수를 같이 보여주고(담당: C),
+ * 탭하면 그 친구 트리 경쟁 모드로 GameActivity를 바로 띄운다(상단 큰 시작 버튼 + 하단 전체 순위) — 약간의 경쟁심리 자극용.
+ */
 class FriendsFragment : Fragment() {
     private var _binding: FragmentFriendsBinding? = null
     private val binding get() = requireNotNull(_binding)
@@ -30,7 +35,7 @@ class FriendsFragment : Fragment() {
     private val viewModel by viewModels<FriendsViewModel> {
         FriendsViewModel.factory(app.repository)
     }
-    private val friendAdapter = FriendAdapter()
+    private val friendAdapter = FriendAdapter(onClick = ::onFriendClicked)
 
     /** 가입할 때 저장된 내 친구 코드. 가입 전이면 null (카드 숨김) */
     private var myCode: String? = null
@@ -122,6 +127,11 @@ class FriendsFragment : Fragment() {
                 binding.friendCodeInputLayout.error = getString(message)
             }
         }
+    }
+
+    private fun onFriendClicked(item: FriendListItem) {
+        // '게임쪽'에 바로 띄움: GameActivity 시작 화면 상단 큰 버튼 + 하단 전체 순위로 바로 들어간다.
+        startActivity(GameActivity.forOwner(requireContext(), item.uid))
     }
 
     override fun onDestroyView() {

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hambaksanta.merrycri.data.FirebaseRepository
 import com.hambaksanta.merrycri.data.model.FriendProfile
+import com.hambaksanta.merrycri.data.model.Score
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -16,11 +17,15 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
+/**
+ * 친구 목록(친구 코드로 추가) + 각 친구 트리의 미니게임 1등 점수. 담당: B(목록) · C(1등 점수 연동)
+ */
 class FriendsViewModel(
     private val repository: FirebaseRepository,
 ) : ViewModel() {
@@ -76,9 +81,13 @@ class FriendsViewModel(
             combine(friends.map(::observeFriendItem)) { items -> items.toList() }
         }
 
+    /** 친구 한 명의 트리 정보 + 그 트리의 미니게임 1등 점수(담당: C)를 합쳐서 내보낸다. */
     private fun observeFriendItem(friend: FriendProfile): Flow<FriendListItem> =
         repository.observeOrnaments(friend.uid).map { ornaments ->
             val letterCount = ornaments.size
+            val topScore = runCatching { repository.observeScores(friend.uid).first() }
+                .getOrNull()
+                ?.maxByOrNull(Score::best)
             FriendListItem(
                 uid = friend.uid,
                 nickname = friend.nickname,
@@ -86,6 +95,7 @@ class FriendsViewModel(
                 letterCount = letterCount,
                 treeStage = treeStageOf(letterCount),
                 hasWritten = ornaments.any { it.writerUid == repository.uid },
+                topScore = topScore,
             )
         }
 
@@ -123,6 +133,7 @@ data class FriendsUiState(
     val error: FriendsError? = null,
 )
 
+/** 친구 한 명의 트리 정보 + 그 트리에서 지금까지 나온 미니게임 최고점(1등). topScore 담당: C */
 data class FriendListItem(
     val uid: String,
     val nickname: String,
@@ -130,6 +141,7 @@ data class FriendListItem(
     val letterCount: Int,
     val treeStage: Int,
     val hasWritten: Boolean,
+    val topScore: Score?,
 )
 
 sealed interface FriendsEvent {
