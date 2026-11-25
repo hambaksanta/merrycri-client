@@ -121,8 +121,11 @@ class TreeSceneView @JvmOverloads constructor(
         sway.pivotY = h * TreeArt.TREE_BASE_Y
         star.pivotX = w * TreeArt.STAR_CENTER.x
         star.pivotY = h * TreeArt.STAR_CENTER.y
-        placeOrnaments()
-        restartAnimations()
+        // 레이아웃 도중에 자식 뷰를 추가하면 크기가 0으로 잡힐 수 있어서 다음 프레임에 배치한다
+        post {
+            placeOrnaments()
+            restartAnimations()
+        }
     }
 
     override fun onAttachedToWindow() {
@@ -139,14 +142,18 @@ class TreeSceneView @JvmOverloads constructor(
         ornamentLayer.removeAllViews()
         val slots = TreeArt.SLOTS[stage].orEmpty()
         if (width == 0 || slots.isEmpty()) return
-        val size = (width * ORNAMENT_SIZE / ART_W).toInt()
+        // 주의: 아래 apply { } 안에서 width/height를 쓰면 장식 ImageView 자신의 크기(0)가 잡힌다.
+        // 그래서 장면 크기를 먼저 꺼내 둔다. (예전엔 이것 때문에 장식이 전부 왼쪽 위 구석에 몰렸음)
+        val sceneW = width.toFloat()
+        val sceneH = height.toFloat()
+        val size = (sceneW * ORNAMENT_SIZE / ART_W).toInt()
         ornamentTypes.forEachIndexed { index, type ->
             val slot = slots[index % slots.size]
             val view = ImageView(context).apply {
                 setImageResource(TreeArt.ornamentRes(type))
                 contentDescription = context.getString(R.string.tree_cd_ornament, index + 1)
-                translationX = slot.x * width - size / 2f
-                translationY = slot.y * height - size / 2f
+                translationX = slot.x * sceneW - size / 2f
+                translationY = slot.y * sceneH - size / 2f
                 pivotX = size / 2f
                 pivotY = size * 0.08f // 고리에 매달린 듯 위쪽 기준으로 살랑
                 onOrnamentClick?.let { click -> setOnClickListener { click(index) } }
