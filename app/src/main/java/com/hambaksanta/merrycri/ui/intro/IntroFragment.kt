@@ -41,7 +41,7 @@ import kotlin.math.sin
 /**
  * 앱 첫 화면. 담당: A
  *
- * 1. 시스템 스플래시의 편지 트리 아이콘에서 이어서, 봉투 속 트리가 흔들 → 봉투가 내려감 → 트리가 점프해 땅에 뿌리내림 (Lv1)
+ * 1. 시스템 스플래시의 편지 트리 아이콘에서 이어서, 봉투 속 트리만 흔들 → 봉투는 제자리에서 사라지고 트리가 점프해 땅에 뿌리내림 (Lv1)
  * 2. 우체통에서 편지가 한 통씩 날아와 트리에 톡 맞을 때마다: 트리가 움찔 → 쭉 늘어나며 한 단계 자람 (단계마다 편지 한 통)
  * 3. 다 자라면 장식이 톡톡 달리고, 타이틀·D-day·안내가 올라온다
  *
@@ -203,13 +203,11 @@ class IntroFragment : Fragment() {
     private fun render(t: Long) = with(binding) {
         val s = plan.stage
 
-        // 1) 봉투: 흔들 → 봉인 톡 → 아래로 내려가며 사라짐, 트리는 살짝 튀어오름
+        // 1) 봉투 속 트리만 흔들 → 트리가 살짝 튀어오르는 동안 봉투는 제자리에서 사라짐 (봉투는 움직이지 않는다)
         val w = cl(t, 300, 650)
         val iconRot = sin(w * PI * 3).toFloat() * 7f * (1 - w)
-        val seal = 1f + 0.06f * sin(PI * cl(t, 300, 520)).toFloat()
         val e = ad(cl(t, 650, 950))
-        listOf(imageEnvelopeBack, imageEnvelopeFront).forEach { it.translationY = 70 * dp * e; it.alpha = 1 - e }
-        imageEnvelopeFront.scaleX = seal; imageEnvelopeFront.scaleY = seal
+        listOf(imageEnvelopeBack, imageEnvelopeFront).forEach { it.alpha = 1 - e }
         val pop = -30 * dp * eo(cl(t, 650, 950))
 
         // 2) 트리가 포물선으로 점프해 땅에 착지 → 꾹 눌렸다 펴짐

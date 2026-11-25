@@ -134,7 +134,27 @@
 
     <!-- 트리 장면 (담당: A) -->
     <string name="tree_cd_ornament">%1$d번째 편지 장식</string>
-    <string name="tree_demo_hint">길게 누르면 단계, 누르면 우체통이 바뀌어요 (임시 미리보기)</string>
+    <string name="tree_max_stage">가장 큰 트리까지 자랐어요!</string>
+    <string name="tree_cd_mailbox">우체통 — 받은 편지 보기</string>
+    <string name="tree_letters_button">📬 받은 편지 %1$d통</string>
+    <string name="tree_letters_button_empty">📭 아직 받은 편지가 없어요</string>
+    <string name="tree_letters_title">받은 편지 %1$d통</string>
+    <string name="tree_letters_sub_open">편지를 누르면 내용을 펼쳐 볼 수 있어요</string>
+    <string name="tree_letters_sub_locked">편지는 크리스마스에 열려요</string>
+    <string name="tree_letters_locked_title">크리스마스에 열려요 · D-%1$d</string>
+    <string name="tree_letters_locked_title_soon">곧 열려요!</string>
+    <string name="tree_letters_locked_body">친구들이 남긴 편지 %1$d통이 트리에 장식으로 걸려 있어요.\n12월 25일 0시에 한꺼번에 열려요.</string>
+    <string name="tree_letters_locked_ornament">이 장식에도 친구의 편지가 들어 있어요.\n12월 25일 0시에 열려요.</string>
+    <string name="tree_letters_empty_title">받은 편지</string>
+    <string name="tree_letters_empty_title_card">아직 받은 편지가 없어요</string>
+    <string name="tree_letters_empty_body">친구 탭에서 내 친구 코드를 공유하면\n친구가 이 트리에 편지를 남길 수 있어요.</string>
+    <string name="tree_letters_error">편지를 불러오지 못했어요.\n인터넷 연결을 확인해 주세요.</string>
+    <string name="tree_letter_new">새 편지</string>
+    <string name="tree_ranking_button">🏆 순위</string>
+    <string name="tree_ranking_title">내 트리 순위</string>
+    <string name="tree_ranking_sub">친구들이 내 트리에서 낸 미니게임 최고점이에요</string>
+    <string name="tree_ranking_empty">아직 아무도 내 트리에서 플레이하지 않았어요.\n편지를 남긴 친구만 순위에 오를 수 있어요.</string>
+    <string name="tree_ranking_close">닫기</string>
 
     <!-- 첫 화면 (담당: A) -->
     <string name="intro_dday">크리스마스까지 D-%1$d</string>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/sheet_tree_letters.xml · 트리 탭 '받은 편지' 아래 시트 · 담당: A
+     잠금(12/25 전) / 불러오는 중 / 오류 / 편지 목록 중 하나만 보인다 (TreeLettersSheet) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/space_20"
+    android:paddingTop="@dimen/space_8"
+    android:paddingBottom="@dimen/space_24">
+
+    <TextView
+        android:id="@+id/text_sheet_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.MerryCri.Title"
+        tools:text="받은 편지 4통" />
+
+    <TextView
+        android:id="@+id/text_sheet_sub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_4"
+        android:textAppearance="@style/TextAppearance.MerryCri.Caption"
+        tools:text="편지를 누르면 내용을 펼쳐 볼 수 있어요" />
+
+    <!-- 12/25 전: 잠금 안내 -->
+    <LinearLayout
+        android:id="@+id/layout_locked"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_20"
+        android:background="@drawable/bg_card"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="@dimen/space_24"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageView
+            android:id="@+id/image_locked"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/orn_gift" />
+
+        <TextView
+            android:id="@+id/text_locked_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_12"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.MerryCri.Subtitle"
+            tools:text="크리스마스에 열려요 · D-30" />
+
+        <TextView
+            android:id="@+id/text_locked_body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_4"
+            android:gravity="center"
+            android:lineSpacingExtra="2dp"
+            android:textAppearance="@style/TextAppearance.MerryCri.Caption"
+            tools:text="친구들이 남긴 편지 4통이 트리에 장식으로 걸려 있어요.\n12월 25일 0시에 한꺼번에 열려요." />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_letters"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginVertical="@dimen/space_24"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/text_letters_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_20"
+        android:gravity="center"
+        android:text="@string/tree_letters_error"
+        android:textAppearance="@style/TextAppearance.MerryCri.Body"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_letters"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_16"
+        android:nestedScrollingEnabled="true"
+        android:visibility="gone"
+        tools:itemCount="3"
+        tools:listitem="@layout/item_tree_letter" />
+</LinearLayout>

@@ -17,8 +17,8 @@
 
         <ImageView
             android:id="@+id/friend_tree_image"
-            android:layout_width="@dimen/avatar_size"
-            android:layout_height="@dimen/avatar_size"
+            android:layout_width="@dimen/friend_tree_width"
+            android:layout_height="@dimen/friend_tree_height"
             android:contentDescription="@string/friends_tree_image_description"
             android:scaleType="fitCenter"
             android:src="@drawable/tree_lv1" />
