@@ -1,10 +1,15 @@
 // ui/friends/FriendsFragment.kt
 package com.hambaksanta.merrycri.ui.friends
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.getSystemService
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -19,7 +24,7 @@ import com.hambaksanta.merrycri.ui.game.GameActivity
 import kotlinx.coroutines.launch
 
 /**
- * 친구 목록. 담당: B
+ * 친구 목록. 담당: B (위쪽 '내 친구 코드' 카드만 A, #45)
  * 각 친구 트리에서 지금까지 나온 미니게임 1등 점수를 같이 보여주고(담당: C),
  * 탭하면 그 친구 트리 경쟁 모드로 GameActivity를 바로 띄운다(상단 큰 시작 버튼 + 하단 전체 순위) — 약간의 경쟁심리 자극용.
  */
@@ -31,6 +36,9 @@ class FriendsFragment : Fragment() {
         FriendsViewModel.factory(app.repository)
     }
     private val friendAdapter = FriendAdapter(onClick = ::onFriendClicked)
+
+    /** 가입할 때 저장된 내 친구 코드. 가입 전이면 null (카드 숨김) */
+    private var myCode: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,12 +56,44 @@ class FriendsFragment : Fragment() {
             viewModel.addFriend(binding.friendCodeInput.text?.toString().orEmpty())
         }
 
+        binding.myCodeArea.setOnClickListener { copyMyCode() }
+        binding.buttonCopyCode.setOnClickListener { copyMyCode() }
+        binding.buttonShareCode.setOnClickListener { shareMyCode() }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch { viewModel.uiState.collect(::render) }
                 launch { viewModel.events.collect(::handleEvent) }
+                launch {
+                    app.settings.friendCode.collect { code ->
+                        myCode = code?.takeIf { it.isNotBlank() }
+                        binding.cardMyCode.isVisible = myCode != null
+                        binding.textMyCode.text = myCode.orEmpty()
+                    }
+                }
             }
         }
+    }
+
+    /** 내 친구 코드를 클립보드에 복사 (담당: A, #45) */
+    private fun copyMyCode() {
+        val code = myCode ?: return
+        val clipboard = requireContext().getSystemService<ClipboardManager>() ?: return
+        clipboard.setPrimaryClip(ClipData.newPlainText(getString(R.string.my_code_clip_label), code))
+        // Android 13부터는 시스템이 "복사됨" 알림을 직접 띄우므로 겹치지 않게 그 아래 버전에서만 알린다
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            Snackbar.make(binding.root, R.string.my_code_copied, Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
+    /** 공유 시트로 친구 코드 안내 문구를 보낸다 (카카오톡·문자 등 사용자가 고름) */
+    private fun shareMyCode() {
+        val code = myCode ?: return
+        val send = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, getString(R.string.my_code_share_text, code))
+        }
+        startActivity(Intent.createChooser(send, getString(R.string.my_code_share_title)))
     }
 
     private fun render(state: FriendsUiState) = with(binding) {

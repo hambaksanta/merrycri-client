@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/ic_copy.xml · 복사 아이콘 (겹친 종이 두 장) · 담당: A -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M9,8.5L17,8.5A1.5,1.5 0,0 1,18.5 10L18.5,18A1.5,1.5 0,0 1,17 19.5L9,19.5A1.5,1.5 0,0 1,7.5 18L7.5,10A1.5,1.5 0,0 1,9 8.5Z"
+        android:strokeWidth="1.8"
+        android:strokeColor="#FF000000"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M15.5,5.5L15.5,5A1.5,1.5 0,0 0,14 3.5L6,3.5A1.5,1.5 0,0 0,4.5 5L4.5,13A1.5,1.5 0,0 0,6 14.5L6.5,14.5"
+        android:strokeWidth="1.8"
+        android:strokeColor="#FF000000"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

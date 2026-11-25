@@ -66,6 +66,15 @@
     <string name="friends_error_already_added">이미 추가한 친구입니다.</string>
     <string name="friends_error_connection">친구 목록을 불러오지 못했습니다. 인터넷 연결을 확인해 주세요.</string>
 
+    <!-- 내 친구 코드 보여주기·복사·공유 (친구 화면 위쪽 카드, 담당: A) -->
+    <string name="my_code_label">내 친구 코드</string>
+    <string name="my_code_copy">복사</string>
+    <string name="my_code_share">공유</string>
+    <string name="my_code_copied">친구 코드를 복사했어요</string>
+    <string name="my_code_clip_label">메리크리 친구 코드</string>
+    <string name="my_code_share_title">친구 코드 공유</string>
+    <string name="my_code_share_text">메리크리에서 내 트리에 편지를 남겨 줘 🎄\n내 친구 코드: %1$s\n앱 → 친구 탭에서 이 코드를 입력하면 돼!</string>
+
     <string name="onboarding_title">내 트리를 만들어요</string>
     <string name="onboarding_body">친구들이 알아볼 닉네임을 입력해 주세요.</string>
     <string name="onboarding_nickname_hint">닉네임</string>
@@ -83,8 +92,17 @@
 
     <string name="letter_write_title">편지 쓰기</string>
     <string name="letter_write_hint">마음을 담아 편지를 써보세요</string>
+    <string name="letter_write_recipient_label">받을 친구 코드</string>
+    <string name="letter_write_ornament_label">트리에 달 장식 고르기</string>
     <string name="letter_write_save">편지 남기기</string>
     <string name="letter_write_error_blank">편지 내용을 입력해 주세요.</string>
+    <string name="letter_write_error_recipient_blank">친구 코드를 입력해 주세요.</string>
+    <string name="letter_write_error_recipient_invalid">6자리 친구 코드를 입력해 주세요.</string>
+    <string name="letter_write_error_recipient_not_found">존재하지 않는 친구 코드예요.</string>
+    <string name="letter_write_error_self">자기 자신에게는 보낼 수 없어요.</string>
+    <string name="letter_write_error_ornament">장식을 선택해 주세요.</string>
+    <string name="letter_write_error_generic">편지를 보내지 못했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="letter_write_success">편지를 보냈어요!</string>
 
     <!-- 트리 단계 이름 · 문구 (ui/tree, TreeArt) -->
     <string name="tree_stage_1">Lv1 앙상한 나무</string>
@@ -118,6 +136,8 @@
     <!-- 첫 화면 (담당: A) -->
     <string name="intro_dday">크리스마스까지 D-%1$d</string>
     <string name="intro_christmas">메리 크리스마스!</string>
-    <string name="intro_my_tree">내 트리 · %1$s</string>
+    <string name="intro_existing_user">내 트리 · %1$s\n받은 편지 %2$d통</string>
+    <string name="intro_new_user">친구들의 편지가 모이면\n이렇게 자라요</string>
+    <string name="intro_start">내 트리 만들기</string>
     <string name="intro_cd_my_tree">내 트리</string>
 </resources>

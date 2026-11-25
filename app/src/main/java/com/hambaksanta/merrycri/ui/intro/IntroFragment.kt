@@ -1,212 +1,393 @@
 // ui/intro/IntroFragment.kt
 package com.hambaksanta.merrycri.ui.intro
 
-import android.animation.Animator
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
-import android.animation.PropertyValuesHolder
 import android.animation.ValueAnimator
+import android.graphics.Outline
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewAnimationUtils
 import android.view.ViewGroup
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.DecelerateInterpolator
-import android.view.animation.OvershootInterpolator
+import android.view.ViewOutlineProvider
+import android.view.animation.LinearInterpolator
+import android.widget.ImageView
 import androidx.core.animation.doOnEnd
-import androidx.core.animation.doOnStart
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnLayout
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.hambaksanta.merrycri.MerryCriApp
 import com.hambaksanta.merrycri.R
 import com.hambaksanta.merrycri.databinding.FragmentIntroBinding
 import com.hambaksanta.merrycri.ui.tree.TreeArt
+import com.hambaksanta.merrycri.ui.tree.TreeSceneView
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.exp
 import kotlin.math.hypot
 import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.pow
+import kotlin.math.sin
 
 /**
- * 앱 첫 화면. 시스템 스플래시의 편지 트리 아이콘을 그대로 이어받아,
- * 봉투 속 트리가 자라서 "내 트리"(받은 편지 수 단계)가 되는 장면을 보여준 뒤 홈으로 넘어간다.
- * 화면을 누르면 바로 넘어간다. 기기에서 애니메이션을 끈 경우 마지막 장면만 보여준다. 담당: A
+ * 앱 첫 화면. 담당: A
  *
- * 시간표(ms): 300 흔들흔들 → 700 봉투가 내려가며 사라짐 → 1100 트리가 땅으로 내려오며 자람
- *            (1200 하늘이 둥글게 펼쳐짐) → 1800 내 트리 그림으로 바뀜 → 2200 제목·D-day → 잠시 뒤 홈
+ * 1. 시스템 스플래시의 편지 트리 아이콘에서 이어서, 봉투 속 트리가 흔들 → 봉투가 내려감 → 트리가 점프해 땅에 뿌리내림 (Lv1)
+ * 2. 우체통에서 편지가 한 통씩 날아와 트리에 톡 맞을 때마다: 트리가 움찔 → 쭉 늘어나며 한 단계 자람 (단계마다 편지 한 통)
+ * 3. 다 자라면 장식이 톡톡 달리고, 타이틀·D-day·안내가 올라온다
+ *
+ * - 신규 사용자(기기에 닉네임 없음): Lv5까지 시연 → "내 트리 만들기" → 닫히면 온보딩
+ * - 기존 사용자: 내가 받은 편지 수의 단계까지 → 잠시 뒤 자동으로 홈
+ * 움직임은 웹 시안과 같은 시간표를 render(t) 한 곳에서 그린다. 화면을 누르면 바로 넘어간다.
+ * 기기에서 애니메이션을 끈 경우 마지막 장면만 보여준다.
  */
 class IntroFragment : Fragment() {
     private var _binding: FragmentIntroBinding? = null
     private val binding get() = requireNotNull(_binding)
 
-    private var animator: Animator? = null
-    private var finished = false
+    /** 이번 인트로에서 보여줄 것 */
+    private data class Plan(val newUser: Boolean, val stage: Int, val letterCount: Int, val ornamentTypes: List<String>)
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
+    private lateinit var plan: Plan
+    private var timeline: ValueAnimator? = null
+    private var finished = false
+    private var ornamentsRevealed = false
+
+    // 레이아웃이 잡힌 뒤 계산하는 값 (px)
+    private var dp = 1f
+    private var groundY = 0f
+    private var iconBaseY = 0f
+    private var skyRevealRadius = 0f
+
+    // 시간표 (ms)
+    private var dep = LongArray(0)
+    private var hit = LongArray(0)
+    private var tEnd = 0L
+    private var tHeader = 0L
+    private var total = 0L
+
+    // 단계별로 어느 장면·하늘 뷰가 맡고 있는지 (홀짝으로 번갈아 씀)
+    private val sceneStage = IntArray(2)
+    private val skyStage = IntArray(2)
+    private var mailboxFull: Boolean? = null
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentIntroBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // TODO(B): 받은 편지 수를 알면 MainActivity에서 navigate 할 때 bundleOf(IntroFragment.ARG_STAGE to 단계)로 넘겨주세요.
-        //         없으면 Lv1(새 사용자)로 보여준다.
-        val stage = (arguments?.getInt(ARG_STAGE, 1) ?: 1).coerceIn(1, 5)
-        bindStage(stage)
-
+        dp = resources.displayMetrics.density
         binding.layoutIntro.setOnClickListener { finish() }
+        binding.buttonStart.setOnClickListener { finish() }
+        binding.textDday.text = ddayText()
+        listOf(binding.sceneA, binding.sceneB).forEach { it.setBackgroundVisible(false) }
 
         val skipAnimation = savedInstanceState != null || !ValueAnimator.areAnimatorsEnabled()
-        binding.layoutIntro.doOnLayout {
-            alignTreeToGround()
-            if (skipAnimation) {
-                showEndState()
-                finishAfter(HOLD_MS)
-            } else {
-                playIntro()
+        viewLifecycleOwner.lifecycleScope.launch {
+            plan = loadPlan() // 봉투(스플래시와 같은 장면)가 보이는 동안 불러옴, 최대 약 1.2초
+            val b = _binding ?: return@launch
+            b.layoutIntro.doOnLayout {
+                if (_binding == null) return@doOnLayout
+                prepare()
+                if (skipAnimation) showEndState() else play()
             }
         }
     }
 
-    private fun bindStage(stage: Int) = with(binding) {
-        imageSky.setImageResource(TreeArt.skyRes(stage))
-        treeScene.setStage(stage)
-        treeScene.setBackgroundVisible(false)
-        weather.setStage(stage)
-        aurora.visibility = if (TreeArt.hasAurora(stage)) View.VISIBLE else View.GONE
-        textStage.text = getString(R.string.intro_my_tree, getString(TreeArt.nameRes(stage)))
-        textDday.text = ddayText()
-        // Lv4·Lv5는 밤하늘이라 흰 글씨
-        val color = ContextCompat.getColor(requireContext(), if (stage >= 4) R.color.white else R.color.ink)
-        textTitle.setTextColor(color)
-        textStage.setTextColor(color)
+    // ---------------------------------------------------------------- 데이터
+
+    private suspend fun loadPlan(): Plan {
+        val app = requireActivity().application as MerryCriApp
+        val nickname = withTimeoutOrNull(1500) { app.settings.nickname.first() }
+        if (nickname.isNullOrBlank()) {
+            val demo = List(TreeArt.SLOTS[5].orEmpty().size) { TreeArt.ORNAMENT_TYPES[it % TreeArt.ORNAMENT_TYPES.size] }
+            return Plan(newUser = true, stage = 5, letterCount = demo.size, ornamentTypes = demo)
+        }
+        val ornaments = withTimeoutOrNull(1200) {
+            runCatching {
+                val uid = app.repository.uid ?: com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid ?: return@runCatching null
+                app.repository.observeOrnaments(uid).first()
+            }.getOrNull()
+        }.orEmpty()
+        val count = ornaments.size
+        return Plan(
+            newUser = false,
+            stage = TreeArt.stageOf(count),
+            letterCount = count,
+            ornamentTypes = ornaments.sortedBy { it.slot }.map { it.type },
+        )
     }
 
-    /**
-     * 하늘 그림은 화면을 꽉 채우도록(centerCrop) 커지므로, 내 트리 밑동이 하늘 그림의 땅(y=334/380)에 닿게 내린다.
-     * 키가 큰 화면일수록 트리가 아래로 내려가고 위쪽에 하늘(달·오로라)이 넓게 보인다.
-     */
-    private fun alignTreeToGround() = with(binding) {
-        val scale = max(imageSky.width / ART_W, imageSky.height / ART_H)
-        val groundY = (imageSky.height - ART_H * scale) / 2f + GROUND_Y * scale
-        treeScene.translationY = groundY - (treeScene.top + treeScene.height * MY_TREE_BASE)
-    }
+    // ---------------------------------------------------------------- 준비
 
-    private fun playIntro() = with(binding) {
-        val dp = resources.displayMetrics.density
-
-        // 트리는 밑동을 기준으로 커진다. 밑동 위치: 아이콘 칸의 58.7%, 내 트리 그림의 334/380.
+    private fun prepare() = with(binding) {
+        val s = plan.stage
+        // 트리 밑동이 하늘 그림의 땅(y=334/380)에 닿게 (하늘은 화면을 꽉 채우도록 centerCrop)
+        val scale = max(layoutSkies.width / ART_W, layoutSkies.height / ART_H)
+        groundY = (layoutSkies.height - ART_H * scale) / 2f + GROUND_Y * scale
+        listOf(sceneA, sceneB).forEach {
+            it.translationY = groundY - (it.top + it.height * TreeArt.TREE_BASE_Y)
+            it.pivotX = it.width / 2f
+            it.pivotY = it.height * TreeArt.TREE_BASE_Y
+        }
         imageIntroTree.pivotX = imageIntroTree.width / 2f
         imageIntroTree.pivotY = imageIntroTree.height * ICON_TREE_BASE
-        treeScene.pivotX = treeScene.width / 2f
-        treeScene.pivotY = treeScene.height.toFloat()
-        val fromBase = imageIntroTree.top + imageIntroTree.pivotY
-        val toBase = treeScene.top + treeScene.translationY + treeScene.height * MY_TREE_BASE
-        val treeDrop = toBase - fromBase
+        iconBaseY = imageIntroTree.top + imageIntroTree.pivotY
+        skyRevealRadius = hypot(layoutSkies.width.toFloat(), layoutSkies.height.toFloat())
 
-        val wiggle = ObjectAnimator.ofFloat(imageIntroTree, View.ROTATION, 0f, -7f, 6f, -4f, 2f, 0f).apply {
-            startDelay = 300; duration = 400
-        }
-        val sealPop = ObjectAnimator.ofPropertyValuesHolder(
-            imageEnvelopeFront,
-            PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 1.06f, 1f),
-            PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 1.06f, 1f),
-        ).apply { startDelay = 300; duration = 220 }
+        // 편지 시간표: 올라갈 단계 수만큼 한 통씩
+        val n = s - 1
+        val gap = if (plan.newUser) 720L else 820L
+        dep = LongArray(n) { LETTER_START + it * gap }
+        hit = LongArray(n) { dep[it] + FLY }
+        tEnd = if (n > 0) stageStart(s) + 420 else LETTER_START + 50
+        tHeader = tEnd + if (plan.newUser) 300 else 250
+        total = tHeader + 900
 
-        val envelopeOut = listOf(imageEnvelopeBack, imageEnvelopeFront).map { v ->
-            ObjectAnimator.ofPropertyValuesHolder(
-                v,
-                PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, 0f, 80 * dp),
-                PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0f),
-            ).apply { startDelay = 700; duration = 500; interpolator = AccelerateDecelerateInterpolator() }
+        weather.setStage(s)
+        aurora.isVisible = TreeArt.hasAurora(s)
+        val onDark = s >= 4
+        val color = ContextCompat.getColor(requireContext(), if (onDark) R.color.white else R.color.ink)
+        imageTitle.imageTintList = android.content.res.ColorStateList.valueOf(color)
+        textStage.setTextColor(color)
+        textStage.text = if (plan.newUser) {
+            getString(R.string.intro_new_user)
+        } else {
+            getString(R.string.intro_existing_user, getString(TreeArt.nameRes(s)), plan.letterCount)
         }
-        val popOut = ObjectAnimator.ofFloat(imageIntroTree, View.TRANSLATION_Y, 0f, -14 * dp, 0f).apply {
-            startDelay = 700; duration = 400
-        }
-        val grow = ObjectAnimator.ofPropertyValuesHolder(
-            imageIntroTree,
-            PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, 0f, treeDrop),
-            PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, TREE_GROW_SCALE),
-            PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, TREE_GROW_SCALE),
-        ).apply { startDelay = 1100; duration = 1000; interpolator = AccelerateDecelerateInterpolator() }
+        buttonStart.isVisible = plan.newUser
 
-        // 하늘: 트리 자리에서 둥글게 펼쳐진다
-        val cx = imageSky.width / 2
-        val cy = (toBase - treeScene.height * 0.4f).toInt()
-        val skyReveal = ViewAnimationUtils.createCircularReveal(
-            imageSky, cx, cy, 0f, hypot(imageSky.width.toFloat(), imageSky.height.toFloat()),
-        ).apply {
-            startDelay = 1200; duration = 900; interpolator = AccelerateDecelerateInterpolator()
-            doOnStart { imageSky.visibility = View.VISIBLE }
+        // Lv1 하늘은 착지한 자리에서 둥글게 펼쳐짐
+        imageSkyB.outlineProvider = object : ViewOutlineProvider() {
+            override fun getOutline(view: View, outline: Outline) {
+                val r = revealR.toInt()
+                val cx = view.width / 2
+                val cy = (groundY - 45 * dp).toInt()
+                outline.setOval(cx - r, cy - r, cx + r, cy + r)
+            }
         }
+        imageSkyB.clipToOutline = true
+        assignSky(1)
+        assignScene(1)
+        setMailbox(true)
+    }
 
-        val treeOut = ObjectAnimator.ofFloat(imageIntroTree, View.ALPHA, 1f, 0f).apply {
-            startDelay = 1800; duration = 500
-        }
-        val myTreeIn = ObjectAnimator.ofPropertyValuesHolder(
-            treeScene,
-            PropertyValuesHolder.ofFloat(View.ALPHA, 0f, 1f),
-            PropertyValuesHolder.ofFloat(View.SCALE_X, 0.94f, 1f),
-            PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.94f, 1f),
-        ).apply { startDelay = 1800; duration = 500; interpolator = OvershootInterpolator(1.2f) }
+    private var revealR = 0f
 
-        val snowIn = ObjectAnimator.ofFloat(weather, View.ALPHA, 0f, 1f).apply {
-            startDelay = 1600; duration = 800
-        }
-        val auroraIn = ObjectAnimator.ofFloat(aurora, View.ALPHA, 0f, 1f).apply {
-            startDelay = 1700; duration = 1000
-        }
+    private fun stageStart(stage: Int): Long = hit[stage - 2] + 130 // stage ≥ 2
 
-        val headerIn = ObjectAnimator.ofPropertyValuesHolder(
-            layoutHeader,
-            PropertyValuesHolder.ofFloat(View.ALPHA, 0f, 1f),
-            PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, 16 * dp, 0f),
-        ).apply { startDelay = 2200; duration = 600; interpolator = DecelerateInterpolator() }
+    // ---------------------------------------------------------------- 재생
 
-        animator = AnimatorSet().apply {
-            playTogether(listOf(wiggle, sealPop, popOut, grow, skyReveal, treeOut, myTreeIn, snowIn, auroraIn, headerIn) + envelopeOut)
-            doOnEnd { finishAfter(HOLD_MS) }
+    private fun play() {
+        timeline = ValueAnimator.ofFloat(0f, total.toFloat()).apply {
+            duration = total
+            interpolator = LinearInterpolator()
+            addUpdateListener { render((it.animatedValue as Float).toLong()) }
+            doOnEnd { if (!finished && !plan.newUser) finishAfter(HOLD_MS) }
             start()
+        }
+    }
+
+    /** 시간 t(ms)의 장면을 그린다. 웹 시안(scene.html 의 C='G')과 같은 식. */
+    private fun render(t: Long) = with(binding) {
+        val s = plan.stage
+
+        // 1) 봉투: 흔들 → 봉인 톡 → 아래로 내려가며 사라짐, 트리는 살짝 튀어오름
+        val w = cl(t, 300, 650)
+        val iconRot = sin(w * PI * 3).toFloat() * 7f * (1 - w)
+        val seal = 1f + 0.06f * sin(PI * cl(t, 300, 520)).toFloat()
+        val e = ad(cl(t, 650, 950))
+        listOf(imageEnvelopeBack, imageEnvelopeFront).forEach { it.translationY = 70 * dp * e; it.alpha = 1 - e }
+        imageEnvelopeFront.scaleX = seal; imageEnvelopeFront.scaleY = seal
+        val pop = -30 * dp * eo(cl(t, 650, 950))
+
+        // 2) 트리가 포물선으로 점프해 땅에 착지 → 꾹 눌렸다 펴짐
+        val j = cl(t, 950, 1500)
+        val startBase = iconBaseY - 30 * dp
+        val base = if (t < 950) iconBaseY + pop else startBase + (groundY - startBase) * j * j - 120 * dp * sin(PI * j).toFloat()
+        var sx = 1f; var sy = 1f
+        val sq = cl(t, 1500, 1720)
+        if (sq > 0f && sq < 1f) { val b = sin(PI * sq).toFloat(); sx = 1 + 0.14f * b; sy = 1 - 0.16f * b }
+        imageIntroTree.translationY = base - iconBaseY
+        imageIntroTree.rotation = iconRot
+        imageIntroTree.scaleX = sx; imageIntroTree.scaleY = sy
+
+        // 3) 하늘 펼침 + 봉투 트리 → Lv1 묘목
+        revealR = skyRevealRadius * ad(cl(t, 1450, 2100))
+        imageSkyB.invalidateOutline()
+        if (skyStage[1] == 1) {
+            imageSkyB.visibility = if (t >= 1450) View.VISIBLE else View.INVISIBLE
+            imageSkyB.alpha = 1f // Lv1 하늘은 투명도 대신 원이 커지며 드러남
+        }
+        val x = ad(cl(t, 1600, 1900))
+        imageIntroTree.alpha = 1 - x
+        weather.alpha = cl(t, 1600, 2400)
+
+        // 4) 단계별 장면 알파 (단계마다 짧게 겹치며 바뀜)
+        val alpha = FloatArray(6)
+        alpha[1] = if (t < 1900) x else if (s > 1) 1 - cl(t, stageStart(2), stageStart(2) + 180) else 1f
+        for (st in 2..s) {
+            var a = cl(t, stageStart(st), stageStart(st) + 180)
+            if (st < s) a *= 1 - cl(t, stageStart(st + 1), stageStart(st + 1) + 180)
+            alpha[st] = a
+        }
+        // 다음 단계가 시작되기 직전에 그 단계를 맡을 뷰를 준비 (가장 최근 단계만 — 앞 단계로 되돌리지 않게)
+        val upcoming = (2..s).lastOrNull { t >= stageStart(it) - 40 }
+        if (upcoming != null) { assignScene(upcoming); assignSky(upcoming) }
+        for (st in 2..s) if (skyStage[st % 2] == st) skyView(st).apply {
+            visibility = View.VISIBLE; this.alpha = cl(t, stageStart(st), stageStart(st) + 300)
+        }
+        listOf(sceneA, sceneB).forEachIndexed { i, v -> v.alpha = alpha.getOrElse(sceneStage[i]) { 0f } }
+        if (TreeArt.hasAurora(s)) aurora.alpha = cl(t, stageStart(5), stageStart(5) + 700)
+
+        // 5) 트리 몸짓: 편지가 맞으면 움찔 → 쭉 늘어났다 탄력 있게 자리 잡음 (마지막은 크게 흔들)
+        var tsx = 1f; var tsy = 1f; var trot = 0f
+        if (t < 1900) { val k = 0.9f + 0.1f * x; tsx = k; tsy = k }
+        val lh = hit.lastOrNull { t >= it }
+        if (lh != null) {
+            val d = (t - lh).toFloat()
+            val isFinal = lh == hit.last()
+            if (d < 130) {
+                val q = sin(PI * (d / 130f) * 0.5).toFloat(); tsy = 1 - 0.12f * q; tsx = 1 + 0.07f * q; trot = -3 * q
+            } else {
+                val dd = d - 130
+                val amp = if (isFinal) 0.15f else 0.11f
+                val sp = exp(-dd / (if (isFinal) 240f else 170f)) * cos(dd / (if (isFinal) 70f else 58f))
+                tsy = 1 + amp * sp; tsx = 1 - amp * 0.55f * sp
+                trot = (if (isFinal) 4.5f else 2.5f) * exp(-dd / (if (isFinal) 420f else 220f)) * sin(dd / (if (isFinal) 95f else 72f))
+            }
+        }
+        listOf(sceneA, sceneB).forEach { it.scaleX = tsx; it.scaleY = tsy; it.rotation = trot }
+
+        // 6) 편지: 지금 단계의 우체통 → 트리 몸통으로 날아가 톡, 맞으면 쏙 사라짐
+        var letterShown = false
+        for (i in dep.indices) {
+            val q = cl(t, dep[i], hit[i])
+            val st = i + 1
+            if (q > 0f && q < 1f) {
+                val (mx, my) = scenePoint(MAILBOX_X[st] + 20f, MAILBOX_GY[st] - 74f)
+                val (ex, ey) = scenePoint(ART_W / 2f, TRUNK_Y[st])
+                placeLetter(mx + (ex - mx) * ad(q), my + (ey - my) * q - 50 * dp * sin(PI * q).toFloat(), -15 + 30 * q, 1f, 1f)
+                letterShown = true
+            } else if (t >= hit[i] && t < hit[i] + 90) {
+                val (ex, ey) = scenePoint(ART_W / 2f, TRUNK_Y[st])
+                val k = 1 - (t - hit[i]) / 90f
+                placeLetter(ex, ey, 15f, k, k)
+                letterShown = true
+            }
+        }
+        imageLetter.visibility = if (letterShown) View.VISIBLE else View.INVISIBLE
+        setMailbox(dep.isNotEmpty() && t < dep.last())
+
+        // 7) 다 자란 뒤 장식 톡톡 + 타이틀
+        if (t >= tEnd && !ornamentsRevealed) revealOrnaments()
+        val h = eo(cl(t, tHeader, tHeader + 600))
+        layoutHeader.alpha = h; layoutHeader.translationY = 14 * dp * (1 - h)
+        if (plan.newUser) {
+            val bq = eo(cl(t, tHeader + 300, tHeader + 900))
+            buttonStart.alpha = bq; buttonStart.translationY = 16 * dp * (1 - bq)
         }
     }
 
     /** 애니메이션 없이 마지막 장면 */
     private fun showEndState() = with(binding) {
-        imageEnvelopeBack.alpha = 0f
-        imageEnvelopeFront.alpha = 0f
-        imageIntroTree.alpha = 0f
-        imageSky.visibility = View.VISIBLE
-        treeScene.alpha = 1f
+        val s = plan.stage
+        listOf(imageEnvelopeBack, imageEnvelopeFront, imageIntroTree).forEach { it.alpha = 0f }
+        revealR = skyRevealRadius; imageSkyB.invalidateOutline()
+        assignSky(s); assignScene(s)
+        skyView(s).apply { visibility = View.VISIBLE; alpha = 1f }
+        listOf(sceneA, sceneB).forEachIndexed { i, v -> v.alpha = if (sceneStage[i] == s) 1f else 0f }
+        if (TreeArt.hasAurora(s)) aurora.alpha = 1f
         weather.alpha = 1f
-        aurora.alpha = 1f
+        setMailbox(false)
+        sceneFor(s).setOrnaments(plan.ornamentTypes.take(TreeArt.SLOTS[s].orEmpty().size))
+        ornamentsRevealed = true
         layoutHeader.alpha = 1f
+        if (plan.newUser) {
+            buttonStart.alpha = 1f
+        } else {
+            finishAfter(HOLD_MS)
+        }
+    }
+
+    // ---------------------------------------------------------------- 도우미
+
+    private fun skyView(stage: Int): ImageView = if (stage % 2 == 1) binding.imageSkyB else binding.imageSkyA
+    private fun sceneFor(stage: Int): TreeSceneView = if (stage % 2 == 1) binding.sceneB else binding.sceneA
+
+    private fun assignSky(stage: Int) {
+        val i = stage % 2
+        if (skyStage[i] == stage) return
+        skyStage[i] = stage
+        skyView(stage).apply {
+            setImageResource(TreeArt.skyRes(stage))
+            alpha = 0f
+            if (stage > 1) clipToOutline = false
+            bringToFront() // 새 하늘이 앞 단계 하늘 위로 덮이게
+        }
+    }
+
+    private fun assignScene(stage: Int) {
+        val i = stage % 2
+        if (sceneStage[i] == stage) return
+        sceneStage[i] = stage
+        sceneFor(stage).apply {
+            setStage(stage)
+            setOrnaments(emptyList())
+            mailboxFull?.let { setMailboxFull(it) }
+        }
+    }
+
+    private fun setMailbox(full: Boolean) {
+        if (mailboxFull == full) return
+        mailboxFull = full
+        binding.sceneA.setMailboxFull(full)
+        binding.sceneB.setMailboxFull(full)
+    }
+
+    private fun revealOrnaments() {
+        ornamentsRevealed = true
+        val s = plan.stage
+        val scene = sceneFor(s)
+        scene.setOrnaments(plan.ornamentTypes.take(TreeArt.SLOTS[s].orEmpty().size))
+        scene.revealOrnaments(if (plan.newUser) 45L else 90L)
+    }
+
+    /** 트리 그림(320x380) 좌표 → 화면 좌표 */
+    private fun scenePoint(ax: Float, ay: Float): Pair<Float, Float> {
+        val v = binding.sceneA
+        return (v.left + ax / ART_W * v.width) to (v.top + v.translationY + ay / ART_H * v.height)
+    }
+
+    private fun placeLetter(cx: Float, cy: Float, rot: Float, sx: Float, sy: Float) = with(binding.imageLetter) {
+        translationX = cx - width / 2f - left
+        translationY = cy - height / 2f - top
+        rotation = rot; scaleX = sx; scaleY = sy
+        alpha = if (sx < 1f) sx else 1f
     }
 
     private fun finishAfter(millis: Long) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            delay(millis)
-            finish()
-        }
+        viewLifecycleOwner.lifecycleScope.launch { delay(millis); finish() }
     }
 
     private fun finish() {
         if (finished || _binding == null) return
         finished = true
-        animator?.removeAllListeners()
-        animator?.cancel()
+        timeline?.removeAllListeners(); timeline?.cancel()
         val nav = findNavController()
-        if (nav.currentDestination?.id == R.id.introFragment) {
-            nav.popBackStack() // 아래의 온보딩이 나타나서 기존 사용자는 홈, 새 사용자는 닉네임 입력으로 보낸다
-        }
+        // 인트로를 닫으면 아래의 온보딩이 기존 사용자는 홈, 새 사용자는 닉네임 입력으로 보낸다
+        if (nav.currentDestination?.id == R.id.introFragment) nav.popBackStack()
     }
 
     private fun ddayText(): String {
@@ -216,21 +397,26 @@ class IntroFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        animator?.removeAllListeners()
-        animator?.cancel()
-        animator = null
+        timeline?.removeAllListeners(); timeline?.cancel(); timeline = null
         _binding = null
         super.onDestroyView()
     }
 
-    companion object {
-        const val ARG_STAGE = "stage"
-        private const val HOLD_MS = 700L
-        private const val TREE_GROW_SCALE = 2.6f
-        private const val ICON_TREE_BASE = 0.587f
-        private const val ART_W = 320f
-        private const val ART_H = 380f
-        private const val GROUND_Y = 334f
-        private const val MY_TREE_BASE = GROUND_Y / ART_H
+    private fun cl(t: Long, a: Long, b: Long): Float = min(1f, max(0f, (t - a).toFloat() / (b - a)))
+    private fun ad(p: Float): Float = ((1 - cos(PI * p)) / 2).toFloat()
+    private fun eo(p: Float): Float = 1 - (1 - p).pow(3)
+
+    private companion object {
+        const val ART_W = 320f
+        const val ART_H = 380f
+        const val GROUND_Y = 334f
+        const val ICON_TREE_BASE = 0.587f
+        const val LETTER_START = 2150L
+        const val FLY = 340L
+        const val HOLD_MS = 900L
+        // 그림 좌표: 단계별 우체통 위치(기둥 x, 땅 y)와 편지가 맞는 몸통 높이
+        val MAILBOX_X = floatArrayOf(0f, 52f, 50f, 38f, 36f, 34f)
+        val MAILBOX_GY = floatArrayOf(0f, 332f, 332f, 334f, 334f, 334f)
+        val TRUNK_Y = floatArrayOf(0f, 250f, 232f, 215f, 205f, 195f)
     }
 }

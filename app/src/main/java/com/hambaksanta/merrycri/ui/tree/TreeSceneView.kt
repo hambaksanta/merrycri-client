@@ -9,6 +9,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.OvershootInterpolator
 import android.widget.FrameLayout
 import android.widget.ImageView
 import com.hambaksanta.merrycri.R
@@ -101,6 +102,21 @@ class TreeSceneView @JvmOverloads constructor(
         restartAnimations()
     }
 
+    /**
+     * 달려 있는 장식을 하나씩 톡톡 나타나게 한다 (첫 화면 마지막 장면용).
+     * 장식은 setOrnaments() 로 먼저 놓여 있어야 한다.
+     */
+    fun revealOrnaments(staggerMs: Long) {
+        for (i in 0 until ornamentLayer.childCount) {
+            val v = ornamentLayer.getChildAt(i)
+            v.scaleX = 0f
+            v.scaleY = 0f
+            v.animate().scaleX(1f).scaleY(1f)
+                .setStartDelay(i * staggerMs).setDuration(260L)
+                .setInterpolator(OvershootInterpolator(2.2f)).start()
+        }
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         // 너비 기준으로 320:380 비율 유지 (높이를 정해 두면 그 높이를 따른다)
         val w = MeasureSpec.getSize(widthMeasureSpec)
@@ -121,8 +137,11 @@ class TreeSceneView @JvmOverloads constructor(
         sway.pivotY = h * TreeArt.TREE_BASE_Y
         star.pivotX = w * TreeArt.STAR_CENTER.x
         star.pivotY = h * TreeArt.STAR_CENTER.y
-        placeOrnaments()
-        restartAnimations()
+        // 레이아웃 도중에 자식 뷰를 추가하면 크기가 0으로 잡힐 수 있어서 다음 프레임에 배치한다
+        post {
+            placeOrnaments()
+            restartAnimations()
+        }
     }
 
     override fun onAttachedToWindow() {
@@ -139,14 +158,18 @@ class TreeSceneView @JvmOverloads constructor(
         ornamentLayer.removeAllViews()
         val slots = TreeArt.SLOTS[stage].orEmpty()
         if (width == 0 || slots.isEmpty()) return
-        val size = (width * ORNAMENT_SIZE / ART_W).toInt()
+        // 주의: 아래 apply { } 안에서 width/height를 쓰면 장식 ImageView 자신의 크기(0)가 잡힌다.
+        // 그래서 장면 크기를 먼저 꺼내 둔다. (예전엔 이것 때문에 장식이 전부 왼쪽 위 구석에 몰렸음)
+        val sceneW = width.toFloat()
+        val sceneH = height.toFloat()
+        val size = (sceneW * ORNAMENT_SIZE / ART_W).toInt()
         ornamentTypes.forEachIndexed { index, type ->
             val slot = slots[index % slots.size]
             val view = ImageView(context).apply {
                 setImageResource(TreeArt.ornamentRes(type))
                 contentDescription = context.getString(R.string.tree_cd_ornament, index + 1)
-                translationX = slot.x * width - size / 2f
-                translationY = slot.y * height - size / 2f
+                translationX = slot.x * sceneW - size / 2f
+                translationY = slot.y * sceneH - size / 2f
                 pivotX = size / 2f
                 pivotY = size * 0.08f // 고리에 매달린 듯 위쪽 기준으로 살랑
                 onOrnamentClick?.let { click -> setOnClickListener { click(index) } }

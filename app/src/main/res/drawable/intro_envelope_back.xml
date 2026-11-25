@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- 인트로 1층: 봉투 안쪽 · 담당: A -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
@@ -11,7 +12,7 @@
         android:scaleX="0.72"
         android:scaleY="0.72">
         <path
-            android:pathData="M27,50h54a5,5 0,0 1,5,5v30a5,5 0,0 1,-5,5h-54a5,5 0,0 1,-5,-5v-30a5,5 0,0 1,5,-5Z"
+            android:pathData="M27.0,50.0h54.0a5.0,5.0 0,0 1,5.0,5.0v30.0a5.0,5.0 0,0 1,-5.0,5.0h-54.0a5.0,5.0 0,0 1,-5.0,-5.0v-30.0a5.0,5.0 0,0 1,5.0,-5.0Z"
             android:fillColor="#FF8E2A1C" />
     </group>
 </vector>

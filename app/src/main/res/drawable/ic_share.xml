@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/ic_share.xml · 공유 아이콘 (상자에서 위로 나가는 화살표) · 담당: A -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M12,14.5L12,3.5M7.5,8L12,3.5L16.5,8"
+        android:strokeWidth="1.8"
+        android:strokeColor="#FF000000"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M8.5,10.5L6.5,10.5A1.5,1.5 0,0 0,5 12L5,19A1.5,1.5 0,0 0,6.5 20.5L17.5,20.5A1.5,1.5 0,0 0,19 19L19,12A1.5,1.5 0,0 0,17.5 10.5L15.5,10.5"
+        android:strokeWidth="1.8"
+        android:strokeColor="#FF000000"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>
