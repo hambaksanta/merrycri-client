@@ -9,6 +9,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.OvershootInterpolator
 import android.widget.FrameLayout
 import android.widget.ImageView
 import com.hambaksanta.merrycri.R
@@ -99,6 +100,21 @@ class TreeSceneView @JvmOverloads constructor(
         onOrnamentClick = onClick
         placeOrnaments()
         restartAnimations()
+    }
+
+    /**
+     * 달려 있는 장식을 하나씩 톡톡 나타나게 한다 (첫 화면 마지막 장면용).
+     * 장식은 setOrnaments() 로 먼저 놓여 있어야 한다.
+     */
+    fun revealOrnaments(staggerMs: Long) {
+        for (i in 0 until ornamentLayer.childCount) {
+            val v = ornamentLayer.getChildAt(i)
+            v.scaleX = 0f
+            v.scaleY = 0f
+            v.animate().scaleX(1f).scaleY(1f)
+                .setStartDelay(i * staggerMs).setDuration(260L)
+                .setInterpolator(OvershootInterpolator(2.2f)).start()
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

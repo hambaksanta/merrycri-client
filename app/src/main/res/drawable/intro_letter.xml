@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 첫 화면에서 우체통 → 트리로 날아가는 편지 · 담당: A -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="22dp"
+    android:height="15dp"
+    android:viewportWidth="22"
+    android:viewportHeight="15">
+    <path
+        android:pathData="M2.6,0.6h16.8a2,2 0,0 1,2 2v9.8a2,2 0,0 1,-2 2h-16.8a2,2 0,0 1,-2 -2v-9.8a2,2 0,0 1,2 -2Z"
+        android:fillColor="#FFFBF3E4"
+        android:strokeColor="#FFD9C6A5"
+        android:strokeWidth="1" />
+    <path
+        android:pathData="M1.2,1.2L11,8.4L20.8,1.2"
+        android:strokeColor="#FFCDB894"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M8.8,8.4a2.2,2.2 0,1 0,4.4,0a2.2,2.2 0,1 0,-4.4,0Z"
+        android:fillColor="#FFC2372C" />
+</vector>
