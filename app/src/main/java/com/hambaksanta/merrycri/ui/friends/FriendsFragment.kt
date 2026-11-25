@@ -29,7 +29,8 @@ import kotlinx.coroutines.launch
 /**
  * 친구 목록. 담당: B (위쪽 '내 친구 코드' 카드만 A, #45)
  * 각 친구 트리에서 지금까지 나온 미니게임 1등 점수를 같이 보여주고(담당: C),
- * 탭하면 그 친구 트리 경쟁 모드로 GameActivity를 바로 띄운다(상단 큰 시작 버튼 + 하단 전체 순위) — 약간의 경쟁심리 자극용.
+ * "게임하러 가기" 칩을 누르면 그 친구 트리 경쟁 모드로 GameActivity를 띄운다
+ * (상단 큰 시작 버튼 + 하단 전체 순위) — 약간의 경쟁심리 자극용.
  */
 class FriendsFragment : Fragment() {
     private var _binding: FragmentFriendsBinding? = null
@@ -135,8 +136,8 @@ class FriendsFragment : Fragment() {
         }
     }
 
+    /** "게임하러 가기" 칩을 눌렀을 때: GameActivity 시작 화면(상단 큰 버튼 + 하단 전체 순위)으로 이동한다. */
     private fun onFriendClicked(item: FriendListItem) {
-        // '게임쪽'에 바로 띄움: GameActivity 시작 화면 상단 큰 버튼 + 하단 전체 순위로 바로 들어간다.
         startActivity(GameActivity.forOwner(requireContext(), item.uid))
     }
 

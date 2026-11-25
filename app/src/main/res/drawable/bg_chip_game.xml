@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/bg_chip_game.xml · '게임하러 가기' 칩 · 담당: C -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/gold_light" />
+    <corners android:radius="@dimen/radius_chip" />
+</shape>

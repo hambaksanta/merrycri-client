@@ -102,6 +102,13 @@
                 style="@style/Widget.MerryCri.Chip.Todo"
                 android:layout_marginTop="@dimen/space_8"
                 android:text="@string/friends_letter_todo" />
+
+            <!-- 카드를 눌러도 더는 바로 게임으로 안 가고, 이 버튼으로만 미니게임으로 이동한다. 담당: C -->
+            <TextView
+                android:id="@+id/play_game_button"
+                style="@style/Widget.MerryCri.Chip.Game"
+                android:layout_marginTop="@dimen/space_8"
+                android:text="@string/friends_play_game" />
         </LinearLayout>
     </LinearLayout>
 

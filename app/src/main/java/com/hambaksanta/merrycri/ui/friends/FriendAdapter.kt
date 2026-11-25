@@ -11,8 +11,9 @@ import com.hambaksanta.merrycri.R
 import com.hambaksanta.merrycri.databinding.ItemFriendBinding
 
 /**
- * 친구 목록 줄. 카드를 탭하면 그 친구 트리 경쟁 모드로 미니게임을 띄우고(onClick),
- * "편지 쓰기" 칩을 탭하면 그 친구에게 편지 쓰기 화면으로 바로 이동한다(onWriteLetterClick). 담당: C
+ * 친구 목록 줄. "게임하러 가기" 칩을 탭하면 그 친구 트리 경쟁 모드로 미니게임을 띄우고(onClick),
+ * "편지 쓰기"/"편지 또 쓰기" 칩을 탭하면 그 친구에게 편지 쓰기 화면으로 바로 이동한다(onWriteLetterClick).
+ * 두 동작 모두 전용 버튼으로만 트리거되며, 카드 전체 탭에는 아무 동작도 연결하지 않는다. 담당: C
  */
 class FriendAdapter(
     private val onClick: (FriendListItem) -> Unit = {},
@@ -63,10 +64,11 @@ class FriendAdapter(
             statusDone.isVisible = item.hasWritten
             statusTodo.isVisible = !item.hasWritten
             writeAgainButton.isVisible = item.hasWritten
-            // "편지 쓰기"/"편지 또 쓰기" 칩은 여기서 따로 소비해서, 카드 전체 탭(게임 연동)으로 안 새도록 한다.
+            // "편지 쓰기"/"편지 또 쓰기"/"게임하러 가기" 칩은 각자 따로 클릭을 소비한다.
+            // 카드 전체(root)에는 클릭 리스너를 걸지 않아, 의도치 않게 게임으로 넘어가는 일이 없게 한다.
             statusTodo.setOnClickListener { onWriteLetterClick(item) }
             writeAgainButton.setOnClickListener { onWriteLetterClick(item) }
-            root.setOnClickListener { onClick(item) }
+            playGameButton.setOnClickListener { onClick(item) }
         }
     }
 
