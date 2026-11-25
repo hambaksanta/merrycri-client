@@ -30,6 +30,88 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/friends_title" />
 
+    <!-- 내 친구 코드 (담당: A, #45): 한 줄짜리 작은 카드. 코드를 누르거나 [복사]로 복사, [공유]로 메신저에 보내기.
+         코드가 없으면(가입 전) 숨김 → 아래 입력칸은 goneMarginTop으로 설명 바로 밑에 붙는다 -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_my_code"
+        style="@style/Widget.MerryCri.Card.Highlight"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_12"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/friends_description">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/space_16"
+            android:paddingTop="@dimen/space_8"
+            android:paddingEnd="@dimen/space_8"
+            android:paddingBottom="@dimen/space_8">
+
+            <LinearLayout
+                android:id="@+id/my_code_area"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackground"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/my_code_label"
+                    android:textAppearance="@style/TextAppearance.MerryCri.Label"
+                    android:textColor="@color/pine_light" />
+
+                <TextView
+                    android:id="@+id/text_my_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:letterSpacing="0.15"
+                    android:textAppearance="@style/TextAppearance.MerryCri.Subtitle"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_copy_code"
+                style="@style/Widget.MerryCri.Button.Secondary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="0dp"
+                android:minHeight="36dp"
+                android:paddingStart="@dimen/space_12"
+                android:paddingEnd="@dimen/space_12"
+                android:text="@string/my_code_copy"
+                android:textSize="14sp"
+                app:icon="@drawable/ic_copy"
+                app:iconPadding="@dimen/space_4"
+                app:iconSize="16dp"
+                app:strokeWidth="0dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_share_code"
+                style="@style/Widget.MerryCri.Button.Accent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_8"
+                android:minWidth="0dp"
+                android:minHeight="36dp"
+                android:paddingStart="@dimen/space_12"
+                android:paddingEnd="@dimen/space_12"
+                android:text="@string/my_code_share"
+                android:textSize="14sp"
+                app:icon="@drawable/ic_share"
+                app:iconPadding="@dimen/space_4"
+                app:iconSize="16dp" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/friend_code_input_layout"
         style="@style/Widget.MerryCri.TextInput"
@@ -39,7 +121,8 @@
         android:hint="@string/friends_code_hint"
         app:layout_constraintEnd_toStartOf="@id/add_friend_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/friends_description">
+        app:layout_constraintTop_toBottomOf="@id/card_my_code"
+        app:layout_goneMarginTop="@dimen/space_16">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/friend_code_input"
