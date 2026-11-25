@@ -43,6 +43,11 @@ class TreeSceneView @JvmOverloads constructor(
     private val ornamentLayer = FrameLayout(context).apply { clipChildren = false }
     private val props = layer()
     private val mailbox = layer()
+    /** 우체통 자리에만 놓는 투명한 터치 영역 (우체통 그림은 장면 전체 크기라 그 자체로는 누를 곳을 정할 수 없다) */
+    private val mailboxHit = View(context).apply {
+        isClickable = false
+        contentDescription = context.getString(R.string.tree_cd_mailbox)
+    }
 
     private var stage = 1
     private var backgroundVisible = true
@@ -58,6 +63,7 @@ class TreeSceneView @JvmOverloads constructor(
         addView(sway, matchParent())
         addView(props, matchParent())
         addView(mailbox, matchParent())
+        addView(mailboxHit, LayoutParams(0, 0))
         setStage(1)
     }
 
@@ -75,6 +81,7 @@ class TreeSceneView @JvmOverloads constructor(
         lightsB.setOptional(lights?.second)
         weather.setStage(this.stage)
         placeOrnaments()
+        placeMailboxHit()
         restartAnimations()
     }
 
@@ -100,6 +107,28 @@ class TreeSceneView @JvmOverloads constructor(
         onOrnamentClick = onClick
         placeOrnaments()
         restartAnimations()
+    }
+
+    /** 우체통을 누르면 [onClick]. null이면 우체통은 눌리지 않는다. */
+    fun setOnMailboxClick(onClick: (() -> Unit)?) {
+        mailboxHit.setOnClickListener(onClick?.let { click -> View.OnClickListener { click() } })
+        mailboxHit.isClickable = onClick != null
+    }
+
+    private fun placeMailboxHit() {
+        if (width == 0) return
+        val sceneW = width.toFloat()
+        val sceneH = height.toFloat()
+        val x = MAILBOX_X[stage]
+        val ground = MAILBOX_GROUND[stage]
+        val left = (x - 16f) / ART_W * sceneW
+        val top = (ground - 100f) / ART_H * sceneH
+        val lp = mailboxHit.layoutParams as LayoutParams
+        lp.width = ((x + 58f) / ART_W * sceneW - left).toInt()
+        lp.height = ((ground + 4f) / ART_H * sceneH - top).toInt()
+        mailboxHit.layoutParams = lp
+        mailboxHit.translationX = left
+        mailboxHit.translationY = top
     }
 
     /**
@@ -140,6 +169,7 @@ class TreeSceneView @JvmOverloads constructor(
         // 레이아웃 도중에 자식 뷰를 추가하면 크기가 0으로 잡힐 수 있어서 다음 프레임에 배치한다
         post {
             placeOrnaments()
+            placeMailboxHit()
             restartAnimations()
         }
     }
@@ -249,5 +279,8 @@ class TreeSceneView @JvmOverloads constructor(
         const val ART_W = 320f
         const val ART_H = 380f
         const val ORNAMENT_SIZE = 26f
+        // 그림 좌표: 단계별 우체통 기둥 x와 땅 높이 (첫 화면 편지가 출발하는 자리와 같음)
+        val MAILBOX_X = floatArrayOf(0f, 52f, 50f, 38f, 36f, 34f)
+        val MAILBOX_GROUND = floatArrayOf(0f, 332f, 332f, 334f, 334f, 334f)
     }
 }
