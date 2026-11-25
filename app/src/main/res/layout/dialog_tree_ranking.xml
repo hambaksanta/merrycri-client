@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/dialog_tree_ranking.xml · 트리 탭 '순위' 팝업 (#50) · 담당: A
+     친구들이 내 트리에서 낸 미니게임 최고점. 줄 모양은 C의 item_score(ScoreAdapter)를 그대로 쓴다 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/space_24"
+    android:paddingTop="@dimen/space_24">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tree_ranking_title"
+        android:textAppearance="@style/TextAppearance.MerryCri.Title" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_4"
+        android:text="@string/tree_ranking_sub"
+        android:textAppearance="@style/TextAppearance.MerryCri.Caption" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_ranking"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_16"
+        android:visibility="gone"
+        tools:itemCount="3"
+        tools:listitem="@layout/item_score" />
+
+    <TextView
+        android:id="@+id/text_ranking_empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/space_24"
+        android:gravity="center"
+        android:lineSpacingExtra="2dp"
+        android:text="@string/tree_ranking_empty"
+        android:textAppearance="@style/TextAppearance.MerryCri.Body"
+        android:textColor="@color/ink_muted" />
+</LinearLayout>

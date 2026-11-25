@@ -13,6 +13,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -22,7 +24,9 @@ import com.hambaksanta.merrycri.R
 import com.hambaksanta.merrycri.data.AuthState
 import com.hambaksanta.merrycri.data.model.Letter
 import com.hambaksanta.merrycri.data.model.Ornament
+import com.hambaksanta.merrycri.databinding.DialogTreeRankingBinding
 import com.hambaksanta.merrycri.databinding.FragmentTreeBinding
+import com.hambaksanta.merrycri.ui.leaderboard.ScoreAdapter
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -38,6 +42,7 @@ import kotlin.math.max
  * - 내가 받은 장식(ornaments/{내 uid})을 실시간으로 받아 트리 단계·장식·진행바를 바꾼다
  * - [받은 편지] 버튼, 우체통, 트리의 장식을 누르면 편지 시트(TreeLettersSheet)가 열린다
  *   12/25(config/openAt) 전에는 서버가 읽기를 막으므로 잠금 안내를, 그 뒤에는 편지 목록을 보여준다
+ * - 오른쪽 위 [순위]: 친구들이 내 트리에서 낸 미니게임 최고점 팝업 (#50)
  * - 상태바 색도 하늘 맨 위 색에 맞춘다 (다른 탭으로 가면 원래대로)
  */
 class TreeFragment : Fragment() {
@@ -67,12 +72,15 @@ class TreeFragment : Fragment() {
         binding.textDday.text = ddayText()
         binding.buttonLetters.setOnClickListener { openLetters(null) }
         binding.treeScene.setOnMailboxClick { openLetters(null) }
+        binding.buttonRanking.setOnClickListener { openRanking() }
 
         // 하늘을 상태바 뒤까지 그리는 기기(안드로이드 15 이상)에서는 머리글을 상태바 아래로 내린다
         val headerTop = (HEADER_TOP_DP * resources.displayMetrics.density).toInt()
+        val rankingTop = (RANKING_TOP_DP * resources.displayMetrics.density).toInt()
         ViewCompat.setOnApplyWindowInsetsListener(binding.layoutTree) { _, insets ->
             val top = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top
             binding.layoutHeader.updateLayoutParams<ViewGroup.MarginLayoutParams> { topMargin = headerTop + top }
+            binding.buttonRanking.updateLayoutParams<ViewGroup.MarginLayoutParams> { topMargin = rankingTop + top }
             insets
         }
         binding.layoutTree.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ -> alignToGround() }
@@ -201,6 +209,31 @@ class TreeFragment : Fragment() {
         }
     }
 
+    // ---------------------------------------------------------------- 순위 (#50)
+
+    /** 내 트리 미니게임 순위 팝업. 열려 있는 동안 점수가 바뀌면 바로 반영하고, [닫기]로 닫는다 */
+    private fun openRanking() {
+        val myUid = app.repository.uid ?: FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val dialogBinding = DialogTreeRankingBinding.inflate(layoutInflater)
+        val adapter = ScoreAdapter(myUid)
+        dialogBinding.listRanking.layoutManager = LinearLayoutManager(requireContext())
+        dialogBinding.listRanking.adapter = adapter
+        val job = viewLifecycleOwner.lifecycleScope.launch {
+            app.repository.observeScores(myUid)
+                .catch { emit(emptyList()) }
+                .collect { scores ->
+                    adapter.submitList(scores)
+                    dialogBinding.listRanking.isVisible = scores.isNotEmpty()
+                    dialogBinding.textRankingEmpty.isVisible = scores.isEmpty()
+                }
+        }
+        MaterialAlertDialogBuilder(requireContext())
+            .setView(dialogBinding.root)
+            .setPositiveButton(R.string.tree_ranking_close, null)
+            .setOnDismissListener { job.cancel() }
+            .show()
+    }
+
     /** 장식 → 편지: 편지와 장식은 한 번에 저장돼 만든 시각(서버 시간)이 같다 */
     private fun findLetter(list: List<Letter>, target: Ornament?): Letter? {
         target ?: return null
@@ -243,6 +276,7 @@ class TreeFragment : Fragment() {
         const val ART_H = 380f
         const val GROUND_Y = 334f
         const val HEADER_TOP_DP = 28 // fragment_tree.xml의 layout_header marginTop과 같게
+        const val RANKING_TOP_DP = 12 // button_ranking marginTop과 같게
         /** 단계별 하늘 그림(bg_sky_lvN) 맨 위 색 — 상태바·바탕색 */
         val SKY_TOP = intArrayOf(
             0xFF86929F.toInt(),
