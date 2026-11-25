@@ -76,26 +76,13 @@
                     android:textAppearance="@style/TextAppearance.MerryCri.Caption" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <!-- 편지는 하루 한 통. 오늘 이미 썼으면 status_done, 아니면 status_todo(클릭해서 쓰기). 담당: C -->
+            <TextView
+                android:id="@+id/status_done"
+                style="@style/Widget.MerryCri.Chip.Done"
                 android:layout_marginTop="@dimen/space_8"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/status_done"
-                    style="@style/Widget.MerryCri.Chip.Done"
-                    android:text="@string/friends_letter_done"
-                    android:visibility="gone" />
-
-                <!-- 편지를 이미 쓴 친구에게도 또 쓸 수 있게 하는 별도 버튼. 담당: C -->
-                <TextView
-                    android:id="@+id/write_again_button"
-                    style="@style/Widget.MerryCri.Chip.Todo"
-                    android:layout_marginStart="@dimen/space_8"
-                    android:text="@string/friends_letter_write_again"
-                    android:visibility="gone" />
-            </LinearLayout>
+                android:text="@string/friends_letter_done"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/status_todo"
@@ -103,7 +90,7 @@
                 android:layout_marginTop="@dimen/space_8"
                 android:text="@string/friends_letter_todo" />
 
-            <!-- 카드를 눌러도 더는 바로 게임으로 안 가고, 이 버튼으로만 미니게임으로 이동한다. 담당: C -->
+            <!-- 카드(root) 전체를 누르면 친구 트리 구경 화면으로 가고, 게임은 이 버튼으로만 이동한다. 담당: C -->
             <TextView
                 android:id="@+id/play_game_button"
                 style="@style/Widget.MerryCri.Chip.Game"

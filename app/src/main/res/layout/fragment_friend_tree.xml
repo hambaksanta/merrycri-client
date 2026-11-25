@@ -1,14 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- res/layout/fragment_friend_tree.xml -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- res/layout/fragment_friend_tree.xml · 친구 트리 구경 화면(친구 목록 카드를 탭하면 들어옴). 담당: C -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/cream"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="@dimen/screen_padding">
 
-    <TextView
+    <!-- 게임/편지 쓰기 화면과 같은 '← 뒤로가기' 패턴. 누르면 친구 목록으로 돌아간다. -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/back_button"
+        style="@style/Widget.MerryCri.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/placeholder_friend_tree"
-        android:textAppearance="?attr/textAppearanceHeadlineSmall" />
+        android:layout_gravity="start"
+        android:layout_marginBottom="@dimen/space_12"
+        android:minHeight="0dp"
+        android:minWidth="0dp"
+        android:paddingHorizontal="@dimen/space_16"
+        android:paddingVertical="@dimen/space_8"
+        android:text="@string/letter_write_back_button"
+        android:textSize="14sp" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/friend_tree_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.MerryCri.Title"
+        tools:text="박지우의 트리" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="@dimen/radius_tree"
+        app:cardElevation="0dp"
+        app:strokeWidth="0dp">
+
+        <com.hambaksanta.merrycri.ui.tree.TreeSceneView
+            android:id="@+id/friend_tree_scene"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/friend_tree_stage_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:textAppearance="@style/TextAppearance.MerryCri.Subtitle" />
+
+    <TextView
+        android:id="@+id/friend_tree_letter_count_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textAppearance="@style/TextAppearance.MerryCri.Caption"
+        android:textColor="@color/ink_muted" />
+
+</LinearLayout>

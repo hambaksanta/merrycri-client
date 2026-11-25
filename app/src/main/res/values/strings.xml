@@ -10,6 +10,9 @@
     <string name="placeholder_onboarding">온보딩 화면</string>
     <string name="placeholder_letter_write">편지 쓰기 화면</string>
     <string name="placeholder_friend_tree">친구 트리 화면</string>
+
+    <!-- 친구 트리 구경 화면(친구 목록에서 카드를 탭하면 들어옴). 담당: C -->
+    <string name="friend_tree_title_format">%1$s의 트리</string>
     <string name="placeholder_letter_read">편지 열람 화면</string>
     <string name="placeholder_leaderboard">리더보드 화면</string>
 
@@ -56,9 +59,8 @@
     <string name="friends_empty">아직 친구가 없어요.\n친구 코드를 입력해 추가해 보세요.</string>
     <string name="friends_code_value">코드 %1$s</string>
     <string name="friends_letter_count">편지 %1$d통</string>
-    <string name="friends_letter_done">편지 씀</string>
+    <string name="friends_letter_done">오늘 편지 보냄 🎄</string>
     <string name="friends_letter_todo">편지 쓰기</string>
-    <string name="friends_letter_write_again">편지 또 쓰기</string>
     <string name="friends_play_game">🎮 게임하러 가기</string>
     <string name="friends_tree_image_description">친구 트리</string>
     <string name="friends_add_success">%1$s님을 친구로 추가했어요.</string>
@@ -95,6 +97,10 @@
     <string name="letter_write_back_button">← 뒤로가기</string>
     <string name="letter_write_title">편지 쓰기</string>
     <string name="letter_write_hint">마음을 담아 편지를 써보세요</string>
+    <!-- 편지는 친구 한 명당 하루 한 통. 크리스마스까지 매일 쓰자는 문구. 담당: C -->
+    <string name="letter_write_daily_hint_format">하루에 한 통만 보낼 수 있어요 · 크리스마스까지 %1$d일, 매일 한 통씩 어때요? 🎄</string>
+    <string name="letter_write_daily_hint_today">메리 크리스마스! 🎄 오늘도 편지 한 통 남겨보세요</string>
+    <string name="letter_write_error_already_sent_today">오늘은 이 친구에게 이미 편지를 보냈어요. 내일 다시 써주세요! 🎄</string>
     <string name="letter_write_recipient_label">받을 친구 코드</string>
     <string name="letter_write_ornament_label">트리에 달 장식 고르기</string>
     <string name="letter_write_save">편지 남기기</string>

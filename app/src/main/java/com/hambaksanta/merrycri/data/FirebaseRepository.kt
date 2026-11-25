@@ -20,6 +20,9 @@ import com.hambaksanta.merrycri.data.model.Ornament
 import com.hambaksanta.merrycri.data.model.Score
 import com.hambaksanta.merrycri.data.model.UserProfile
 import java.security.SecureRandom
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 import java.util.Locale
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -135,6 +138,12 @@ class FirebaseRepository(context: Context) {
 
         val sender = getCurrentUser() ?: throw IllegalStateException("user profile not found")
         val recipientOrnaments = root.child(ORNAMENTS).child(recipientUid).get().awaitResult()
+        // 편지 장식은 친구당 한 자리(senderUid가 키)라서, 그 createdAt이 '이 친구에게 마지막으로 편지를
+        // 쓴 시각'이다. 편지는 친구당 하루 한 통으로 제한한다(한국 시간 기준 자정에 초기화).
+        val myLastSentAt = recipientOrnaments.child(senderUid).child("createdAt").getValue(Long::class.java)
+        if (myLastSentAt != null && isSameDaySeoul(myLastSentAt)) {
+            throw AlreadySentTodayException()
+        }
         val slot = recipientOrnaments.childrenCount.toInt().coerceAtMost(MAX_ORNAMENT_SLOT)
         val letterId = root.child(LETTERS).child(recipientUid).push().key
             ?: throw IllegalStateException("letter id creation failed")
@@ -337,6 +346,13 @@ class FirebaseRepository(context: Context) {
     private fun requireUid(): String = uid ?: FirebaseAuth.getInstance().currentUser?.uid
         ?: throw IllegalStateException("로그인이 필요합니다.")
 
+    /** epochMillis가 한국 시간(Asia/Seoul) 기준 오늘인지. 편지 하루 한 통 제한에 쓴다. */
+    private fun isSameDaySeoul(epochMillis: Long): Boolean {
+        val zone = ZoneId.of("Asia/Seoul")
+        val day = Instant.ofEpochMilli(epochMillis).atZone(zone).toLocalDate()
+        return day == LocalDate.now(zone)
+    }
+
     private fun requireDatabase(): DatabaseReference = if (isAvailable) {
         FirebaseDatabase.getInstance().reference
     } else {
@@ -416,3 +432,6 @@ class FirebaseRepository(context: Context) {
         val random = SecureRandom()
     }
 }
+
+/** 편지는 친구당 하루 한 통. 이미 오늘 보냈을 때 [FirebaseRepository.sendLetter]가 던진다. 담당: C */
+class AlreadySentTodayException : IllegalStateException("already sent a letter to this recipient today")
