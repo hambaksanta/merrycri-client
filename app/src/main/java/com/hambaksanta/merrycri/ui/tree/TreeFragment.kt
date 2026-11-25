@@ -1,7 +1,6 @@
 // ui/tree/TreeFragment.kt
 package com.hambaksanta.merrycri.ui.tree
 
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -81,11 +80,21 @@ class TreeFragment : Fragment() {
             val top = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top
             binding.layoutHeader.updateLayoutParams<ViewGroup.MarginLayoutParams> { topMargin = headerTop + top }
             binding.buttonRanking.updateLayoutParams<ViewGroup.MarginLayoutParams> { topMargin = rankingTop + top }
+            binding.textDday.updateLayoutParams<ViewGroup.MarginLayoutParams> { topMargin = rankingTop + top }
             insets
         }
         binding.layoutTree.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ -> alignToGround() }
 
         render(emptyList())
+        // 내 이름: 가입할 때 저장된 닉네임으로 '지우님의 트리'
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                app.settings.nickname.collect { name ->
+                    binding.textOwner.isVisible = !name.isNullOrBlank()
+                    binding.textOwner.text = getString(R.string.tree_owner, name.orEmpty())
+                }
+            }
+        }
         viewLifecycleOwner.lifecycleScope.launch {
             val repository = app.repository
             // 익명 로그인이 끝날 때까지 기다린다. 오프라인이면 빈 트리(Lv1)로 둔다
@@ -147,8 +156,10 @@ class TreeFragment : Fragment() {
         val onDark = s >= 4
         val text = ContextCompat.getColor(requireContext(), if (onDark) R.color.white else R.color.ink)
         val sub = ContextCompat.getColor(requireContext(), if (onDark) R.color.night_text_muted else R.color.ink_muted)
-        imageTitle.imageTintList = ColorStateList.valueOf(text)
+        textOwner.setTextColor(text)
         textStage.setTextColor(text)
+        // 진행바 바탕: 밝은 하늘에는 진한 반투명, 밤하늘에는 흰 반투명
+        progressStage.trackColor = if (onDark) 0x40FFFFFF else 0x331E2A28
         textMessage.setTextColor(sub)
         textProgress.setTextColor(text)
         if (isResumed) applySystemBars()
@@ -275,8 +286,8 @@ class TreeFragment : Fragment() {
         const val ART_W = 320f
         const val ART_H = 380f
         const val GROUND_Y = 334f
-        const val HEADER_TOP_DP = 28 // fragment_tree.xml의 layout_header marginTop과 같게
-        const val RANKING_TOP_DP = 12 // button_ranking marginTop과 같게
+        const val HEADER_TOP_DP = 76 // fragment_tree.xml의 layout_header marginTop과 같게
+        const val RANKING_TOP_DP = 12 // button_ranking·text_dday marginTop과 같게
         /** 단계별 하늘 그림(bg_sky_lvN) 맨 위 색 — 상태바·바탕색 */
         val SKY_TOP = intArrayOf(
             0xFF86929F.toInt(),

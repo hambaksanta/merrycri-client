@@ -38,43 +38,46 @@
         android:layout_gravity="center"
         android:contentDescription="@string/intro_cd_my_tree" />
 
+    <!-- 왼쪽 위 D-day (오른쪽 위 [순위]와 같은 높이) -->
+    <TextView
+        android:id="@+id/text_dday"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_gravity="top|start"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_intro_dday"
+        android:gravity="center"
+        android:paddingHorizontal="16dp"
+        android:textAppearance="@style/TextAppearance.MerryCri.Label"
+        android:textColor="@color/ink"
+        android:textSize="13sp"
+        tools:text="크리스마스까지 D-30" />
+
     <LinearLayout
         android:id="@+id/layout_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="76dp"
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <!-- 타이틀: 첫 화면과 같은 박스테이프 글자 그림. 색은 하늘에 맞춰 코드에서 바꾼다 -->
-        <ImageView
-            android:id="@+id/image_title"
-            android:layout_width="180dp"
-            android:layout_height="48dp"
-            android:contentDescription="@string/app_name"
-            android:src="@drawable/title_merrycri"
-            app:tint="@color/ink" />
-
+        <!-- 내 이름: '지우님의 트리' (가입할 때 저장된 닉네임) -->
         <TextView
-            android:id="@+id/text_dday"
+            android:id="@+id/text_owner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_intro_dday"
-            android:paddingHorizontal="14dp"
-            android:paddingVertical="5dp"
-            android:textAppearance="@style/TextAppearance.MerryCri.Label"
-            android:textColor="@color/ink"
-            tools:text="크리스마스까지 D-30" />
+            android:textAppearance="@style/TextAppearance.MerryCri.Title"
+            tools:text="지우님의 트리" />
 
         <TextView
             android:id="@+id/text_stage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="4dp"
             android:textAppearance="@style/TextAppearance.MerryCri.Subtitle"
-            tools:text="Lv3 겨울 트리" />
+            tools:text="Lv2 새싹 트리" />
 
         <TextView
             android:id="@+id/text_message"
@@ -82,36 +85,30 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:textAppearance="@style/TextAppearance.MerryCri.Caption"
-            tools:text="트리가 자라고 있어요" />
+            tools:text="조금 따뜻해졌어요" />
 
-        <!-- 다음 단계까지: Lv5면 숨김 -->
-        <LinearLayout
-            android:id="@+id/layout_progress"
+        <!-- 다음 단계까지: 진행바 위에 남은 통수. Lv5면 진행바는 숨기고 문구만 -->
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progress_stage"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:max="100"
+            app:indicatorColor="@color/gold"
+            app:indicatorTrackGapSize="0dp"
+            app:trackColor="#331E2A28"
+            app:trackCornerRadius="4dp"
+            app:trackStopIndicatorSize="0dp"
+            app:trackThickness="8dp"
+            tools:progress="50" />
+
+        <TextView
+            android:id="@+id/text_progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <com.google.android.material.progressindicator.LinearProgressIndicator
-                android:id="@+id/progress_stage"
-                android:layout_width="96dp"
-                android:layout_height="wrap_content"
-                android:max="100"
-                app:indicatorColor="@color/gold"
-                app:trackColor="#40FFFFFF"
-                app:trackCornerRadius="4dp"
-                app:trackThickness="6dp"
-                tools:progress="40" />
-
-            <TextView
-                android:id="@+id/text_progress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:textAppearance="@style/TextAppearance.MerryCri.Label"
-                tools:text="2통 더 받으면 다음 단계" />
-        </LinearLayout>
+            android:layout_marginTop="6dp"
+            android:textAppearance="@style/TextAppearance.MerryCri.Label"
+            tools:text="2통 더 받으면 다음 단계" />
     </LinearLayout>
 
     <!-- 내 트리 미니게임 순위 팝업 (#50). 친구들이 내 트리에서 낸 최고점 -->

@@ -156,6 +156,7 @@
     <string name="tree_letters_empty_body">친구 탭에서 내 친구 코드를 공유하면\n친구가 이 트리에 편지를 남길 수 있어요.</string>
     <string name="tree_letters_error">편지를 불러오지 못했어요.\n인터넷 연결을 확인해 주세요.</string>
     <string name="tree_letter_new">새 편지</string>
+    <string name="tree_owner">%1$s님의 트리</string>
     <string name="tree_ranking_button">🏆 순위</string>
     <string name="tree_ranking_title">내 트리 순위</string>
     <string name="tree_ranking_sub">친구들이 내 트리에서 낸 미니게임 최고점이에요</string>
