@@ -10,23 +10,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.getSystemService
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.hambaksanta.merrycri.MerryCriApp
 import com.hambaksanta.merrycri.R
 import com.hambaksanta.merrycri.databinding.FragmentFriendsBinding
 import com.hambaksanta.merrycri.ui.game.GameActivity
+import com.hambaksanta.merrycri.ui.letter.WriteFragment
 import kotlinx.coroutines.launch
 
 /**
  * 친구 목록. 담당: B (위쪽 '내 친구 코드' 카드만 A, #45)
  * 각 친구 트리에서 지금까지 나온 미니게임 1등 점수를 같이 보여주고(담당: C),
- * 탭하면 그 친구 트리 경쟁 모드로 GameActivity를 바로 띄운다(상단 큰 시작 버튼 + 하단 전체 순위) — 약간의 경쟁심리 자극용.
+ * "게임하러 가기" 칩을 누르면 그 친구 트리 경쟁 모드로 GameActivity를 띄운다
+ * (상단 큰 시작 버튼 + 하단 전체 순위) — 약간의 경쟁심리 자극용.
  */
 class FriendsFragment : Fragment() {
     private var _binding: FragmentFriendsBinding? = null
@@ -35,7 +39,10 @@ class FriendsFragment : Fragment() {
     private val viewModel by viewModels<FriendsViewModel> {
         FriendsViewModel.factory(app.repository)
     }
-    private val friendAdapter = FriendAdapter(onClick = ::onFriendClicked)
+    private val friendAdapter = FriendAdapter(
+        onClick = ::onFriendClicked,
+        onWriteLetterClick = ::onWriteLetterClicked,
+    )
 
     /** 가입할 때 저장된 내 친구 코드. 가입 전이면 null (카드 숨김) */
     private var myCode: String? = null
@@ -129,9 +136,17 @@ class FriendsFragment : Fragment() {
         }
     }
 
+    /** "게임하러 가기" 칩을 눌렀을 때: GameActivity 시작 화면(상단 큰 버튼 + 하단 전체 순위)으로 이동한다. */
     private fun onFriendClicked(item: FriendListItem) {
-        // '게임쪽'에 바로 띄움: GameActivity 시작 화면 상단 큰 버튼 + 하단 전체 순위로 바로 들어간다.
         startActivity(GameActivity.forOwner(requireContext(), item.uid))
+    }
+
+    /** "편지 쓰기" 칩을 눌렀을 때: 그 친구 코드를 미리 채운 편지 쓰기 화면으로 이동한다. */
+    private fun onWriteLetterClicked(item: FriendListItem) {
+        findNavController().navigate(
+            R.id.action_friends_to_write,
+            bundleOf(WriteFragment.ARG_RECIPIENT_CODE to item.friendCode),
+        )
     }
 
     override fun onDestroyView() {

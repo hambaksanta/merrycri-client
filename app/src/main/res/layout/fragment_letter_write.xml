@@ -13,6 +13,20 @@
         android:layout_gravity="top"
         android:orientation="vertical">
 
+        <!-- 게임 화면의 '← 뒤로가기'와 같은 패턴. 친구 목록에서 들어온 화면이라 항상 친구 목록으로 돌아간다. 담당: C -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/back_button"
+            style="@style/Widget.MerryCri.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/space_12"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:paddingHorizontal="@dimen/space_16"
+            android:paddingVertical="@dimen/space_8"
+            android:text="@string/letter_write_back_button"
+            android:textSize="14sp" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

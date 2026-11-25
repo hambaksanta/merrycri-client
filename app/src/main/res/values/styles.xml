@@ -138,4 +138,9 @@
         <item name="android:background">@drawable/bg_chip_todo</item>
         <item name="android:textColor">@color/berry</item>
     </style>
+    <!-- '게임하러 가기' -->
+    <style name="Widget.MerryCri.Chip.Game">
+        <item name="android:background">@drawable/bg_chip_game</item>
+        <item name="android:textColor">@color/ink</item>
+    </style>
 </resources>

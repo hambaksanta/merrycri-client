@@ -28,7 +28,11 @@
     <fragment
         android:id="@+id/navigation_friends"
         android:name="com.hambaksanta.merrycri.ui.friends.FriendsFragment"
-        android:label="@string/tab_friends" />
+        android:label="@string/tab_friends">
+        <action
+            android:id="@+id/action_friends_to_write"
+            app:destination="@id/writeFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/onboardingFragment"
@@ -43,7 +47,13 @@
     <fragment
         android:id="@+id/writeFragment"
         android:name="com.hambaksanta.merrycri.ui.letter.WriteFragment"
-        android:label="@string/placeholder_letter_write" />
+        android:label="@string/placeholder_letter_write">
+        <argument
+            android:name="recipient_code"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
 
     <fragment
         android:id="@+id/openLettersFragment"
