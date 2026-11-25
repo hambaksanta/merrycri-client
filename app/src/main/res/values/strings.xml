@@ -58,6 +58,7 @@
     <string name="friends_letter_count">편지 %1$d통</string>
     <string name="friends_letter_done">편지 씀</string>
     <string name="friends_letter_todo">편지 쓰기</string>
+    <string name="friends_letter_write_again">편지 또 쓰기</string>
     <string name="friends_tree_image_description">친구 트리</string>
     <string name="friends_add_success">%1$s님을 친구로 추가했어요.</string>
     <string name="friends_error_invalid_code">6자리 친구 코드를 입력해 주세요.</string>

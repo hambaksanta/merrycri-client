@@ -62,8 +62,10 @@ class FriendAdapter(
             )
             statusDone.isVisible = item.hasWritten
             statusTodo.isVisible = !item.hasWritten
-            // "편지 쓰기" 칩은 여기서 따로 소비해서, 카드 전체 탭(게임 연동)으로 안 새도록 한다.
+            writeAgainButton.isVisible = item.hasWritten
+            // "편지 쓰기"/"편지 또 쓰기" 칩은 여기서 따로 소비해서, 카드 전체 탭(게임 연동)으로 안 새도록 한다.
             statusTodo.setOnClickListener { onWriteLetterClick(item) }
+            writeAgainButton.setOnClickListener { onWriteLetterClick(item) }
             root.setOnClickListener { onClick(item) }
         }
     }
