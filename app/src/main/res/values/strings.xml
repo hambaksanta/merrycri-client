@@ -137,6 +137,12 @@
     <string name="notification_channel_gifts">편지 알림</string>
     <string name="notification_gift_title">편지를 열 수 있어요</string>
     <string name="notification_gift_body">내 트리에 도착한 편지를 확인해 보세요.</string>
+    <string name="open_debug_title">편지 열람 시연</string>
+    <string name="open_debug_instructions">콘솔을 열면 현재 시각(ms)이 복사됩니다. 테스트 DB의 config/openAt에 숫자로 붙여넣은 뒤 편지함을 다시 열어 주세요. 시연 후에는 기존 값으로 되돌려 주세요.</string>
+    <string name="open_debug_console">시각 복사 및 콘솔 열기</string>
+    <string name="open_debug_test_notification">1분 뒤 테스트 알림</string>
+    <string name="open_debug_notification_scheduled">테스트 알림을 예약했어요. 기기의 알림 권한을 확인해 주세요.</string>
+    <string name="open_debug_console_unavailable">Firebase 콘솔을 열 수 없어요. 프로젝트 설정과 브라우저를 확인해 주세요.</string>
 
     <!-- 트리 장면 (담당: A) -->
     <string name="tree_cd_ornament">%1$d번째 편지 장식</string>
