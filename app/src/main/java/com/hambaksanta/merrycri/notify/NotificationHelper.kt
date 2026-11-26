@@ -4,13 +4,16 @@ package com.hambaksanta.merrycri.notify
 import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.hambaksanta.merrycri.R
+import com.hambaksanta.merrycri.MainActivity
 
 /** 로컬 알림 채널 생성과 표시. 담당: B */
 object NotificationHelper {
@@ -37,10 +40,19 @@ object NotificationHelper {
             ) != PackageManager.PERMISSION_GRANTED
         ) return
 
+        if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) return
+
+        val openApp = PendingIntent.getActivity(
+            context,
+            GIFT_OPEN_NOTIFICATION_ID,
+            Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            PendingIntent.FLAG_IMMUTABLE,
+        )
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentTitle(context.getString(R.string.notification_gift_title))
             .setContentText(context.getString(R.string.notification_gift_body))
+            .setContentIntent(openApp)
             .setAutoCancel(true)
             .build()
         NotificationManagerCompat.from(context).notify(GIFT_OPEN_NOTIFICATION_ID, notification)
