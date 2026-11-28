@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -35,5 +36,29 @@ class SettingsStore(private val context: Context) {
             it[nicknameKey] = nickname
             it[friendCodeKey] = friendCode
         }
+    }
+
+    /** 첫 목록을 기준으로 저장하고, 이후에 도착한 편지가 있는지 반환한다. */
+    suspend fun recordLetterArrivals(uid: String, arrivals: Map<String, Long>): Boolean {
+        val key = stringSetPreferencesKey("letter_arrivals_$uid")
+        var hasNewLetter = false
+        context.dataStore.edit { preferences ->
+            val previous = preferences[key]
+            val latestByWriter = previous.orEmpty().mapNotNull { entry ->
+                val timestamp = entry.substringAfterLast(':').toLongOrNull()
+                    ?: return@mapNotNull null
+                entry.substringBeforeLast(':') to timestamp
+            }.toMap().toMutableMap()
+            arrivals.forEach { (writerUid, timestamp) ->
+                if (timestamp > (latestByWriter[writerUid] ?: 0L)) {
+                    latestByWriter[writerUid] = timestamp
+                    hasNewLetter = previous != null
+                }
+            }
+            preferences[key] = latestByWriter.map { (writerUid, timestamp) ->
+                "$writerUid:$timestamp"
+            }.toSet()
+        }
+        return hasNewLetter
     }
 }
