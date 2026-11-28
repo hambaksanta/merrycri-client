@@ -5,20 +5,31 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.hambaksanta.merrycri.data.AuthState
 import com.hambaksanta.merrycri.databinding.ActivityMainBinding
 import com.hambaksanta.merrycri.notify.DebugMenu
 import com.hambaksanta.merrycri.notify.GiftOpenWorker
+import com.hambaksanta.merrycri.notify.NotificationHelper
 import com.hambaksanta.merrycri.ui.game.GameActivity
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 /** v2의 단일 Activity. Navigation Component로 Fragment 전환을 담당한다. 담당: B */
 class MainActivity : AppCompatActivity() {
@@ -34,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        observeNewLetters()
 
         val navHost = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -82,6 +94,26 @@ class MainActivity : AppCompatActivity() {
                     }
                 },
             )
+        }
+    }
+
+    private fun observeNewLetters() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                app.repository.authState.collectLatest { state ->
+                    if (state != AuthState.SignedIn) return@collectLatest
+                    val uid = app.repository.uid ?: return@collectLatest
+                    app.repository.observeOrnaments(uid)
+                        .onEach { ornaments ->
+                            val arrivals = ornaments.associate { it.writerUid to it.createdAt }
+                            if (app.settings.recordLetterArrivals(uid, arrivals)) {
+                                NotificationHelper.showNewLetterNotification(this@MainActivity)
+                            }
+                        }
+                        .catch { error -> Log.w("MainActivity", "편지 알림 처리 실패", error) }
+                        .collect()
+                }
+            }
         }
     }
 
